@@ -1,0 +1,21 @@
+Note: Unnecessary use of -X or --request, POST is already inferred.
+* Host localhost:3000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:3000...
+* Connected to localhost (::1) port 3000
+> POST /auth/login HTTP/1.1
+> Host: localhost:3000
+> User-Agent: curl/8.7.1
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 49
+> 
+} [49 bytes data]
+* upload completely sent off: 49 bytes
+* Empty reply from server
+100    49    0     0  100    49      0    300 --:--:-- --:--:-- --:--:--   300
+* Closing connection
+curl: (52) Empty reply from server

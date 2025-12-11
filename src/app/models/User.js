@@ -11,7 +11,11 @@ const User = new Schema(
             maxLength: 255,
             required: true,
         },
-        email: { type: String, required: true, unique: true },
+        email: { 
+          type: String, 
+          required: true,
+          index: { unique: true }
+        },
         password: { type: String, required: true },
 
         // Từ Step 2
@@ -31,7 +35,10 @@ const User = new Schema(
         // Mặc định
         role: { type: Number, default: 1 },
         cvPath: { type: String },
-        slug: { type: String, unique: true },
+        slug: { 
+          type: String, 
+          index: { unique: true }
+        },
         status: { type: String, default: 'active' },
     },
     {

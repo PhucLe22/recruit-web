@@ -4,11 +4,12 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const Business = require('../app/models/Business');
 const { multipleMongooseToObject } = require('../util/mongoose');
-const { verifyToken } = require('../middlewares/verifyToken');
+const { verifyToken, isBusiness } = require('../middlewares/verifyToken');
 const JobField = require('../app/models/JobField');
 const Job = require('../app/models/Job');
 const registerController = require('../app/controllers/business/RegisterController');
 const loginController = require('../app/controllers/business/LoginController');
+const businessLoginController = require('../app/controllers/business/LoginController');
 const jobCreateController = require('../app/controllers/business/JobCreateController');
 const detailApplicantController = require('../app/controllers/business/DetailApplicantController');
 const dashboardController = require('../app/controllers/business/DashboardController');
@@ -84,6 +85,7 @@ router.get('/profile-page', verifyToken, profileController.showProfile);
 router.post('/profile/edit', verifyToken, profileController.updateProfile);
 router.post('/job/create', verifyToken, jobCreateController.createJob);
 router.post('/login', loginController.login);
+router.get('/logout', businessLoginController.logout);
 router.post('/register/step1', registerController.showRegisterPage);
 router.post('/register/step2', upload.single('logo'), registerController.register);
 router.post('/register/submit', registerController.register);
@@ -100,8 +102,8 @@ router.post(
 router.get('/applicants-list', verifyToken, detailApplicantController.detail);
 router.put('/:jobAppliedId/update', businessController.update);
 router.get('/jobs-list', verifyToken, businessController.jobList);
-router.get('/dashboard', verifyToken, dashboardController.showDashboard);
-router.post('/dashboard', verifyToken, dashboardController.showDashboard);
+router.get('/dashboard', isBusiness, dashboardController.showDashboard);
+router.post('/dashboard', isBusiness, dashboardController.showDashboard);
 // Route to view scheduled applicants list
 router.get('/applicants-scheduled-list', verifyToken, (req, res, next) => {
     // Override layout for this specific route
@@ -442,7 +444,11 @@ router.get('/job/create-page', verifyToken, async (req, res, next) => {
     }
 });
 router.get('/login-page', (req, res) => {
-    res.render('business/login', { layout: false });
+    res.render('auth/login', { 
+        layout: false,
+        title: 'Business Login',
+        isBusinessLogin: true // Add this flag to customize the login form for business users if needed
+    });
 });
 router.get('/register-page', (req, res) => {
     try {

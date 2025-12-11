@@ -3,28 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
+    <title>{{title}} Job Life</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- <link href="/css/style.css" rel="stylesheet"> -->
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="/css/style.css" rel="stylesheet">
+    
+    <!-- Page-specific CSS -->
+    {{#if styles}}
+        {{#each styles}}
+            <link rel="stylesheet" href="{{this}}">
+        {{/each}}
+    {{/if}}
+    
+    <style>
+        :root {
+            --primary-color: #4a6cf7;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --dark-color: #212529;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .alert {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+    </style>
 </head>
 <body>
     {{> header}}
 
     {{#if success}}
-        <div class="alert alert-success">{{success}}</div>
+        <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+            <div class="container">
+                {{success}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
     {{/if}}
     
     {{#if error}}
-        <div class="alert alert-danger">{{error}}</div>
+        <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
+            <div class="container">
+                {{error}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
     {{/if}}
 
-    <main class="container my-4">
+    <main>
         {{{body}}}
     </main>
 
-    {{> footer}}
+    {{!-- {{> footer}} --}}
 
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+
+        // Back to Top Button
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        backToTop.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+
+    <!-- Page-specific JavaScript -->
+    {{#if scripts}}
+        {{#each scripts}}
+            <script src="{{this}}"></script>
+        {{/each}}
+    {{/if}}
 </body>
 </html>

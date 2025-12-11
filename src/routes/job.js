@@ -7,6 +7,7 @@ const searchController = require('../app/controllers/job/SearchController');
 const applyController = require('../app/controllers/job/ApplyController');
 const saveJobController = require('../app/controllers/job/SaveJobController');
 const jobCategoryController = require('../app/controllers/job/JobCategoryController');
+const {isLogin} = require('../middlewares/isLogin');
 
 // Add smart search API endpoint
 const SmartSearchService = require('../services/SmartSearchService');
@@ -36,7 +37,7 @@ function formatRelativeTime(date) {
 }
 
 // Apply routes
-router.post('/apply/:slug', verifyToken, applyController.apply);
+router.post('/apply/:slug', isLogin, applyController.apply);
 router.post('/save/:jobId', verifyToken, saveJobController.saveJob);
 router.delete('/save/:jobId', verifyToken, saveJobController.unsaveJob);
 router.get('/saved/:jobId', verifyToken, saveJobController.checkJobSaved);

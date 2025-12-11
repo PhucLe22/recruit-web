@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const RefreshToken = require('../models/RefreshToken');
 
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
@@ -220,35 +222,60 @@ const isBusiness = (req, res, next) => {
   }
 };
 
-// Generate JWT token
-const generateToken = (user) => {
-  return jwt.sign(
-    {
-      id: user._id || user.id,
-      email: user.email,
-      username: user.username,
-      role: user.role || 'user',
-      isBusiness: user.isBusiness || false
-    },
+// Generate JWT tokens
+const generateToken = async (user, userAgent = '', ipAddress = '') => {
+  const isBiz = user instanceof mongoose.model('Business');
+  const tokenData = {
+    id: user._id,
+    email: user.email,
+    type: 'access',
+    role: isBiz ? 'business' : (user.role || 'user'),
+    ...(isBiz ? { 
+      companyName: user.companyName,
+      businessId: user._id 
+    } : { username: user.username })
+  };
+
+  const accessToken = jwt.sign(
+    tokenData,
     process.env.JWT_SECRET || process.env.SESSION_SECRET,
-    {
-      expiresIn: '24h'
-    }
+    { expiresIn: isBiz ? '8h' : '24h' }
   );
+
+  const refreshToken = await RefreshToken.createToken(
+    { ...user.toObject(), userType: isBiz ? 'business' : 'user' }, 
+    userAgent, 
+    ipAddress
+  );
+
+  return { accessToken, refreshToken };
 };
 
-// Set token in cookie and session
-const setToken = (res, token) => {
-  // Set in cookie
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  });
+// Set tokens in cookie and session
+const setToken = async (req, res, { accessToken, refreshToken }) => {
+  // Set access token in cookie
+  if (accessToken) {
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 15 * 60 * 1000, // 15 minutes
+      sameSite: 'strict'
+    });
+    
+    // Set in session
+    if (req.session) {
+      req.session.accessToken = accessToken;
+    }
+  }
   
-  // Set in session
-  if (req.session) {
-    req.session.token = token;
+  // Set refresh token in httpOnly cookie if it's a new token
+  if (refreshToken) {
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+    });
   }
 };
 

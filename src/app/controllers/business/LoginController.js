@@ -99,15 +99,36 @@ class LoginController {
   // Logout
   logout(req, res) {
     try {
+      // Clear HTTP-only cookies
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
+      
+      // Clear session
       req.session.destroy((err) => {
         if (err) {
-          console.error('Error destroying session:', err);
+          console.error('Logout error:', err);
+          if (req.xhr || req.headers.accept?.includes('application/json')) {
+            return res.status(500).json({ success: false, message: 'Logout failed' });
+          }
+          return res.redirect('/business/login');
         }
-        res.clearCookie('connect.sid');
+        
+        // Clear any other auth-related cookies
+        res.clearCookie('connect.sid', { path: '/' });
+        
+        // Handle JSON/API response
+        if (req.xhr || req.headers.accept?.includes('application/json')) {
+          return res.json({ success: true, message: 'Logged out successfully' });
+        }
+        
+        // Redirect for web requests
         res.redirect('/business/login');
       });
     } catch (error) {
       console.error('Logout error:', error);
+      if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(500).json({ success: false, message: 'Logout failed' });
+      }
       res.redirect('/business/login');
     }
   }

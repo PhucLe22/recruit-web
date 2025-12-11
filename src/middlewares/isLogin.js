@@ -1,72 +1,119 @@
-// Middleware to check if user is logged in
-const isLogin = (req, res, next) => {
+const jwt = require('jsonwebtoken');
+
+/**
+ * Extracts and verifies JWT token from request
+ * @param {string} token - JWT token to verify
+ * @returns {Object|null} Decoded token or null if invalid
+ */
+const verifyJwtToken = (token) => {
+  if (!token) return null;
+  
   try {
-    // Check for regular user session
-    if (req.session && req.session.users) {
-      req.user = req.session.users;
-      req.isLogin = true;
-      req.userType = 'user';
-      return next();
-    }
-
-    // Check for business user session
-    if (req.session && req.session.business) {
-      req.user = req.session.business;
-      req.isLogin = true;
-      req.userType = 'business';
-      return next();
-    }
-
-    // Check for JWT token in Authorization header
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.substring(7);
-      try {
-        const jwt = require('jsonwebtoken');
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || process.env.SESSION_SECRET);
-        
-        req.user = decoded;
-        req.isLogin = true;
-        req.userType = decoded.isBusiness ? 'business' : 'user';
-        return next();
-      } catch (tokenError) {
-        // Token is invalid, continue without user
-        console.warn('Invalid JWT token:', tokenError.message);
-      }
-    }
-
-    // Check for JWT token in cookies
-    if (req.cookies && req.cookies.token) {
-      try {
-        const jwt = require('jsonwebtoken');
-        const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET || process.env.SESSION_SECRET);
-        
-        req.user = decoded;
-        req.isLogin = true;
-        req.userType = decoded.isBusiness ? 'business' : 'user';
-        return next();
-      } catch (tokenError) {
-        // Token is invalid, continue without user
-        console.warn('Invalid cookie token:', tokenError.message);
-      }
-    }
-
-    // No user found, continue as guest
-    req.user = null;
-    req.isLogin = false;
-    req.userType = null;
-    
-    next();
+    return jwt.verify(token, process.env.JWT_SECRET || process.env.SESSION_SECRET);
   } catch (error) {
-    console.error('Error in isLogin middleware:', error);
-    req.user = null;
-    req.isLogin = false;
-    req.userType = null;
-    next();
+    console.warn('JWT verification failed:', error.message);
+    return null;
   }
 };
 
-// Middleware to require authentication
+const extractToken = (req) => {
+  // Check Authorization header
+  const authHeader = req.headers.authorization || null;
+  if (authHeader?.startsWith('Bearer ')) {
+    //return res.json("Found token in header:", authHeader.substring(7));
+    return authHeader.substring(7);
+  }
+  
+  // Check cookies
+  if (req.cookies?.accessToken) {
+    return req.cookies.accessToken;
+  } 
+  return null;
+};
+
+const isLogin = (req, res, next) => {
+  try {
+    // Check session first (faster than JWT verification)
+    if (req.session?.user) {
+      setRequestUser(req, req.session.user, 'user');
+      // return res.json("Found user in session:", req.session.user);
+      // return next();
+    }
+    if (req.session?.business) {
+      setRequestUser(req, req.session.business, 'business');
+      // return res.json("Found business in session:", req.session.business);
+      // return next();
+    }
+    const token = extractToken(req) || null;
+    if (!token) {
+      // return next();
+      return res.json('No token found', token);
+    }
+    else {
+      const decoded = verifyJwtToken(token);
+      if (decoded) {
+        setRequestUser(req, decoded, decoded.isBusiness ? 'business' : 'user');
+        return next();
+      }
+      else {
+        return res.json('Token is invalid', token);
+      }
+    }
+    // No valid session or token found
+    setGuestUser(req);
+    return next();
+  } catch (error) {
+    console.error('Authentication error:', error);
+    setGuestUser(req);
+    // return res.json("Authentication error:", error);
+    return next();
+  }
+};
+
+const setRequestUser = (req, userData, userType) => {
+  req.user = userData;
+  req.isLogin = true;
+  req.userType = userType;
+  
+  // Handle business user
+  if (userType === 'business') {
+    req.headerData = {
+      isAuthenticated: true,
+      userType: 'business',
+      displayName: userData.name || userData.companyName || userData.businessName || 'Business',
+      avatar: userData.logoPath || '/images/default-business-logo.png',
+      email: userData.email || '',
+      // Include any additional business data needed in the header
+      ...(userData.businessData ? { businessData: userData.businessData } : {})
+    };
+  } 
+  // Handle regular user
+  else {
+    req.headerData = {
+      isAuthenticated: true,
+      userType: 'user',
+      displayName: userData.name || userData.username || 'User',
+      avatar: userData.avatar || '/images/default-avatar.png',
+      email: userData.email || '',
+      // Include any additional user data needed in the header
+      ...(userData.profile ? { profile: userData.profile } : {})
+    };
+  }
+};
+
+const setGuestUser = (req) => {
+  req.user = null;
+  req.isLogin = false;
+  req.userType = null;
+  req.headerData = {
+    isAuthenticated: false,
+    userType: null,
+    displayName: 'Guest',
+    avatar: '/images/default-avatar.png',
+    email: ''
+  };
+};
+
 const requireAuth = (req, res, next) => {
   if (!req.isLogin || !req.user) {
     if (req.xhr || req.headers.accept?.includes('application/json')) {
@@ -84,7 +131,6 @@ const requireAuth = (req, res, next) => {
   next();
 };
 
-// Middleware to require business authentication
 const requireBusinessAuth = (req, res, next) => {
   if (!req.isLogin || !req.user || req.userType !== 'business') {
     if (req.xhr || req.headers.accept?.includes('application/json')) {
@@ -93,14 +139,13 @@ const requireBusinessAuth = (req, res, next) => {
         message: 'Business authentication required'
       });
     } else {
-      return res.redirect('/business/login-page');
+      return res.redirect('/business/login');
     }
   }
   
   next();
 };
 
-// Middleware to require user authentication (not business)
 const requireUserAuth = (req, res, next) => {
   if (!req.isLogin || !req.user || req.userType !== 'user') {
     if (req.xhr || req.headers.accept?.includes('application/json')) {
@@ -109,17 +154,16 @@ const requireUserAuth = (req, res, next) => {
         message: 'User authentication required'
       });
     } else {
-      return res.redirect('/auth/login-page');
+      return res.redirect('/auth/login');
     }
   }
   
   next();
 };
 
-// Middleware to check if user is admin
 const requireAdmin = (req, res, next) => {
   if (!req.isLogin || !req.user) {
-    return res.redirect('/auth/login-page');
+    return res.redirect('/auth/login');
   }
   
   // Check if user has admin role
@@ -130,21 +174,26 @@ const requireAdmin = (req, res, next) => {
         message: 'Admin access required'
       });
     } else {
-      return res.redirect('/auth/login-page');
+      return res.redirect('/auth/login');
     }
   }
   
   next();
 };
 
-// Middleware to make user data available in templates
 const makeUserDataAvailable = (req, res, next) => {
-  // Add user data to res.locals for templates
+  // Ensure headerData is set
+  if (!req.headerData) {
+    setGuestUser(req);
+  }
+  
+  // Add data to res.locals for templates
   res.locals.user = req.user;
   res.locals.isLogin = req.isLogin;
   res.locals.userType = req.userType;
+  res.locals.headerData = req.headerData;
   
-  // Add user data to response object for controllers
+  // Add data to response object for controllers
   res.user = req.user;
   res.isLogin = req.isLogin;
   res.userType = req.userType;
@@ -152,34 +201,30 @@ const makeUserDataAvailable = (req, res, next) => {
   next();
 };
 
-// Helper function to get current user info
+const userDataMiddleware = makeUserDataAvailable;
+
 const getCurrentUser = (req) => {
   return req.user || null;
 };
 
-// Helper function to check if current user is the owner of a resource
 const isResourceOwner = (req, resourceUserId) => {
   if (!req.user || !req.isLogin) return false;
   
   return req.user._id.toString() === resourceUserId.toString();
 };
 
-// Helper function to check if current user can edit a resource
 const canEditResource = (req, resourceUserId, resourceBusinessId = null) => {
   if (!req.user || !req.isLogin) return false;
   
-  // User can edit their own resources
   if (req.userType === 'user' && req.user._id.toString() === resourceUserId.toString()) {
     return true;
   }
   
-  // Business can edit their own resources
   if (req.userType === 'business' && resourceBusinessId && 
       req.user._id.toString() === resourceBusinessId.toString()) {
     return true;
   }
   
-  // Admin can edit everything
   if (req.user.role === 'admin' || req.user.isAdmin) {
     return true;
   }
@@ -193,8 +238,17 @@ module.exports = {
   requireBusinessAuth,
   requireUserAuth,
   requireAdmin,
+  
+  // Data handling
   makeUserDataAvailable,
+  userDataMiddleware,
+  
+  // Helpers
   getCurrentUser,
   isResourceOwner,
-  canEditResource
+  canEditResource,
+  
+  // Internal (for testing/advanced usage)
+  _setRequestUser: setRequestUser,
+  _setGuestUser: setGuestUser
 };

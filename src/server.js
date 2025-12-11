@@ -10,7 +10,7 @@ const exphbs = require('express-handlebars');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
-const { isLogin } = require('./middlewares/isLogin');
+const { isLogin, userDataMiddleware } = require('./middlewares/isLogin');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const flash = require('connect-flash');
 const hbs = require('handlebars');
@@ -135,36 +135,49 @@ app.engine(
                 return pages;
             },
             paginationRange: (currentPage, totalPages) => {
-                const pages = [];
-                const currentPageNum = parseInt(currentPage);
+                const range = [];
+                const maxVisiblePages = 5; // Số lượng trang hiển thị tối đa
+                let startPage, endPage;
 
-                // Always show first page
-                pages.push(1);
+                if (totalPages <= maxVisiblePages) {
+                    // Nếu tổng số trang ít hơn hoặc bằng số lượng trang tối đa hiển thị
+                    startPage = 1;
+                    endPage = totalPages;
+                } else {
+                    // Nếu tổng số trang nhiều hơn số lượng trang tối đa hiển thị
+                    const maxPagesBeforeCurrentPage = Math.floor(maxVisiblePages / 2);
+                    const maxPagesAfterCurrentPage = Math.ceil(maxVisiblePages / 2) - 1;
 
-                // Show pages around current page
-                const showAround = 2; // Show 2 pages before and after
-                let startPage = Math.max(2, currentPageNum - showAround);
-                let endPage = Math.min(totalPages - 1, currentPageNum + showAround);
-
-                // Add ellipsis before if needed
-                if (startPage > 2) {
-                    pages.push('...');
-                }
-
-                // Add pages around current page
-                for (let i = startPage; i <= endPage; i++) {
-                    if (i !== 1 && i !== totalPages) {
-                        pages.push(i);
+                    if (currentPage <= maxPagesBeforeCurrentPage) {
+                        // Trang hiện tại ở gần đầu
+                        startPage = 1;
+                        endPage = maxVisiblePages;
+                    } else if (currentPage + maxPagesAfterCurrentPage >= totalPages) {
+                        // Trang hiện tại ở gần cuối
+                        startPage = totalPages - maxVisiblePages + 1;
+                        endPage = totalPages;
+                    } else {
+                        // Trang hiện tại ở giữa
+                        startPage = currentPage - maxPagesBeforeCurrentPage;
+                        endPage = currentPage + maxPagesAfterCurrentPage;
                     }
                 }
 
-                // Add ellipsis after if needed
-                if (endPage < totalPages - 1) {
-                    pages.push('...');
+                // Thêm các nút phân trang
+                for (let i = startPage; i <= endPage; i++) {
+                    range.push({
+                        page: i,
+                        isCurrent: i === currentPage,
+                    });
                 }
 
-                // Always show last page if different from first
-                if (totalPages > 1) {
+                return range;
+            },
+            randomColor: (str) => {
+                if (!str) return '#6c757d'; // Default gray color
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    hash = str.charCodeAt(i) + ((hash << 5) - hash);
                     pages.push(totalPages);
                 }
 
@@ -178,12 +191,66 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware session
+// Session configuration
+const sessionConfig = {
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    },
+    store: new (require('connect-mongodb-session')(session))({
+        uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/your-db-name',
+        collection: 'sessions'
+    })
+};
+
+// Session middleware
+app.use(session(sessionConfig));
+
+// Flash messages middleware
+app.use(flash());
+
+// Make flash messages available to all views
+app.use((req, res, next) => {
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    res.locals.error = req.flash('error');
+    next();
+});
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Make user data available to all views
+app.use((req, res, next) => {
+    res.locals.user = req.user || null;
+    res.locals.business = req.business || null;
+    next();
+});
+
+// Cookie parser
+app.use(cookieParser());
+
+// Method override
+app.use(methodOverride('_method'));
+
+// Set global variables
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    res.locals.errors = req.flash('error');
+    next();
+});
+
+// Session configuration
 app.use(
     session({
-        secret: process.env.SESSION_SECRET,
+        secret: process.env.SESSION_SECRET || 'your-secret-key',
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
         cookie: {
             secure: false,
             maxAge: 3 * 60 * 60 * 1000,
@@ -191,16 +258,16 @@ app.use(
     }),
 );
 
-// Middleware setLocals (sau khi có session)
+// Make user data available in all views
+app.use(userDataMiddleware);
+
+// Backward compatibility for existing code
 app.use((req, res, next) => {
-    res.locals.currentUser = req.session.users || null;
-    res.locals.currentBusiness = req.session.business || null;
+    res.locals.currentUser = req.user || req.session.users || null;
+    res.locals.currentBusiness = req.userType === 'business' ? req.user : req.session.business || null;
     res.locals.req = { query: req.query };
     next();
 });
-
-// Đã có dòng 56 serve static files từ src/public rồi, không cần trùng lặp
-// avatars và logos đã được serve tự động qua dòng 56
 
 passport.use(
     new GoogleStrategy(

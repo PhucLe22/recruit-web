@@ -7,10 +7,11 @@ const ActivityTracker = require('../../../middlewares/activityTracker');
 
 class ApplyController {
   // Apply for a job
-  async apply(req, res) {
+  async apply(req, res, next) {
     try {
-      const userId = req.user?._id;
-      const { jobId } = req.params;
+      const userId = req.session.user._id;
+      // return res.json(userId)
+      const { slug } = req.params;
       const { cvId, coverLetter, notes } = req.body;
 
       if (!userId) {
@@ -21,7 +22,7 @@ class ApplyController {
       }
 
       // Check if job exists and is active
-      const job = await Job.findById(jobId).populate('businessId');
+      const job = await Job.findOne({ slug: slug }).populate('businessId');
       if (!job || job.expiryTime < new Date()) {
         return res.status(404).json({
           success: false,
@@ -32,7 +33,7 @@ class ApplyController {
       // Check if already applied
       const existingApplication = await AppliedJobs.findOne({
         user_id: userId,
-        job_id: jobId
+        job_id: job._id
       });
 
       if (existingApplication) {
@@ -56,7 +57,7 @@ class ApplyController {
       // Create application
       const application = new AppliedJobs({
         user_id: userId,
-        job_id: jobId,
+        job_id: job._id,
         business_id: job.businessId._id,
         cv_id: cvId || null,
         cover_letter: coverLetter || null,
@@ -66,14 +67,14 @@ class ApplyController {
       await application.save();
 
       // Track activity
-      await ActivityTracker.trackJobApplication(userId, jobId, {
+      await ActivityTracker.trackJobApplication(userId, job._id, {
         cvId,
         coverLetter: coverLetter ? 'provided' : null,
         notes: notes ? 'provided' : null
       }, req);
 
       // Update job application count
-      await Job.findByIdAndUpdate(jobId, {
+      await Job.findByIdAndUpdate(job._id, {
         $inc: { applicationCount: 1 }
       });
 

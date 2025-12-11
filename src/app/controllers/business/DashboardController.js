@@ -77,8 +77,8 @@ class DashboardController {
         appStats[stat._id] = stat.count;
       });
 
-      res.render('business/dashboard', {
-        layout: 'business/main',
+      res.render('businesses/dashboard', {
+        layout: 'main',
         stats,
         applicationStats: appStats,
         recentApplications,

@@ -10,7 +10,7 @@ const businessSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true,
+    index: { unique: true },
     lowercase: true,
     trim: true
   },
@@ -117,7 +117,6 @@ const businessSchema = new mongoose.Schema({
 });
 
 // Indexes
-businessSchema.index({ email: 1 });
 businessSchema.index({ companyName: 1 });
 businessSchema.index({ 'address.city': 1 });
 businessSchema.index({ industry: 1 });

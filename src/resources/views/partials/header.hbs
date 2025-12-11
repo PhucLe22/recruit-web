@@ -1,163 +1,5 @@
-<!-- Modern Header Navigation -->
-<style>
-  /* Smooth Dropdown Animations */
-  .nav-item .dropdown-menu,
-  .nav-item .mega-menu {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-  }
-
-  .nav-item:hover .dropdown-menu,
-  .nav-item:hover .mega-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-    pointer-events: auto;
-  }
-
-  /* Dropdown Toggle Smooth Rotation */
-  .dropdown-toggle .dropdown-indicator {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .nav-item:hover .dropdown-toggle .dropdown-indicator {
-    transform: rotate(180deg);
-  }
-
-  /* Dropdown Item Hover Effects */
-  .dropdown-item,
-  .mega-menu-link,
-  .category-item {
-    position: relative;
-    transition: all 0.2s ease;
-  }
-
-  .dropdown-item:hover,
-  .mega-menu-link:hover {
-    background-color: rgba(0, 0, 0, 0.04);
-    transform: translateX(4px);
-  }
-
-  .category-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Smooth Icon Animation */
-  .dropdown-item .item-icon,
-  .mega-menu-link .link-icon {
-    display: inline-block;
-    transition: transform 0.2s ease;
-  }
-
-  .dropdown-item:hover .item-icon,
-  .mega-menu-link:hover .link-icon {
-    transform: scale(1.2);
-  }
-
-  /* Smooth Arrow Animation */
-  .item-arrow {
-    display: inline-block;
-    transition: transform 0.2s ease;
-  }
-
-  .dropdown-item:hover .item-arrow {
-    transform: translateX(4px);
-  }
-
-  /* User Dropdown Smooth Animation */
-  .user-dropdown .dropdown-menu {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px) scale(0.95);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-  }
-
-  .user-dropdown:hover .dropdown-menu,
-  .user-dropdown.active .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0) scale(1);
-    pointer-events: auto;
-  }
-
-  /* Smooth Mega Menu Animation */
-  .mega-dropdown .mega-menu {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-15px);
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-  }
-
-  .mega-dropdown:hover .mega-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-    pointer-events: auto;
-  }
-
-  /* Smooth Mega Menu Link Animation */
-  .mega-menu-link {
-    transition: all 0.2s ease;
-  }
-
-  .mega-menu-link:hover {
-    background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
-  }
-
-  /* Dropdown Button Smooth Hover */
-  .dropdown-toggle {
-    transition: all 0.2s ease;
-  }
-
-  .nav-item:hover .dropdown-toggle {
-    color: #4ECDC4;
-  }
-
-  /* Smooth Transition for Dropdown Menu Appearance */
-  .dropdown-menu,
-  .mega-menu {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  /* Prevent flickering on hover */
-  .nav-item {
-    position: relative;
-  }
-
-  .nav-item .dropdown-menu,
-  .nav-item .mega-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 1000;
-  }
-
-  /* Smooth Divider Animation */
-  .dropdown-divider {
-    transition: background-color 0.2s ease;
-  }
-
-  /* Smooth Badge Animation */
-  .item-badge,
-  .link-badge {
-    display: inline-block;
-    transition: all 0.2s ease;
-  }
-
-  .dropdown-item:hover .item-badge,
-  .mega-menu-link:hover .link-badge {
-    transform: scale(1.1);
-  }
-</style>
-
+<!-- Header CSS -->
+<link href="/css/header.css" rel="stylesheet">
 <header class="header">
   <div class="header-container">
     <!-- Enhanced Logo -->
@@ -262,12 +104,12 @@
               <span class="item-title">Danh sách công ty</span>
               <span class="item-arrow">→</span>
             </a>
-            <a href="/business/register-page" class="dropdown-item featured">
+            <a href="/business/register" class="dropdown-item featured">
               <span class="item-icon">⭐</span>
               <span class="item-title">Đăng ký nhà tuyển dụng</span>
               <span class="item-badge">For Business</span>
             </a>
-            <a href="/business/login-page" class="dropdown-item">
+            <a href="/business/login" class="dropdown-item">
               <span class="item-icon">🚀</span>
               <span class="item-title">Đăng nhập tuyển dụng</span>
               <span class="item-arrow">→</span>
@@ -283,17 +125,17 @@
             <i class="fas fa-chevron-down dropdown-indicator"></i>
           </button>
           <div class="dropdown-menu">
-            <a href="/cv/uploadCV-page" class="dropdown-item">
+            <a href="/cv/uploadCV" class="dropdown-item">
               <span class="item-icon">📄</span>
               <span class="item-title">Tải CV & Gợi ý việc làm</span>
               <span class="item-arrow">→</span>
             </a>
-            <a href="/auth/profile-page" class="dropdown-item">
+            <a href="/users/profile" class="dropdown-item">
               <span class="item-icon">🎨</span>
               <span class="item-title">Quản lý hồ sơ cá nhân</span>
               <span class="item-arrow">→</span>
             </a>
-            <a href="/users/upload-avatar-page" class="dropdown-item featured">
+            <a href="/users/upload-avatar" class="dropdown-item featured">
               <span class="item-icon">📸</span>
               <span class="item-title">Cập nhật ảnh đại diện</span>
               <span class="item-badge">Profile</span>
@@ -324,7 +166,7 @@
               <span class="item-title">Trang chủ & Blog</span>
               <span class="item-arrow">→</span>
             </a>
-            <a href="/auth/register-page" class="dropdown-item">
+            <a href="/auth/register" class="dropdown-item">
               <span class="item-icon">💡</span>
               <span class="item-title">Hướng dẫn đăng ký</span>
               <span class="item-arrow">→</span>
@@ -339,41 +181,96 @@
       </ul>
     </nav>
 
-    <!-- Enhanced Auth Actions -->
+    <!-- Auth Actions -->
     <div class="auth-actions">
-      {{#if user}}
-        <!-- Enhanced User Dropdown -->
-        <div class="dropdown user-dropdown">
-          <button class="dropdown-toggle user-toggle" type="button">
-            {{#if user.avatar}}
-              <img src="{{user.avatar}}" alt="Avatar" class="user-avatar">
-            {{else}}
-              <div class="user-avatar-placeholder">
-                <i class="fas fa-user"></i>
-              </div>
-            {{/if}}
-            <div class="user-info">
-              <span class="user-name">{{user.name}}</span>
-              <span class="user-role">{{user.role}}</span>
+      <!-- User/Business Avatar Icon -->
+      <div class="header-avatar-icon">
+        {{#if isLogin}}
+          {{#if (eq userType 'user')}}
+            <!-- Logged in as regular user -->
+            <a href="/profile" class="avatar-link">
+              {{#if user.avatar}}
+                <img src="{{user.avatar}}" alt="{{user.name}}" class="header-avatar" onerror="this.onerror=null; this.src='/images/default-avatar.png';">
+              {{else}}
+                <div class="avatar-placeholder" style="background-color: {{randomColor user._id}};">
+                  {{#if user.name}}
+                    {{substring (uppercase user.name) 0 1}}
+                  {{else}}
+                    <i class="fas fa-user"></i>
+                  {{/if}}
+                </div>
+              {{/if}}
+            </a>
+          {{else if (eq userType 'business')}}
+            <!-- Logged in as business -->
+            <a href="/business/dashboard" class="avatar-link">
+              {{#if business.logoPath}}
+                <img src="{{business.logoPath}}" alt="{{business.companyName}}" class="header-avatar" onerror="this.onerror=null; this.src='/images/default-company.png';">
+              {{else}}
+                <div class="avatar-placeholder" style="background-color: {{randomColor business._id}};">
+                  {{#if business.companyName}}
+                    {{substring (uppercase business.companyName) 0 1}}
+                  {{else}}
+                    <i class="fas fa-building"></i>
+                  {{/if}}
+                </div>
+              {{/if}}
+            </a>
+          {{/if}}
+        {{else}}
+          <!-- Not logged in -->
+          <a href="/auth/login" class="avatar-link" title="Đăng nhập">
+            <div class="avatar-placeholder" style="background-color: #e2e8f0;">
+              <i class="fas fa-user" style="color: #718096;"></i>
             </div>
-            <span class="dropdown-indicator"></span>
-          </button>
-          <div class="dropdown-menu user-menu">
+          </a>
+        {{/if}}
+      </div>
+      
+{{#if isLogin}}
+  {{#if (eq userType 'user')}}
+    <!-- User is logged in - Show avatar with dropdown -->
+    <div class="user-dropdown">
+            <button class="user-menu-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-label="User menu">
+              <div class="avatar-container">
+                {{#if user.avatar}}
+                  <img src="{{user.avatar}}" alt="{{user.name}}" class="user-avatar" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'avatar-placeholder\' style=\'background-color: {{randomColor user._id}}\'><i class=\'fas fa-user\'></i></div>'">
+                {{else}}
+                  <div class="avatar-placeholder" style="background-color: {{randomColor user._id}};">
+                    {{#if user.name}}
+                      {{substring (uppercase user.name) 0 1}}
+                    {{else}}
+                      <i class="fas fa-user"></i>
+                    {{/if}}
+                  </div>
+                {{/if}}
+                {{#if user.isOnline}}
+                  <span class="online-status" title="Online"></span>
+                {{/if}}
+              </div>
+              <span class="user-name">{{user.name}}</span>
+              <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </button>
+          <div class="dropdown-menu user-menu" aria-label="User menu">
             <div class="user-menu-header">
               {{#if user.avatar}}
-                <img src="{{user.avatar}}" alt="Avatar" class="user-menu-avatar">
+                <img src="{{user.avatar}}" alt="" class="user-menu-avatar" onerror="console.error('Error loading avatar in menu:', this.src); this.onerror=null; this.src='/images/default-avatar.png';">
               {{else}}
-                <div class="user-menu-avatar-placeholder">
-                  <i class="fas fa-user"></i>
+                <div class="avatar-placeholder user-menu-avatar" style="background-color: {{randomColor user._id}};">
+                  {{#if user.name}}
+                    {{substring (uppercase user.name) 0 1}}
+                  {{else}}
+                    <i class="fas fa-user"></i>
+                  {{/if}}
                 </div>
               {{/if}}
               <div class="user-menu-info">
-                <h4>{{user.name}}</h4>
-                <p>{{user.email}}</p>
+                <h4 class="truncate">{{user.name}}</h4>
+                <p class="truncate">{{user.email}}</p>
               </div>
             </div>
             <div class="dropdown-divider"></div>
-            <a href="/auth/profile-page" class="dropdown-item">
+            <a href="/users/profile" class="dropdown-item">
               <span class="item-icon">👤</span>
               <span class="item-title">Hồ sơ cá nhân</span>
               <span class="item-arrow">→</span>
@@ -404,18 +301,86 @@
               <span class="item-title">Đăng xuất</span>
               <span class="item-arrow">→</span>
             </a>
+      </div>
+    </div>
+  {{else if business}}
+        <!-- Business account is logged in - Show business avatar with dropdown -->
+        <div class="user-dropdown">
+          <button class="user-menu-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Business menu">
+            <div class="avatar-container">
+              {{#if business.logoPath}}
+                <img src="{{business.logoPath}}" alt="{{business.companyName}}" class="user-avatar" onerror="this.onerror=null; this.src='/images/default-company.png';">
+              {{else}}
+                <div class="avatar-placeholder" style="background-color: {{randomColor business._id}};">
+                  {{#if business.companyName}}
+                    {{substring (uppercase business.companyName) 0 1}}
+                  {{else}}
+                    <i class="fas fa-building"></i>
+                  {{/if}}
+                </div>
+              {{/if}}
+            </div>
+            <span class="user-name">{{business.companyName}}</span>
+            <i class="fas fa-chevron-down dropdown-arrow"></i>
+          </button>
+          <div class="dropdown-menu user-menu" aria-label="Business menu">
+            <div class="user-menu-header">
+              {{#if business.logoPath}}
+                <img src="{{business.logoPath}}" alt="" class="user-menu-avatar">
+              {{else}}
+                <div class="avatar-placeholder user-menu-avatar" style="background-color: {{randomColor business._id}};">
+                  {{#if business.companyName}}
+                    {{substring (uppercase business.companyName) 0 1}}
+                  {{else}}
+                    <i class="fas fa-building"></i>
+                  {{/if}}
+                </div>
+              {{/if}}
+              <div class="user-menu-info">
+                <h4 class="truncate">{{business.companyName}}</h4>
+                <p class="truncate">{{business.email}}</p>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a href="/business/dashboard" class="dropdown-item">
+              <span class="item-icon">📊</span>
+              <span class="item-title">Bảng điều khiển</span>
+              <span class="item-arrow">→</span>
+            </a>
+            <a href="/business/jobs" class="dropdown-item">
+              <span class="item-icon">💼</span>
+              <span class="item-title">Quản lý tin tuyển dụng</span>
+              <span class="item-arrow">→</span>
+            </a>
+            <a href="/business/applications" class="dropdown-item">
+              <span class="item-icon">📄</span>
+              <span class="item-title">Hồ sơ ứng tuyển</span>
+              <span class="item-arrow">→</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="/business/settings" class="dropdown-item">
+              <span class="item-icon">⚙️</span>
+              <span class="item-title">Cài đặt</span>
+              <span class="item-arrow">→</span>
+            </a>
+            <a href="/auth/logout" class="dropdown-item logout">
+              <span class="item-icon">🚪</span>
+              <span class="item-title">Đăng xuất</span>
+              <span class="item-arrow">→</span>
+            </a>
           </div>
         </div>
-      {{else}}
-        <!-- Enhanced Auth Buttons -->
+      {{/if}}
+    {{else}}
+        <!-- User is not logged in - Show login/register buttons -->
         <div class="auth-buttons">
-          <a href="/auth/login-page" class="btn btn-login">
+          <a href="/auth/login" class="btn btn-login">
             <i class="fas fa-sign-in-alt"></i>
             Đăng nhập
           </a>
-          <a href="/auth/register-page" class="btn btn-signup">
+          <a href="/auth/register" class="btn btn-signup">
             <i class="fas fa-user-plus"></i>
-            Đăng ký miễn phí
+            Đăng ký
           </a>
         </div>
       {{/if}}
@@ -435,7 +400,7 @@
 <!-- Header Spacer -->
 <div class="header-spacer"></div>
 
-<!-- <script>
+<script>
   // Smooth Dropdown Interactions
   document.addEventListener('DOMContentLoaded', function() {
     // Handle dropdown hover with delay for smooth UX
@@ -471,10 +436,11 @@
     // Handle user dropdown click for mobile
     const userDropdown = document.querySelector('.user-dropdown');
     if (userDropdown) {
-      const userToggle = userDropdown.querySelector('.user-toggle');
+      const userToggle = userDropdown.querySelector('.user-menu-toggle');
       if (userToggle) {
         userToggle.addEventListener('click', function(e) {
           e.preventDefault();
+          e.stopPropagation(); // Prevent event from bubbling up to document
           userDropdown.classList.toggle('active');
           
           // Close other dropdowns
@@ -550,4 +516,4 @@
       });
     });
   });
-</script> -->
+</script> 

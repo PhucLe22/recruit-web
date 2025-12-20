@@ -901,6 +901,46 @@
       font-size: 16px;
       margin-bottom: 20px;
     }
+
+    /* Avatar Status */
+    .avatar-status {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      min-height: 20px;
+    }
+
+    .avatar-status.success {
+      color: #4CAF50;
+    }
+
+    .avatar-status.error {
+      color: #f44336;
+    }
+
+    .avatar-status.uploading {
+      color: #667eea;
+    }
+
+    /* Loading spinner for avatar */
+    .avatar-container.loading .avatar-img {
+      opacity: 0.5;
+    }
+
+    .avatar-container.loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 30px;
+      height: 30px;
+      margin: -15px 0 0 -15px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
   </style>
 </head>
 
@@ -911,16 +951,14 @@
       <div class="header-content">
         <!-- Avatar Section -->
         <div class="avatar-section">
-          <form action="/users/upload-avatar" method="POST" enctype="multipart/form-data" id="avatarForm">
-            <div class="avatar-container">
-              <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/avatars/default-avatar-red.png{{/if}}" alt="Avatar" class="avatar-img" id="avatarPreview" onerror="this.src='/avatars/default-avatar-red.png'" />
-              <div class="avatar-upload-overlay">
-                <span>Thay đổi ảnh</span>
-              </div>
-              <input type="file" name="avatar" class="file-input" accept="image/*" id="avatarInput">
+          <div class="avatar-container" id="avatarContainer">
+            <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/avatars/default-avatar.png{{/if}}" alt="Avatar" class="avatar-img" id="avatarPreview" onerror="this.src='/avatars/default-avatar.png'" />
+            <div class="avatar-upload-overlay">
+              <span id="uploadText">Thay đổi ảnh</span>
             </div>
-            <button type="submit" class="upload-btn">Cập nhật Avatar</button>
-          </form>
+            <input type="file" name="avatar" class="file-input" accept="image/*" id="avatarInput">
+          </div>
+          <div id="avatarStatus" class="avatar-status"></div>
         </div>
 
         <!-- Profile Info -->
@@ -948,7 +986,6 @@
       </div>
     </div>
 {{title}}
-<p>User email: {{user.email}}</p>
     <!-- Main Content -->
     <div class="main-content">
       <div class="content-grid">
@@ -965,23 +1002,23 @@
             </div>
             <div class="info-item">
               <div class="info-label">Số điện thoại</div>
-              <div class="info-value">{{user.phone}}</div>
+              <div class="info-value">{{#if user.phone}}{{user.phone}}{{else}}Chưa cập nhật{{/if}}</div>
             </div>
             <div class="info-item">
               <div class="info-label">Ngày sinh</div>
-              <div class="info-value">{{birthdate}}</div>
+              <div class="info-value">{{#if user.birthday}}{{formatDate user.birthday}}{{else}}Chưa cập nhật{{/if}}</div>
             </div>
             <div class="info-item">
               <div class="info-label">Giới tính</div>
-              <div class="info-value">{{user.gender}}</div>
+              <div class="info-value">{{#if user.gender}}{{user.gender}}{{else}}Chưa cập nhật{{/if}}</div>
             </div>
             <div class="info-item">
               <div class="info-label">Bằng cấp</div>
-              <div class="info-value">{{user.degree}}</div>
+              <div class="info-value">{{#if user.degree}}{{user.degree}}{{else}}Chưa cập nhật{{/if}}</div>
             </div>
             <div class="info-item">
               <div class="info-label">Kinh nghiệm</div>
-              <div class="info-value">{{user.experience}}</div>
+              <div class="info-value">{{#if user.experience}}{{user.experience}}{{else}}Chưa cập nhật{{/if}}</div>
             </div>
           </div>
         </div>
@@ -1057,7 +1094,7 @@
         <h3 class="modal-title">Chỉnh sửa thông tin cá nhân</h3>
         <button class="modal-close" onclick="closeEditModal()">&times;</button>
       </div>
-      <form action="/auth/profile/edit" method="POST">
+      <form action="/users/profile" method="POST">
         <div class="form-group">
           <label class="form-label">Tên người dùng</label>
           <input type="text" name="username" class="form-input" value="{{user.username}}">
@@ -1069,6 +1106,10 @@
         <div class="form-group">
           <label class="form-label">Số điện thoại</label>
           <input type="tel" name="phone" class="form-input" value="{{user.phone}}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ngày sinh</label>
+          <input type="date" name="birthday" class="form-input" value="{{#if user.birthday}}{{formatISODate user.birthday}}{{/if}}">
         </div>
         <div class="form-group">
           <label class="form-label">Giới tính</label>
@@ -1107,15 +1148,28 @@
 
     // Setup event listeners
     function setupEventListeners() {
-      // Avatar upload preview
+      // Avatar upload with AJAX
       document.getElementById('avatarInput').addEventListener('change', function (e) {
         const file = e.target.files[0];
         if (file) {
+          // Client-side validation first
+          const validationError = validateAvatarFile(file);
+          if (validationError) {
+            showAvatarError(validationError);
+            // Clear file input
+            e.target.value = '';
+            return;
+          }
+          
+          // Preview first
           const reader = new FileReader();
           reader.onload = function (e) {
             document.getElementById('avatarPreview').src = e.target.result;
           };
           reader.readAsDataURL(file);
+          
+          // Then upload
+          uploadAvatar(file);
         }
       });
 
@@ -1125,6 +1179,111 @@
           closeEditModal();
         }
       });
+    }
+
+    // Upload avatar via AJAX
+    async function uploadAvatar(file) {
+      const formData = new FormData();
+      formData.append('avatar', file);
+      
+      const avatarContainer = document.getElementById('avatarContainer');
+      const avatarStatus = document.getElementById('avatarStatus');
+      const uploadText = document.getElementById('uploadText');
+      
+      // Show loading state
+      avatarContainer.classList.add('loading');
+      avatarStatus.className = 'avatar-status uploading';
+      avatarStatus.textContent = 'Đang tải ảnh...';
+      uploadText.textContent = 'Đang tải...';
+      
+      try {
+        const response = await fetch('/users/upload-avatar', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Update avatar preview with server URL
+          document.getElementById('avatarPreview').src = result.avatar + '?t=' + Date.now();
+          
+          // Show success message
+          avatarStatus.className = 'avatar-status success';
+          avatarStatus.textContent = result.message;
+          uploadText.textContent = 'Thay đổi ảnh';
+          
+          // Clear file input
+          document.getElementById('avatarInput').value = '';
+          
+          // Hide success message after 3 seconds
+          setTimeout(() => {
+            avatarStatus.textContent = '';
+          }, 3000);
+          
+        } else {
+          throw new Error(result.message || 'Upload failed');
+        }
+        
+      } catch (error) {
+        console.error('Avatar upload error:', error);
+        avatarStatus.className = 'avatar-status error';
+        avatarStatus.textContent = error.message || 'Lỗi khi tải ảnh lên';
+        uploadText.textContent = 'Thay đổi ảnh';
+        
+        // Revert to original avatar if upload failed
+        const originalSrc = document.getElementById('avatarPreview').getAttribute('src').split('?')[0];
+        document.getElementById('avatarPreview').src = originalSrc;
+        
+      } finally {
+        // Remove loading state
+        avatarContainer.classList.remove('loading');
+      }
+    }
+
+    // Validate avatar file on client side
+    function validateAvatarFile(file) {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      const minSize = 100; // 100 bytes minimum
+      
+      // Check file type
+      if (!allowedTypes.includes(file.type)) {
+        return 'Chỉ chấp nhận file ảnh (jpeg, jpg, png, gif, webp)';
+      }
+      
+      // Check file size
+      if (file.size > maxSize) {
+        return 'File ảnh không được vượt quá 5MB';
+      }
+      
+      if (file.size < minSize) {
+        return 'File ảnh quá nhỏ, vui lòng chọn ảnh khác';
+      }
+      
+      // Check file extension matches type
+      const extension = file.name.split('.').pop().toLowerCase();
+      const validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      if (!validExtensions.includes(extension)) {
+        return 'Phần mở rộng file không hợp lệ';
+      }
+      
+      return null; // No error
+    }
+
+    // Show avatar error message
+    function showAvatarError(message) {
+      const avatarStatus = document.getElementById('avatarStatus');
+      avatarStatus.className = 'avatar-status error';
+      avatarStatus.textContent = message;
+      
+      // Hide error after 5 seconds
+      setTimeout(() => {
+        avatarStatus.textContent = '';
+      }, 5000);
     }
 
     // Load profile data

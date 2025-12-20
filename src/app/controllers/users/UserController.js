@@ -1,11 +1,17 @@
 
 
 
+const fs = require('fs');
+const User = require('../../models/User');
+const MBTIAssessment = require('../../models/MBTIAssessment');
+const BigFiveAssessment = require('../../models/BigFiveAssessment');
+const DISCAssessment = require('../../models/DISCAssessment');
+
 class UserController{
     // PUT /user/profile
     async updateProfile(req, res) {
         try {
-        const userId = req.session.users._id;
+        const userId = req.session.user._id;
         const { username, email, phone, gender, degree, experience } = req.body;
 
         await User.findByIdAndUpdate(userId, {
@@ -19,7 +25,7 @@ class UserController{
 
         // Update session
         const updatedUser = await User.findById(userId);
-        req.session.users = updatedUser;
+        req.session.user = updatedUser;
 
         req.flash('success', 'Cập nhật hồ sơ thành công');
         res.redirect('/users/profile');
@@ -143,15 +149,21 @@ class UserController{
         });
     }
 
-    // [PUT] /profile/:userId
+    // [POST] /users/profile
     async updateProfile(req, res) {
         try {
-            const { userId } = req.params;
+            const userId = req.session.user._id; // Get userId from session
             const updateData = req.body;
+            
+            console.log('=== DEBUG: Profile Update ===');
+            console.log('User ID:', userId);
+            console.log('Update Data:', updateData);
+            console.log('Has file:', !!req.file);
 
             // Handle file upload if avatar is being updated
             if (req.file) {
                 updateData.avatar = `/uploads/avatars/${req.file.filename}`;
+                console.log('Avatar updated:', updateData.avatar);
             }
 
             const updatedUser = await User.findByIdAndUpdate(
@@ -159,6 +171,8 @@ class UserController{
                 { $set: updateData },
                 { new: true, runValidators: true }
             ).select('-password -__v');
+
+            console.log('Updated User:', updatedUser);
 
             // Update session if user is updating their own profile
             if (req.user && req.user._id.toString() === userId) {
@@ -170,12 +184,133 @@ class UserController{
             }
 
             req.flash('success', 'Cập nhật hồ sơ thành công');
-            res.redirect(`/profile/${userId}`);
+            res.redirect('/users/profile');
 
         } catch (error) {
             console.error('Error updating profile:', error);
             req.flash('error', 'Có lỗi xảy ra khi cập nhật hồ sơ');
             res.redirect('back');
+        }
+    }
+
+    // [POST] /users/upload-avatar
+    async uploadAvatar(req, res) {
+        try {
+            // Check if user is authenticated
+            if (!req.session.user || !req.session.user._id) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Bạn cần đăng nhập để thực hiện thao tác này'
+                });
+            }
+
+            if (!req.file) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Vui lòng chọn file ảnh'
+                });
+            }
+
+            // Additional file validation
+            const file = req.file;
+            const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            
+            if (!allowedMimes.includes(file.mimetype)) {
+                // Delete the uploaded file if it's not a valid image
+                const fs = require('fs');
+                if (fs.existsSync(file.path)) {
+                    fs.unlinkSync(file.path);
+                }
+                
+                return res.status(400).json({
+                    success: false,
+                    message: 'Chỉ chấp nhận file ảnh (jpeg, jpg, png, gif, webp)'
+                });
+            }
+
+            // Check file size (additional validation)
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                const fs = require('fs');
+                if (fs.existsSync(file.path)) {
+                    fs.unlinkSync(file.path);
+                }
+                
+                return res.status(400).json({
+                    success: false,
+                    message: 'File ảnh không được vượt quá 5MB'
+                });
+            }
+
+            const userId = req.session.user._id;
+            const avatarPath = `/uploads/avatars/${file.filename}`;
+
+            try {
+                // Get old avatar to delete it later
+                const oldUser = await User.findById(userId).select('avatar');
+                
+                // Update user's avatar in database
+                const updatedUser = await User.findByIdAndUpdate(
+                    userId,
+                    { $set: { avatar: avatarPath } },
+                    { new: true, runValidators: true }
+                ).select('-password -__v');
+
+                // Delete old avatar file if it exists and is not the default
+                if (oldUser && oldUser.avatar && 
+                    !oldUser.avatar.includes('default-avatar') && 
+                    fs.existsSync(`public${oldUser.avatar}`)) {
+                    fs.unlinkSync(`public${oldUser.avatar}`);
+                }
+
+                // Update session
+                req.session.user = {
+                    ...req.session.user,
+                    avatar: avatarPath
+                };
+
+                // Also update req.user for the current request
+                req.user.avatar = avatarPath;
+
+                res.json({
+                    success: true,
+                    message: 'Cập nhật avatar thành công',
+                    avatar: avatarPath
+                });
+
+            } catch (dbError) {
+                // If database update fails, delete the uploaded file
+                console.error('Database error during avatar upload:', dbError);
+                const fs = require('fs');
+                if (fs.existsSync(file.path)) {
+                    fs.unlinkSync(file.path);
+                }
+                
+                throw dbError;
+            }
+
+        } catch (error) {
+            console.error('Error uploading avatar:', error);
+            
+            // Handle multer errors specifically
+            if (error.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'File ảnh không được vượt quá 5MB'
+                });
+            }
+            
+            if (error.code === 'LIMIT_FILE_COUNT') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Chỉ được tải lên một file ảnh'
+                });
+            }
+            
+            res.status(500).json({
+                success: false,
+                message: 'Có lỗi xảy ra khi cập nhật avatar. Vui lòng thử lại.'
+            });
         }
     }
 }

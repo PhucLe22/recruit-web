@@ -2,16 +2,16 @@
     <div class="content-wrapper">
 <!-- Header -->
 <div class="page-header">
-    <div class="d-flex justify-content-between align-items-center">
-        <div>
-            <h1 class="h3 mb-0">
-                <i class="fas fa-building me-2"></i>
+    <div class="header-content">
+        <div class="header-left">
+            <h1 class="page-title">
+                <i class="fas fa-building"></i>
                 Hồ sơ công ty
             </h1>
-            <p class="text-muted mb-0">Quản lý thông tin công ty của bạn</p>
+            <p class="page-subtitle">Quản lý thông tin công ty của bạn</p>
         </div>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-            <i class="fas fa-edit me-2"></i>
+        <button class="btn btn-primary btn-edit-profile" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+            <i class="fas fa-edit"></i>
             Chỉnh sửa hồ sơ
         </button>
     </div>
@@ -20,8 +20,8 @@
 <!-- Success/Error Messages -->
 {{#if success}}
 <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <i class="fas fa-check-circle me-2"></i>
-    {{success}}
+    <i class="fas fa-check-circle"></i>
+    <span>{{success}}</span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 {{/if}}
@@ -29,86 +29,22 @@
 {{#if errors}}
 {{#each errors}}
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <i class="fas fa-exclamation-circle me-2"></i>
-    {{this}}
+    <i class="fas fa-exclamation-circle"></i>
+    <span>{{this}}</span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 {{/each}}
 {{/if}}
 
 <!-- Profile Content -->
-<div class="row">
-    <!-- CV Upload Section -->
-    <div class="col-12 mb-4">
-        <!-- Debug: Business data check -->
-        {{#if business}}
-        <div class="alert alert-info" style="margin-bottom: 10px;">
-            <small>Debug: Business found - {{business.companyName}} | CV Path: {{business.cvPath}}</small>
-        </div>
-        {{else}}
-        <div class="alert alert-warning" style="margin-bottom: 10px;">
-            <small>Debug: No business data found</small>
-        </div>
-        {{/if}}
-        
-        <div class="card shadow-sm border-primary">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">
-                    <i class="fas fa-file-pdf me-2"></i>
-                    CV Management
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <div class="cv-info">
-                            {{#if business.cvPath}}
-                            <div class="cv-item d-flex align-items-center">
-                                <i class="fas fa-file-pdf text-danger me-3" style="font-size: 1.5rem;"></i>
-                                <div>
-                                    <div class="cv-filename fw-bold">{{business.cvFilename || 'CV Document'}}</div>
-                                    <small class="text-muted">Uploaded: {{business.cvUploadedAt}}</small>
-                                </div>
-                            </div>
-                            {{else}}
-                            <div class="cv-placeholder text-muted d-flex align-items-center">
-                                <i class="fas fa-upload me-3" style="font-size: 1.5rem;"></i>
-                                <div>
-                                    <div class="fw-bold">No CV uploaded yet</div>
-                                    <small>Upload your CV to enhance your business profile</small>
-                                </div>
-                            </div>
-                            {{/if}}
-                        </div>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        {{#if business.cvPath}}
-                        <button class="btn btn-outline-primary btn-sm me-2" id="viewCVBtn">
-                            <i class="fas fa-eye me-1"></i>
-                            View CV
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm" id="deleteCVBtn">
-                            <i class="fas fa-trash me-1"></i>
-                            Delete
-                        </button>
-                        {{else}}
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#cvUploadModal">
-                            <i class="fas fa-upload me-1"></i>
-                            Upload CV
-                        </button>
-                        {{/if}}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+<div class="profile-grid">
     <!-- Company Info Card -->
-    <div class="col-lg-8">
-        <div class="card shadow-sm">
+    <div class="profile-main">
+        <div class="card card-company-info">
             <div class="card-body">
-                <div class="d-flex align-items-center mb-4">
-                    <div class="company-logo-container me-3">
+                <!-- Company Header with Logo -->
+                <div class="company-header">
+                    <div class="logo-section">
                         <div class="logo-wrapper" id="logoClickArea">
                             {{#if business.logoPath}}
                             <img src="{{business.logoPath}}" alt="{{business.companyName}}" class="company-logo" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -126,17 +62,20 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex-grow-1">
-                        <h4 class="mb-1">{{business.companyName}}</h4>
-                        <p class="text-muted mb-2">{{business.industry}}</p>
+                    <div class="company-details">
+                        <h2 class="company-name">{{business.companyName}}</h2>
+                        <p class="company-industry">
+                            <i class="fas fa-industry"></i>
+                            {{business.industry}}
+                        </p>
                         <div class="company-actions">
                             <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#logoModal">
-                                <i class="fas fa-camera me-1"></i>
+                                <i class="fas fa-camera"></i>
                                 {{#if business.logoPath}}Thay đổi logo{{else}}Thêm logo{{/if}}
                             </button>
                             {{#if business.logoPath}}
                             <button class="btn btn-sm btn-outline-danger" id="deleteLogoBtn">
-                                <i class="fas fa-trash me-1"></i>
+                                <i class="fas fa-trash"></i>
                                 Xóa logo
                             </button>
                             {{/if}}
@@ -144,65 +83,80 @@
                     </div>
                 </div>
 
-                <div class="row company-info">
-                    <div class="col-md-6">
-                        <div class="info-item">
-                            <label class="info-label">
-                                <i class="fas fa-envelope me-2"></i>Email
-                            </label>
+                <!-- Divider -->
+                <div class="section-divider"></div>
+
+                <!-- Company Information Grid -->
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <label class="info-label">Email</label>
                             <p class="info-value">{{business.email}}</p>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="info-item">
-                            <label class="info-label">
-                                <i class="fas fa-phone me-2"></i>Điện thoại
-                            </label>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="info-content">
+                            <label class="info-label">Điện thoại</label>
                             <p class="info-value">{{business.phone}}</p>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="info-item">
-                            <label class="info-label">
-                                <i class="fas fa-globe me-2"></i>Website
-                            </label>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="info-content">
+                            <label class="info-label">Website</label>
                             <p class="info-value">
                                 {{#if business.website}}
-                                <a href="{{business.website}}" target="_blank">{{business.website}}</a>
+                                <a href="{{business.website}}" target="_blank" class="info-link">{{business.website}}</a>
                                 {{else}}
                                 <span class="text-muted">Chưa cập nhật</span>
                                 {{/if}}
                             </p>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="info-item">
-                            <label class="info-label">
-                                <i class="fas fa-users me-2"></i>Quy mô công ty
-                            </label>
-                            <p class="info-value">{{business.companySize}}</p>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="info-content">
+                            <label class="info-label">Quy mô công ty</label>
+                            <p class="info-value">{{business.capital}}</p>
                         </div>
                     </div>
-                    <div class="col-12">
-                        <div class="info-item">
-                            <label class="info-label">
-                                <i class="fas fa-map-marker-alt me-2"></i>Địa chỉ
-                            </label>
+
+                    <div class="info-item info-item-full">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <label class="info-label">Địa chỉ</label>
                             <p class="info-value">
                                 {{#if business.address}}
-                                {{business.address.street}}, {{business.address.city}}, {{business.address.country}}
+                                {{business.address}}
                                 {{else}}
                                 <span class="text-muted">Chưa cập nhật</span>
                                 {{/if}}
                             </p>
                         </div>
                     </div>
-                    <div class="col-12">
-                        <div class="info-item">
-                            <label class="info-label">
-                                <i class="fas fa-info-circle me-2"></i>Mô tả công ty
-                            </label>
-                            <p class="info-value">{{business.description}}</p>
+
+                    <div class="info-item info-item-full">
+                        <div class="info-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="info-content">
+                            <label class="info-label">Mô tả công ty</label>
+                            <p class="info-value info-description">{{business.description}}</p>
                         </div>
                     </div>
                 </div>
@@ -210,35 +164,40 @@
         </div>
     </div>
 
-    <!-- Statistics Card -->
-    <div class="col-lg-4">
-        <div class="card shadow-sm">
+    <!-- Statistics Sidebar -->
+    <div class="profile-sidebar">
+        <div class="card card-statistics">
             <div class="card-body">
-                <h5 class="card-title mb-4">
-                    <i class="fas fa-chart-bar me-2"></i>
+                <h5 class="card-title">
+                    <i class="fas fa-chart-bar"></i>
                     Thống kê
                 </h5>
-                <div class="stat-item">
-                    <div class="stat-icon bg-primary">
-                        <i class="fas fa-briefcase"></i>
+                
+                <div class="stats-list">
+                    <div class="stat-item">
+                        <div class="stat-icon bg-primary">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-number">{{stats.totalJobs}}</p>
+                            <h6 class="stat-title">Tổng số tin tuyển dụng</h6>
+                        </div>
                     </div>
-                    <div class="stat-content">
-                        <h6 class="stat-title">Tổng số tin tuyển dụng</h6>
-                        <p class="stat-number">{{stats.totalJobs}}</p>
+
+                    <div class="stat-item">
+                        <div class="stat-icon bg-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-number">{{stats.activeJobs}}</p>
+                            <h6 class="stat-title">Tin đang hoạt động</h6>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-icon bg-success">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h6 class="stat-title">Tin đang hoạt động</h6>
-                        <p class="stat-number">{{stats.activeJobs}}</p>
-                    </div>
-                </div>
-                <div class="text-center mt-4">
-                    <a href="/business/jobs" class="btn btn-outline-primary">
-                        <i class="fas fa-list me-2"></i>
+
+                <div class="stats-footer">
+                    <a href="/business/applications" class="btn btn-outline-primary btn-block">
+                        <i class="fas fa-list"></i>
                         Quản lý tin tuyển dụng
                     </a>
                 </div>
@@ -253,7 +212,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="fas fa-edit me-2"></i>
+                    <i class="fas fa-edit"></i>
                     Chỉnh sửa hồ sơ công ty
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -333,76 +292,11 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-2"></i>
+                        <i class="fas fa-save"></i>
                         Lưu thay đổi
                     </button>
                 </div>
             </form>
-        </div>
-    </div>
-</div>
-
-<!-- CV Upload Modal -->
-<div class="modal fade" id="cvUploadModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-file-pdf me-2"></i>
-                    Upload CV
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form id="cvUploadForm" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Select CV File</label>
-                        <input type="file" class="form-control" name="file" accept=".pdf,.doc,.docx" required>
-                        <div class="form-text">Accepted formats: PDF, DOC, DOCX. Maximum file size: 5MB.</div>
-                    </div>
-                    <div class="cv-upload-preview" id="cvUploadPreview" style="display: none;">
-                        <div class="alert alert-info">
-                            <i class="fas fa-file-pdf me-2"></i>
-                            <span id="cvFileName"></span>
-                            <span class="text-muted ms-2" id="cvFileSize"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="uploadCVBtn">
-                        <i class="fas fa-upload me-2"></i>
-                        Upload CV
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- CV View Modal -->
-<div class="modal fade" id="cvViewModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-eye me-2"></i>
-                    View CV
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="cv-viewer-container">
-                    <iframe id="cvViewer" style="width: 100%; height: 600px; border: none;"></iframe>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <a href="#" id="downloadCVLink" class="btn btn-primary" download>
-                    <i class="fas fa-download me-2"></i>
-                    Download CV
-                </a>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
         </div>
     </div>
 </div>
@@ -413,20 +307,19 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="fas fa-camera me-2"></i>
+                    <i class="fas fa-camera"></i>
                     {{#if business.logoPath}}Thay đổi logo{{else}}Thêm logo{{/if}}
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="logoUploadForm" enctype="multipart/form-data">
                 <div class="modal-body">
-                    <div class="text-center mb-3">
-                        <div class="logo-upload-preview">
+                    <div class="logo-upload-area">
+                        <div class="logo-preview-container">
                             <img src="{{#if business.logoPath}}{{business.logoPath}}{{else}}/images/default-company-logo.png{{/if}}" 
                                  id="logoPreview" 
                                  alt="Logo Preview" 
-                                 class="img-fluid rounded"
-                                 style="max-width: 200px; max-height: 200px; border: 2px solid #e9ecef;">
+                                 class="logo-preview-image">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -438,7 +331,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                     <button type="submit" class="btn btn-primary" id="uploadLogoBtn">
-                        <i class="fas fa-upload me-2"></i>
+                        <i class="fas fa-upload"></i>
                         Tải lên
                     </button>
                 </div>
@@ -448,28 +341,163 @@
 </div>
 
 <style>
+/* ===============================================
+   Main Layout
+   =============================================== */
 .main-content {
     margin-left: 280px;
-    padding: 20px;
-    background-color: #f8f9fa;
+    padding: 30px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
 }
 
 .content-wrapper {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
+/* ===============================================
+   Page Header
+   =============================================== */
 .page-header {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 35px 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.header-left {
+    flex: 1;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.page-title i {
+    font-size: 1.8rem;
+}
+
+.page-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    font-size: 1rem;
+}
+
+.btn-edit-profile {
+    padding: 12px 30px;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-edit-profile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-edit-profile i {
+    margin-right: 8px;
+}
+
+/* ===============================================
+   Alerts
+   =============================================== */
+.alert {
+    border: none;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.alert i {
+    font-size: 1.2rem;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: #ffffff;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    color: #ffffff;
+}
+
+/* ===============================================
+   Profile Grid Layout
+   =============================================== */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 30px;
+}
+
+/* ===============================================
+   Cards
+   =============================================== */
+.card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    background: #ffffff;
+}
+
+.card:hover {
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+    transform: translateY(-5px);
+}
+
+.card-body {
+    padding: 35px;
+}
+
+/* ===============================================
+   Company Header
+   =============================================== */
+.company-header {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
     margin-bottom: 30px;
 }
 
-.company-logo-container {
-    position: relative;
+.logo-section {
+    flex-shrink: 0;
 }
 
 .logo-wrapper {
@@ -478,282 +506,542 @@
     transition: all 0.3s ease;
 }
 
+.logo-wrapper:hover {
+    transform: scale(1.05);
+}
+
 .logo-wrapper:hover .logo-overlay {
     opacity: 1;
 }
 
-.logo-wrapper:hover .company-logo,
-.logo-wrapper:hover .company-logo-placeholder {
-    transform: scale(1.05);
-    filter: brightness(0.8);
+.company-logo,
+.company-logo-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
 }
 
 .company-logo {
-    width: 100px;
-    height: 100px;
-    border-radius: 10px;
     object-fit: cover;
-    border: 3px solid #e9ecef;
-    transition: all 0.3s ease;
+    border: 4px solid #f0f0f0;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .company-logo-placeholder {
-    width: 100px;
-    height: 100px;
-    border-radius: 10px;
-    background: #e9ecef;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
-    color: #6c757d;
-    transition: all 0.3s ease;
+    color: #ffffff;
+    font-size: 3rem;
 }
 
 .logo-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 10px;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: #ffffff;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
 .logo-overlay i {
-    font-size: 1.5rem;
-    margin-bottom: 5px;
+    font-size: 2rem;
+    margin-bottom: 8px;
 }
 
 .logo-overlay span {
-    font-size: 0.8rem;
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.company-details {
+    flex: 1;
+}
+
+.company-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 12px 0;
+}
+
+.company-industry {
+    color: #718096;
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+}
+
+.company-industry i {
+    color: #667eea;
 }
 
 .company-actions {
     display: flex;
-    gap: 10px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* ===============================================
+   Section Divider
+   =============================================== */
+.section-divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+    margin: 30px 0;
+}
+
+/* ===============================================
+   Info Grid
+   =============================================== */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
 }
 
 .info-item {
-    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    background: #f7fafc;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    background: #edf2f7;
+    transform: translateX(5px);
+}
+
+.info-item-full {
+    grid-column: 1 / -1;
+}
+
+.info-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.info-content {
+    flex: 1;
+    min-width: 0;
 }
 
 .info-label {
     font-weight: 600;
-    color: #495057;
-    margin-bottom: 5px;
-    display: block;
+    color: #4a5568;
+    margin: 0 0 6px 0;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .info-value {
     margin: 0;
-    color: #212529;
+    color: #2d3748;
+    font-size: 1rem;
+    word-wrap: break-word;
+}
+
+.info-description {
+    line-height: 1.7;
+}
+
+.info-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.info-link:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+/* ===============================================
+   Statistics Card
+   =============================================== */
+.card-statistics {
+    position: sticky;
+    top: 30px;
+}
+
+.card-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 25px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-title i {
+    color: #667eea;
+}
+
+.stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 25px;
 }
 
 .stat-item {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 8px;
+    gap: 18px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .stat-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    margin-right: 15px;
-    font-size: 1.2rem;
+    color: #ffffff;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.stat-icon.bg-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.stat-icon.bg-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
 }
 
 .stat-content {
-    flex-grow: 1;
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 4px 0;
+    line-height: 1;
 }
 
 .stat-title {
     margin: 0;
     font-size: 0.9rem;
-    color: #6c757d;
+    color: #718096;
+    font-weight: 500;
 }
 
-.stat-number {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #212529;
+.stats-footer {
+    padding-top: 20px;
+    border-top: 2px solid #e2e8f0;
 }
 
-.logo-preview {
-    margin-top: 15px;
+.btn-block {
+    width: 100%;
+    padding: 14px;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.3s ease;
 }
 
-.logo-preview img {
+.btn-block i {
+    margin-right: 8px;
+}
+
+.btn-block:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* ===============================================
+   Modal Styles
+   =============================================== */
+.modal-content {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+    border-radius: 20px 20px 0 0;
+    padding: 25px 30px;
+    border: none;
+}
+
+.modal-title {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modal-title i {
+    font-size: 1.3rem;
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+.modal-footer {
+    padding: 20px 30px;
+    border-top: 2px solid #e2e8f0;
+}
+
+.logo-upload-area {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.logo-preview-container {
+    display: inline-block;
+    padding: 20px;
+    background: #f7fafc;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.logo-preview-image {
     max-width: 200px;
     max-height: 200px;
-    border-radius: 8px;
-    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    border: 3px solid #e2e8f0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ===============================================
+   Form Elements
+   =============================================== */
+.form-label {
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 8px;
+}
+
+.form-control,
+.form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* ===============================================
+   Buttons
+   =============================================== */
+.btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn i {
+    margin-right: 6px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-outline-primary {
+    border: 2px solid #667eea;
+    color: #667eea;
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: #667eea;
+    color: #ffffff;
+    border-color: #667eea;
+}
+
+.btn-outline-danger {
+    border: 2px solid #dc3545;
+    color: #dc3545;
+    background: transparent;
+}
+
+.btn-outline-danger:hover {
+    background: #dc3545;
+    color: #ffffff;
+    border-color: #dc3545;
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.btn-secondary:hover {
+    background: #cbd5e0;
+}
+
+/* ===============================================
+   Responsive Design
+   =============================================== */
+@media (max-width: 1200px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .card-statistics {
+        position: static;
+    }
 }
 
 @media (max-width: 992px) {
     .main-content {
         margin-left: 0;
+        padding: 20px;
+    }
+    
+    .page-header {
+        padding: 25px 20px;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .btn-edit-profile {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .company-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .company-name {
+        font-size: 1.5rem;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .card-body {
+        padding: 25px 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-content {
         padding: 15px;
     }
+    
+    .company-actions {
+        width: 100%;
+    }
+    
+    .company-actions .btn {
+        flex: 1;
+    }
+    
+    .stats-list {
+        gap: 15px;
+    }
+    
+    .stat-item {
+        padding: 15px;
+    }
+    
+    .stat-number {
+        font-size: 1.6rem;
+    }
+}
+
+/* ===============================================
+   Animations
+   =============================================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.5s ease;
+}
+
+.card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+/* ===============================================
+   Utility Classes
+   =============================================== */
+.text-muted {
+    color: #a0aec0 !important;
 }
 </style>
 
 <script>
-// CV Upload functionality
-document.getElementById('cvUploadForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    const submitBtn = document.getElementById('uploadCVBtn');
-    const originalText = submitBtn.innerHTML;
-    
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
-    
-    try {
-        const response = await fetch('/cv/assistant-upload', {
-            method: 'POST',
-            body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            bootstrap.Modal.getInstance(document.getElementById('cvUploadModal')).hide();
-            // Show success message
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-success alert-dismissible fade show';
-            alertDiv.innerHTML = `
-                <i class="fas fa-check-circle me-2"></i>
-                ${result.message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.querySelector('.page-header').after(alertDiv);
-            
-            // Reload page after a short delay to show updated CV
-            setTimeout(() => {
-                location.reload();
-            }, 1500);
-        } else {
-            // Show error message
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-            alertDiv.innerHTML = `
-                <i class="fas fa-exclamation-circle me-2"></i>
-                ${result.message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.querySelector('.page-header').after(alertDiv);
-        }
-    } catch (error) {
-        console.error('CV upload error:', error);
-        // Show error message
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-        alertDiv.innerHTML = `
-            <i class="fas fa-exclamation-circle me-2"></i>
-            Error uploading CV. Please try again.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.querySelector('.page-header').after(alertDiv);
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-    }
-});
-
-// CV file preview
-document.querySelector('input[name="file"]').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    const preview = document.getElementById('cvUploadPreview');
-    const fileName = document.getElementById('cvFileName');
-    const fileSize = document.getElementById('cvFileSize');
-    
-    if (file) {
-        // Validate file size
-        if (file.size > 5 * 1024 * 1024) {
-            alert('File size cannot exceed 5MB');
-            this.value = '';
-            return;
-        }
-        
-        // Validate file type
-        const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-        if (!allowedTypes.includes(file.type)) {
-            alert('Only PDF, DOC, and DOCX files are allowed');
-            this.value = '';
-            return;
-        }
-        
-        // Show preview
-        fileName.textContent = file.name;
-        fileSize.textContent = `(${(file.size / 1024 / 1024).toFixed(2)} MB)`;
-        preview.style.display = 'block';
-    } else {
-        preview.style.display = 'none';
-    }
-});
-
-// View CV functionality
-document.getElementById('viewCVBtn')?.addEventListener('click', function() {
-    const cvPath = '{{business.cvPath}}';
-    if (cvPath) {
-        const cvViewer = document.getElementById('cvViewer');
-        const downloadLink = document.getElementById('downloadCVLink');
-        
-        cvViewer.src = cvPath;
-        downloadLink.href = cvPath;
-        
-        const cvViewModal = new bootstrap.Modal(document.getElementById('cvViewModal'));
-        cvViewModal.show();
-    }
-});
-
-// Delete CV functionality
-document.getElementById('deleteCVBtn')?.addEventListener('click', async function() {
-    if (confirm('Are you sure you want to delete this CV?')) {
-        try {
-            const response = await fetch('/business/delete-cv', {
-                method: 'POST'
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                location.reload();
-            } else {
-                alert('Error: ' + result.message);
-            }
-        } catch (error) {
-            console.error('Delete CV error:', error);
-            alert('Error occurred while deleting CV');
-        }
-    }
-});
-
-// Make logo clickable to trigger upload modal
-document.getElementById('logoClickArea').addEventListener('click', function() {
-    const logoModal = new bootstrap.Modal(document.getElementById('logoModal'));
-    logoModal.show();
-});
-
 // Logo upload functionality
 document.getElementById('logoUploadForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -763,7 +1051,7 @@ document.getElementById('logoUploadForm').addEventListener('submit', async funct
     const originalText = submitBtn.innerHTML;
     
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang tải lên...';
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tải lên...';
     
     try {
         const response = await fetch('/business/upload-logo', {
@@ -775,42 +1063,14 @@ document.getElementById('logoUploadForm').addEventListener('submit', async funct
         
         if (result.success) {
             bootstrap.Modal.getInstance(document.getElementById('logoModal')).hide();
-            // Show success message
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-success alert-dismissible fade show';
-            alertDiv.innerHTML = `
-                <i class="fas fa-check-circle me-2"></i>
-                ${result.message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.querySelector('.page-header').after(alertDiv);
-            
-            // Reload page after a short delay to show updated logo
-            setTimeout(() => {
-                location.reload();
-            }, 1500);
+            showAlert('success', result.message);
+            setTimeout(() => location.reload(), 1500);
         } else {
-            // Show error message
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-            alertDiv.innerHTML = `
-                <i class="fas fa-exclamation-circle me-2"></i>
-                ${result.message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.querySelector('.page-header').after(alertDiv);
+            showAlert('danger', result.message);
         }
     } catch (error) {
         console.error('Logo upload error:', error);
-        // Show error message
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-        alertDiv.innerHTML = `
-            <i class="fas fa-exclamation-circle me-2"></i>
-            Đã xảy ra lỗi khi tải lên logo. Vui lòng thử lại.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.querySelector('.page-header').after(alertDiv);
+        showAlert('danger', 'Đã xảy ra lỗi khi tải lên logo. Vui lòng thử lại.');
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
@@ -867,4 +1127,27 @@ document.getElementById('deleteLogoBtn')?.addEventListener('click', async functi
         }
     }
 });
+
+// Make logo clickable
+document.getElementById('logoClickArea').addEventListener('click', function() {
+    const logoModal = new bootstrap.Modal(document.getElementById('logoModal'));
+    logoModal.show();
+});
+
+// Helper function to show alerts
+function showAlert(type, message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <span>${message}</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.querySelector('.page-header').after(alertDiv);
+    
+    // Auto dismiss after 5 seconds
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
 </script>

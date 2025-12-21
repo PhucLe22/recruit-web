@@ -4,9 +4,9 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Dashboard</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <button type="button" class="btn btn-sm btn-outline-secondary me-2">
+        {{!-- <button type="button" class="btn btn-sm btn-outline-secondary me-2">
             <i class="fas fa-download me-1"></i> Export
-        </button>
+        </button> --}}
         <a href="/business/job/create-page" class="btn btn-sm btn-primary">
             <i class="fas fa-plus me-1"></i> Post New Job
         </a>
@@ -94,9 +94,9 @@
                                 <th><i class="fas fa-briefcase me-1"></i> Position</th>
                                 <th><i class="fas fa-calendar me-1"></i> Applied</th>
                                 <th><i class="fas fa-info-circle me-1"></i> Status</th>
-                                <th><i class="fas fa-file-pdf me-1"></i> CV</th>
-                                <th><i class="fas fa-envelope me-1"></i> Contact</th>
-                                <th><i class="fas fa-eye me-1"></i> Action</th>
+                                <th><i class="fas fa-file-pdf me-1"></i> View CV</th>
+                                {{!-- <th><i class="fas fa-envelope me-1"></i> Contact</th> --}}
+                                <th><i class="fas fa-eye me-1"></i> View Profile</th>
                             </tr>
                         </thead>
                         <tbody id="recent-applications-tbody">
@@ -151,7 +151,7 @@
                                         <span class="text-muted small">No CV</span>
                                     {{/if}}
                                 </td>
-                                <td>
+                                {{!-- <td>
                                     <a href="mailto:{{user_id.email}}" class="btn btn-sm btn-outline-info me-1" title="Email">
                                         <i class="fas fa-envelope"></i>
                                     </a>
@@ -160,7 +160,7 @@
                                             <i class="fas fa-phone"></i>
                                         </a>
                                     {{/if}}
-                                </td>
+                                </td> --}}
                                 <td>
                                     <a href="/business/applicants/{{_id}}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-eye me-1"></i> View

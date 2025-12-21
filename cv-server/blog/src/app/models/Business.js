@@ -29,6 +29,14 @@ const businessSchema = new mongoose.Schema({
     country: String,
     zipCode: String
   },
+  capital: {
+    type: String,
+    trim: true
+  },
+  scale: {
+    type: String,
+    trim: true
+  },
   website: {
     type: String,
     trim: true

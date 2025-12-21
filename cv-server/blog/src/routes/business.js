@@ -9,6 +9,8 @@ const detailApplicantController = require('../app/controllers/business/DetailApp
 const profileViewsController = require('../app/controllers/business/ProfileViewsController');
 const jobsController = require('../app/controllers/business/JobsController');
 const jobDetailController = require('../app/controllers/business/JobDetailController');
+const applicantMatchingController = require('../app/controllers/business/ApplicantMatchingController');
+const isBusinessOrApiKey = require('../middlewares/isBusinessOrApiKey');
 
 // Apply business data middleware to all routes
 router.use(businessDataMiddleware);
@@ -151,7 +153,10 @@ router.post('/delete-logo', isBusiness, profileController.deleteLogo);
 // CV Management Routes
 router.post('/delete-cv', isBusiness, profileController.deleteCV);
 
-router.get('/applications', isBusiness, detailApplicantController.detail);
+// Test route for matching scores (no auth required)
+router.get('/test-matching', detailApplicantController.detail);
+
+router.get('/applications', detailApplicantController.detail);
 // router.get('/applications/cv/:userId', isBusiness, userProfileController.viewCVDetails);
 router.get('/jobs-list', verifyToken, businessController.jobList);
 router.get('/jobs', isBusiness, businessController.jobList);
@@ -414,6 +419,70 @@ router.get('/detail-protected/:id', verifyToken, async (req, res, next) => {
             layout: false,
         });
     } catch (error) {
+        next(error);
+    }
+});
+
+// AI Applicant Matching route - Must come before /jobs/:id
+router.get('/jobs/matching', isBusiness, (req, res) => {
+    res.render('business/jobs/matching', {
+        layout: false,
+        title: 'AI Applicant Matching',
+        description: 'Find the best applicants for your jobs using AI'
+    });
+});
+
+// AI Applicant Matching simple view route
+router.get('/jobs/matching-simple/:jobId', isBusiness, async (req, res, next) => {
+    try {
+        const { jobId } = req.params;
+        const { limit = 20, minScore = 30 } = req.query;
+        
+        // Get job details
+        const Job = require('../app/models/Job');
+        const job = await Job.findById(jobId);
+        
+        if (!job) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Job not found' 
+            });
+        }
+
+        // Get matching applicants using the existing service
+        const AIApplicantMatchingService = require('../services/AIApplicantMatchingService');
+        const AppliedJobs = require('../app/models/AppliedJobs');
+        
+        // Get already applied applicants to exclude
+        const appliedApplicants = await AppliedJobs.find({ job_id: jobId })
+            .distinct('user_id');
+
+        const matchingApplicants = await AIApplicantMatchingService.getMatchingApplicants(
+            jobId, 
+            { 
+                limit: parseInt(limit),
+                minScore: parseInt(minScore),
+                excludeApplicants: appliedApplicants.map(id => id.toString())
+            }
+        );
+
+        // Transform data for the simple template
+        const transformedApplicants = matchingApplicants.map(applicant => ({
+            user: applicant.user,
+            cv: applicant.cv,
+            score: applicant.matchingScore,
+            reasons: applicant.matchingReasons || [],
+            matchedSkills: applicant.skills || []
+        }));
+
+        res.render('business/jobs/matching-simple', {
+            layout: false,
+            job: job,
+            applicants: transformedApplicants
+        });
+
+    } catch (error) {
+        console.error('Error getting matching applicants:', error);
         next(error);
     }
 });
@@ -687,6 +756,45 @@ router.get('/jobs', jobsController.viewJobs);
 
 // Job detail route
 router.get('/job/:id', jobDetailController.viewJobDetail);
+
+// AI Applicant Matching routes
+router.get('/api/job/:jobId/matching-applicants', isBusinessOrApiKey, applicantMatchingController.getMatchingApplicants);
+router.get('/api/matching-applicants/all', isBusinessOrApiKey, applicantMatchingController.getAllJobsApplicantRecommendations);
+// Temporarily remove authentication for testing matching scores
+router.get('/api/applicant/:userId/profile', applicantMatchingController.getApplicantProfile);
+router.post('/api/matching-preferences', isBusinessOrApiKey, applicantMatchingController.updateMatchingPreferences);
+
+// API Test page (for development/testing)
+router.get('/test-api', (req, res) => {
+    res.render('test-api', {
+        layout: false,
+        title: 'AI Applicant Matching API Test',
+        description: 'Test the AI Applicant Matching API endpoints'
+    });
+});
+
+// Jobs list API for AI matching modal
+router.get('/jobs/api/list', isBusiness, async (req, res) => {
+    try {
+        const businessId = req.user?.id || req.user?._id || req.account?.id || req.account?._id;
+        const Job = require('../app/models/Job');
+        
+        const jobs = await Job.find({ businessId, status: { $ne: 'closed' } })
+            .select('_id title field experience type')
+            .sort({ createdAt: -1 });
+        
+        res.json({
+            success: true,
+            jobs: jobs
+        });
+    } catch (error) {
+        console.error('Error fetching jobs list:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
+    }
+});
 
 // Update application status route
 router.put('/:id/update', detailApplicantController.updateApplicationStatus);

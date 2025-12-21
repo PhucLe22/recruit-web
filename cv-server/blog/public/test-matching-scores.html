@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test AI Matching Scores</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .matching-score {
+      text-align: center;
+      min-width: 80px;
+    }
+    .score-placeholder {
+      color: #a0aec0;
+      font-weight: 500;
+    }
+    .score-badge {
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      display: inline-block;
+      min-width: 60px;
+    }
+    .score-high {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+    .score-medium {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    }
+    .score-low {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    }
+    .score-none {
+      background: #e2e8f0;
+      color: #718096;
+    }
+    .score-loading i {
+      color: #667eea;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <h2>AI Matching Score Test</h2>
+    <p>Testing the matching score functionality for applicants table.</p>
+    
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Position</th>
+          <th>Matching Score</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>john.doe@example.com</td>
+          <td>Software Engineer</td>
+          <td>
+            <div class="matching-score" data-user-id="mock_user_1" data-job-id="mock_job_1">
+              <span class="score-placeholder">-</span>
+              <div class="score-loading d-none">
+                <i class="fas fa-spinner fa-spin"></i>
+              </div>
+            </div>
+          </td>
+          <td>Pending</td>
+        </tr>
+        <tr>
+          <td>jane.smith@example.com</td>
+          <td>Product Manager</td>
+          <td>
+            <div class="matching-score" data-user-id="mock_user_2" data-job-id="mock_job_2">
+              <span class="score-placeholder">-</span>
+              <div class="score-loading d-none">
+                <i class="fas fa-spinner fa-spin"></i>
+              </div>
+            </div>
+          </td>
+          <td>Reviewing</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="mt-4">
+      <h4>Test Results:</h4>
+      <div id="test-results"></div>
+    </div>
+  </div>
+
+  <script>
+    // Get score class based on percentage
+    function getScoreClass(score) {
+      if (score >= 70) return 'score-high';
+      if (score >= 40) return 'score-medium';
+      return 'score-low';
+    }
+    
+    // Fetch matching scores for all applicants
+    async function fetchMatchingScores() {
+      const scoreElements = document.querySelectorAll('.matching-score');
+      const results = [];
+      
+      for (const element of scoreElements) {
+        const userId = element.dataset.userId;
+        const jobId = element.dataset.jobId;
+        
+        if (userId && jobId) {
+          const placeholder = element.querySelector('.score-placeholder');
+          const loading = element.querySelector('.score-loading');
+          
+          // Show loading
+          placeholder.classList.add('d-none');
+          loading.classList.remove('d-none');
+          
+          try {
+            // Fetch matching score
+            const response = await fetch(`/business/api/applicant/${userId}/profile?jobId=${jobId}`, {
+              method: 'GET',
+              headers: {
+                'Accept': 'application/json',
+                'X-API-Key': 'ai-service-internal-key'
+              }
+            });
+            
+            const data = await response.json();
+            loading.classList.add('d-none');
+            
+            if (data.success && data.data && data.data.matchingScore) {
+              const score = data.data.matchingScore;
+              const scoreClass = getScoreClass(score);
+              
+              placeholder.innerHTML = `<span class="score-badge ${scoreClass}">${score}%</span>`;
+              placeholder.classList.remove('d-none');
+              
+              results.push({
+                userId,
+                jobId,
+                score,
+                status: 'success'
+              });
+            } else {
+              placeholder.innerHTML = '<span class="score-badge score-none">N/A</span>';
+              placeholder.classList.remove('d-none');
+              
+              results.push({
+                userId,
+                jobId,
+                score: 'N/A',
+                status: 'no_score',
+                message: data.message || 'No score available'
+              });
+            }
+          } catch (error) {
+            console.error('Error fetching matching score:', error);
+            loading.classList.add('d-none');
+            placeholder.innerHTML = '<span class="score-badge score-none">Error</span>';
+            placeholder.classList.remove('d-none');
+            
+            results.push({
+              userId,
+              jobId,
+              score: 'Error',
+              status: 'error',
+              message: error.message
+            });
+          }
+        }
+      }
+      
+      // Display test results
+      const resultsDiv = document.getElementById('test-results');
+      resultsDiv.innerHTML = `
+        <h5>API Test Results:</h5>
+        <pre>${JSON.stringify(results, null, 2)}</pre>
+      `;
+    }
+    
+    // Run test when page loads
+    document.addEventListener('DOMContentLoaded', fetchMatchingScores);
+  </script>
+</body>
+</html>

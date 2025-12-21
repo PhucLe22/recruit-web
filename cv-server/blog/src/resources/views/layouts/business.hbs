@@ -250,12 +250,19 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {{#if (eq title 'AI Applicant Matching')}}active{{/if}}" href="/business/jobs/matching">
+                            <i class="fas fa-robot me-3"></i>
+                            <span>AI Matching</span>
+                            <span class="badge bg-success ms-auto">New</span>
+                        </a>
+                    </li>
+                    {{!-- <li class="nav-item">
                         <a class="nav-link {{#if (eq title 'Schedule')}}active{{/if}}" href="/business/schedule">
                             <i class="fas fa-calendar-alt me-3"></i>
                             <span>Interview Schedule</span>
                         </a>
-                    </li>
-                    <li class="nav-item">
+                    </li> --}}
+                    {{!-- <li class="nav-item">
                         <a class="nav-link {{#if (eq title 'Analytics')}}active{{/if}}" href="/business/analytics">
                             <i class="fas fa-chart-line me-3"></i>
                             <span>Analytics</span>
@@ -267,7 +274,7 @@
                             <span>Messages</span>
                             <span class="badge bg-danger ms-auto">3</span>
                         </a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item">
                         <a class="nav-link {{#if (eq title 'Profile')}}active{{/if}}" href="/business/profile">
                             <i class="fas fa-user-cog me-3"></i>

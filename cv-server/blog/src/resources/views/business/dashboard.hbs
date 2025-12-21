@@ -122,7 +122,7 @@
                                     <small class="text-muted">{{job_id.field}}</small>
                                 </td>
                                 <td>
-                                    <div class="text-muted">{{applied_at}}</div>
+                                    <div class="text-muted" title="{{applied_at}}">{{formatTime applied_at}}</div>
                                 </td>
                                 <td>
                                     {{#if (eq status 'pending')}}
@@ -681,12 +681,39 @@
         };
     });
 
+    // Helper function to format time in a user-friendly way
+    function formatTimeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+        
+        if (diffInSeconds < 60) {
+            return 'Just now';
+        } else if (diffInSeconds < 3600) {
+            const minutes = Math.floor(diffInSeconds / 60);
+            return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        } else if (diffInSeconds < 86400) {
+            const hours = Math.floor(diffInSeconds / 3600);
+            return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        } else if (diffInSeconds < 604800) {
+            const days = Math.floor(diffInSeconds / 86400);
+            return `${days} day${days > 1 ? 's' : ''} ago`;
+        } else {
+            // For older dates, show the actual date
+            return date.toLocaleDateString('vi-VN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+    }
+
     function createApplicationRow(application) {
         const row = document.createElement('tr');
         row.setAttribute('data-application-id', application._id);
         row.className = 'new-application';
         
-        const appliedDate = new Date(application.applied_at).toLocaleString('vi-VN');
+        const appliedDate = formatTimeAgo(application.applied_at);
         const firstLetter = application.user_id?.username ? application.user_id.username.charAt(0).toUpperCase() : 'U';
         
         row.innerHTML = `

@@ -249,8 +249,25 @@ const canEditResource = (req, resourceUserId, resourceBusinessId = null) => {
   return false;
 };
 
+// Business-specific authentication middleware
+const isBusiness = (req, res, next) => {
+  if (!req.isLogin || !req.user || req.userType !== 'business') {
+    if (req.xhr || req.headers.accept?.includes('application/json')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Business authentication required'
+      });
+    } else {
+      return res.redirect('/business/login');
+    }
+  }
+  
+  next();
+};
+
 module.exports = {
   isLogin,
+  isBusiness,
   requireAuth,
   requireBusinessAuth,
   requireUserAuth,

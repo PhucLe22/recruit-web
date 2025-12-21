@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,688 +7,456 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --success: #11998e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d1b69 100%);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       min-height: 100vh;
-      color: #ffffff;
-      position: relative;
-      overflow-x: hidden;
     }
 
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: 
-        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: -1;
-    }
+    .container-fluid { max-width: 1400px; padding: 30px; }
 
-    .container {
-      max-width: 1400px;
-      margin: 20px auto;
-      background: rgba(255, 255, 255, 0.05);
+    /* Header */
+    .page-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      padding: 2rem;
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-      overflow: hidden;
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
     }
 
-    .back-btn {
-      position: fixed;
-      top: 30px;
-      left: 30px;
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px 20px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      color: white;
-      text-decoration: none;
-      border-radius: 25px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      z-index: 100;
+      gap: 1rem;
     }
 
-    .back-btn:hover {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-      border-color: transparent;
-      color: white;
-    }
-
-    .back-btn i {
-      font-size: 16px;
-    }
-
-    .header {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      color: white;
-      padding: 40px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .header::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 2.5rem;
-      font-weight: 700;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    }
-
-    .stats-container {
+    /* Stats */
+    .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 30px;
-      background: rgba(255, 255, 255, 0.02);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
     }
 
     .stat-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 25px;
-      text-align: center;
-      transition: all 0.3s ease;
-      animation: fadeInUp 0.5s ease forwards;
-      opacity: 0;
-    }
-
-    .stat-card:nth-child(1) { animation-delay: 0.1s; }
-    .stat-card:nth-child(2) { animation-delay: 0.2s; }
-    .stat-card:nth-child(3) { animation-delay: 0.3s; }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .stat-icon {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .stat-number {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: #8b5cf6;
-      margin-bottom: 5px;
-    }
-
-    .stat-label {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .table-container {
-      padding: 30px;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-
-    th {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      color: white;
-      padding: 20px 15px;
-      text-align: left;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-size: 0.9rem;
-      position: relative;
-    }
-
-    th::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    }
-
-    td {
-      padding: 18px 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.3s ease;
-      color: #ffffff;
-    }
-
-    tr:nth-child(even) {
-      background-color: rgba(255, 255, 255, 0.02);
-    }
-
-    tr:hover {
-      background-color: rgba(255, 255, 255, 0.08);
-      transform: scale(1.01);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    }
-
-    .user-info {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 8px 0;
+      gap: 1rem;
+      transition: transform 0.3s ease;
+      border-left: 4px solid;
     }
 
-    .user-avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid rgba(99, 102, 241, 0.3);
-      transition: transform 0.2s ease, border-color 0.2s ease;
-    }
+    .stat-card:hover { transform: translateY(-4px); }
+    .stat-card:nth-child(1) { border-color: var(--primary); }
+    .stat-card:nth-child(2) { border-color: var(--success); }
+    .stat-card:nth-child(3) { border-color: var(--warning); }
 
-    .user-avatar:hover {
-      transform: scale(1.05);
-      border-color: #6366f1;
-    }
-
-    .avatar-placeholder {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 1.8rem;
       color: white;
-      font-weight: 600;
-      text-transform: uppercase;
     }
 
-    .email-text {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 0.95rem;
+    .stat-card:nth-child(1) .stat-icon { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+    .stat-card:nth-child(2) .stat-icon { background: linear-gradient(135deg, var(--success), #38ef7d); }
+    .stat-card:nth-child(3) .stat-icon { background: linear-gradient(135deg, var(--warning), #f97316); }
+
+    .stat-number { font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .stat-label { color: #718096; font-size: 0.9rem; font-weight: 600; }
+
+    /* Card */
+    .card {
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      background: white;
     }
 
-    .status-select {
-      background: rgba(255, 255, 255, 0.05);
-      color: #ffffff;
-      border: 2px solid rgba(255, 255, 255, 0.1);
+    .card-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 1.5rem 2rem;
+      border: none;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Search */
+    .search-section {
+      background: #f8fafc;
+      padding: 1.5rem 2rem;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .form-control, .form-select {
+      border: 2px solid #e2e8f0;
       border-radius: 10px;
-      padding: 8px 12px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      cursor: pointer;
+      padding: 0.75rem 1rem;
       transition: all 0.3s ease;
-      min-width: 140px;
     }
 
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Table */
+    .table thead { background: #f8fafc; }
+    .table th {
+      padding: 1rem 1.5rem;
+      font-weight: 700;
+      color: #2d3748;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .table td { padding: 1rem 1.5rem; vertical-align: middle; }
+    .table tbody tr {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table tbody tr:hover {
+      background: #f8f9ff;
+      transform: scale(1.002);
+    }
+
+    /* Status Select */
+    .status-select {
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      min-width: 150px;
+    }
+
+    .status-select:hover { border-color: var(--primary); }
     .status-select:focus {
       outline: none;
-      border-color: #6366f1;
-      background: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
-    .status-select option {
-      background: #1a1a3a;
-      color: #ffffff;
-      padding: 8px;
+    /* Badges & Buttons */
+    .badge {
+      font-weight: 600;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
     }
 
-    .status-select.loading {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .btn {
+      font-weight: 600;
+      border-radius: 10px;
+      padding: 0.5rem 1rem;
+      transition: all 0.3s ease;
     }
 
-    .job-tag {
-      background: rgba(99, 102, 241, 0.2);
-      color: #c4b5fd;
-      padding: 6px 14px;
-      border-radius: 20px;
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+    }
+
+    .btn-outline-primary {
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-outline-primary:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-outline-danger {
+      color: var(--danger);
+      border: 2px solid var(--danger);
+    }
+
+    .btn-outline-danger:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    /* Score Badge */
+    .score-badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-weight: 700;
       font-size: 0.85rem;
-      font-weight: 500;
-      white-space: nowrap;
       display: inline-block;
     }
 
-    .btn-primary, .btn-danger {
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      border: none;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .score-high { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .score-medium { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+    .score-low { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+    .score-none { background: #e2e8f0; color: #718096; }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      color: white;
-    }
-
-    .btn-danger:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-    }
-
-    .no-data {
-      text-align: center;
-      padding: 40px;
-      color: #a1a1aa;
-    }
-
-    .no-data i {
-      font-size: 3rem;
-      margin-bottom: 15px;
-      opacity: 0.5;
-    }
-
-    .no-data p {
-      margin: 0;
-      font-size: 1.1rem;
-    }
-
-    /* Loading indicator */
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .status-select.loading::after {
-      content: '';
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 14px;
-      height: 14px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-    }
-
-    /* Modal Styles */
-    .modal-content {
-      background: rgba(26, 26, 58, 0.95);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      color: white;
-    }
-
-    .modal-header {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px 20px 0 0;
-    }
-
-    .modal-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .btn-close {
-      filter: invert(1);
-    }
-
-    .modal-body {
-      padding: 30px;
-      text-align: center;
-    }
-
-    .modal-body i {
-      font-size: 3rem;
-      color: #ef4444;
-      margin-bottom: 15px;
-    }
-
-    .modal-footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 10px 25px;
-      border-radius: 10px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Success Toast */
-    @keyframes slideInRight {
-      from {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes slideOutRight {
-      from {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      to {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-    }
-
-    .success-toast {
+    /* Toast */
+    .toast-notification {
       position: fixed;
       top: 20px;
       right: 20px;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
       color: white;
-      padding: 15px 25px;
-      border-radius: 15px;
       font-weight: 600;
       z-index: 9999;
-      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-      animation: slideInRight 0.5s ease;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      animation: slideIn 0.3s ease;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 0.75rem;
     }
 
-    /* Search Form Styles */
-    .search-section .form-control,
-    .search-section .form-select {
-      background: rgba(255, 255, 255, 0.1) !important;
-      border: 1px solid rgba(255, 255, 255, 0.2) !important;
-      color: white !important;
-      border-radius: 10px;
-      padding: 12px 15px;
-      transition: all 0.3s ease;
+    .toast-notification.success { background: linear-gradient(135deg, var(--success), #38ef7d); }
+    .toast-notification.error { background: linear-gradient(135deg, var(--danger), #dc2626); }
+
+    @keyframes slideIn {
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
-    .search-section .form-control:focus,
-    .search-section .form-select:focus {
-      background: rgba(255, 255, 255, 0.15) !important;
-      border-color: #6366f1 !important;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
-      outline: none;
-      color: white !important;
-    }
-
-    .search-section .form-control::placeholder {
-      color: rgba(255, 255, 255, 0.6) !important;
-    }
-
-    .search-section .form-label {
-      color: rgba(255, 255, 255, 0.9) !important;
-      font-weight: 500;
-      margin-bottom: 8px;
-    }
-
-    .search-section .form-select option {
-      background: #1a1a3a;
+    /* Modal */
+    .modal-content { border-radius: 20px; overflow: hidden; }
+    .modal-header {
+      background: linear-gradient(135deg, var(--danger), #dc2626);
       color: white;
+      border: none;
     }
 
-    .search-results-info {
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      border-radius: 10px;
-      padding: 15px;
-    }
-
-    .search-results-info strong {
-      color: #c4b5fd;
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container-fluid { padding: 1rem; }
+      .page-title { font-size: 1.5rem; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .table { font-size: 0.85rem; }
     }
   </style>
 </head>
-
 <body>
-  <!-- Back Button -->
-  {{> back-to-dashboard}}
-
-  <div class="container">
-    <div class="header">
-      <h1>Quản Lý Ứng Viên</h1>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="stats-container">
-      <div class="stat-card">
-        <i class="fas fa-users stat-icon"></i>
-        <div class="stat-number" id="totalCandidates">0</div>
-        <div class="stat-label">Tổng Ứng Viên</div>
-      </div>
-      <div class="stat-card">
-        <i class="fas fa-check-circle stat-icon"></i>
-        <div class="stat-number" id="approvedCandidates">0</div>
-        <div class="stat-label">Đã Tuyển</div>
-      </div>
-      <div class="stat-card">
-        <i class="fas fa-clock stat-icon"></i>
-        <div class="stat-number" id="pendingCandidates">0</div>
-        <div class="stat-label">Chờ Xử Lý</div>
+  <div class="container-fluid">
+    <!-- Header -->
+    <div class="page-header">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <h1 class="page-title">
+          <i class="fas fa-users"></i>Quản Lý Ứng Viên
+        </h1>
+        {{> back-to-dashboard}}
       </div>
     </div>
 
-    <!-- Table Container -->
-    <div class="table-container">
-      <!-- Search Form -->
-      <div class="search-section" style="margin-bottom: 30px; padding: 25px; background: rgba(255, 255, 255, 0.05); border-radius: 15px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
-        <form method="GET" action="/business/applications" class="search-form">
-          <div class="row g-3 align-items-end">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <div>
+          <div class="stat-number" id="totalCandidates">0</div>
+          <div class="stat-label">Tổng Ứng Viên</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+        <div>
+          <div class="stat-number" id="approvedCandidates">0</div>
+          <div class="stat-label">Đã Tuyển</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div>
+          <div class="stat-number" id="pendingCandidates">0</div>
+          <div class="stat-label">Chờ Xử Lý</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">
+          <i class="fas fa-user-tie"></i>Danh Sách Ứng Viên
+        </h5>
+      </div>
+
+      <!-- Search -->
+      <div class="search-section">
+        <form method="GET" action="/business/applications">
+          <div class="row g-3">
             <div class="col-md-4">
-              <label for="search" class="form-label text-white">
-                <i class="fas fa-search me-2"></i>Tìm kiếm ứng viên
-              </label>
-              <input type="text" class="form-control" id="search" name="search" 
-                     placeholder="Tên hoặc email ứng viên..." 
-                     value="{{search}}"
-                     style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+              <input type="text" class="form-control" name="search" placeholder="Tìm kiếm..." value="{{search}}">
             </div>
             <div class="col-md-3">
-              <label for="status" class="form-label text-white">
-                <i class="fas fa-filter me-2"></i>Trạng thái
-              </label>
-              <select class="form-select" id="status" name="status" 
-                      style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+              <select class="form-select" name="status">
                 <option value="">Tất cả trạng thái</option>
-                <option value="pending" {{#if (eq status 'pending')}}selected{{/if}}>⏳ Chờ xử lý</option>
-                <option value="reviewing" {{#if (eq status 'reviewing')}}selected{{/if}}>👁️ Đang xem xét</option>
-                <option value="interviewing" {{#if (eq status 'interviewing')}}selected{{/if}}>💬 Phỏng vấn</option>
-                <option value="hired" {{#if (eq status 'hired')}}selected{{/if}}>✅ Đã tuyển</option>
-                <option value="rejected" {{#if (eq status 'rejected')}}selected{{/if}}>❌ Từ chối</option>
+                <option value="pending" {{#if (eq status 'pending')}}selected{{/if}}>Chờ xử lý</option>
+                <option value="reviewing" {{#if (eq status 'reviewing')}}selected{{/if}}>Đang xem xét</option>
+                <option value="interviewing" {{#if (eq status 'interviewing')}}selected{{/if}}>Phỏng vấn</option>
+                <option value="hired" {{#if (eq status 'hired')}}selected{{/if}}>Đã tuyển</option>
+                <option value="rejected" {{#if (eq status 'rejected')}}selected{{/if}}>Từ chối</option>
               </select>
             </div>
             <div class="col-md-3">
-              <label for="jobTitle" class="form-label text-white">
-                <i class="fas fa-briefcase me-2"></i>Vị trí công việc
-              </label>
-              <input type="text" class="form-control" id="jobTitle" name="jobTitle" 
-                     placeholder="Tên vị trí..." 
-                     value="{{jobTitle}}"
-                     style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+              <input type="text" class="form-control" name="jobTitle" placeholder="Vị trí..." value="{{jobTitle}}">
             </div>
             <div class="col-md-2">
-              <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary flex-fill">
-                  <i class="fas fa-search me-2"></i>Tìm kiếm
-                </button>
-                <a href="/business/applications" class="btn btn-secondary">
-                  <i class="fas fa-times me-2"></i>Xóa
-                </a>
-              </div>
+              <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-search"></i>
+              </button>
             </div>
           </div>
         </form>
-        
-        <!-- Search Results Info -->
-        {{#if search}}
-        <div class="search-results-info mt-3">
-          <p class="text-white-50 mb-0">
-            <i class="fas fa-info-circle me-2"></i>
-            Kết quả tìm kiếm cho: <strong>"{{search}}"</strong>
-            {{#if status}} - Trạng thái: <strong>"{{status}}"</strong>{{/if}}
-            {{#if jobTitle}} - Vị trí: <strong>"{{jobTitle}}"</strong>{{/if}}
-            - Tìm thấy <strong>{{pagination.total}}</strong> kết quả
-          </p>
+
+        <!-- AI Matching -->
+        <div class="mt-3">
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#aiModal">
+            <i class="fas fa-robot me-2"></i>AI Matching
+          </button>
         </div>
-        {{/if}}
       </div>
 
-      <table id="candidateTable">
-        <thead>
-          <tr>
-            <th><i class="fas fa-envelope me-2"></i>Email</th>
-            <th><i class="fas fa-toggle-on me-2"></i>Trạng Thái</th>
-            <th><i class="fas fa-briefcase me-2"></i>Vị Trí</th>
-            <th><i class="fas fa-calendar me-2"></i>Ngày Tạo</th>
-            <th><i class="fas fa-cogs me-2"></i>Thao Tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#if jobApplieds.length}}
-            {{#each jobApplieds}}
+      <!-- Table -->
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
             <tr>
-              <td>
-                <div class="email-text">{{this.userEmail}}</div>
-              </td>
-              <td>
-                <select class="status-select" data-id="{{this._id}}">
-                  <option value="pending" {{#if (eq this.status 'pending')}}selected{{/if}}>⏳ Chờ xử lý</option>
-                  <option value="reviewing" {{#if (eq this.status 'reviewing')}}selected{{/if}}>👁️ Đang xem xét</option>
-                  <option value="interviewing" {{#if (eq this.status 'interviewing')}}selected{{/if}}>💬 Phỏng vấn</option>
-                  <option value="hired" {{#if (eq this.status 'hired')}}selected{{/if}}>✅ Đã tuyển</option>
-                  <option value="rejected" {{#if (eq this.status 'rejected')}}selected{{/if}}>❌ Từ chối</option>
-                </select>
-              </td>
-              <td>
-                <span class="job-tag">{{this.jobTitle}}</span>
-              </td>
-              <td>
-                <i class="far fa-calendar-alt me-2"></i>
-                {{formatDate this.createdAt}}
-              </td>
-              <td>
-                <div class="d-flex gap-2">
-                  <a href="/business/cv/view/{{this.cvId}}" class="btn btn-primary" target="_blank">
-                    <i class="far fa-eye"></i> Xem CV
-                  </a>
-                  <button class="btn btn-danger delete-candidate" data-id="{{this._id}}">
-                    <i class="far fa-trash-alt"></i> Xóa
-                  </button>
-                </div>
-              </td>
+              <th>#</th>
+              <th>Email</th>
+              <th>Trạng Thái</th>
+              <th>Vị Trí</th>
+              <th>Điểm</th>
+              <th>Ngày Tạo</th>
+              <th>Thao Tác</th>
             </tr>
-            {{/each}}
-          {{else}}
-            <tr>
-              <td colspan="5" class="no-data">
-                <i class="fas fa-inbox"></i>
-                <p>Chưa có ứng viên nào</p>
-              </td>
-            </tr>
-          {{/if}}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {{#if jobApplieds.length}}
+              {{#each jobApplieds}}
+              <tr>
+                <td><span class="badge bg-primary">{{sum @index 1}}</span></td>
+                <td>{{this.userEmail}}</td>
+                <td>
+                  <select class="status-select" data-id="{{this._id}}">
+                    <option value="pending" {{#if (eq this.status 'pending')}}selected{{/if}}>⏳ Chờ</option>
+                    <option value="reviewing" {{#if (eq this.status 'reviewing')}}selected{{/if}}>👁️ Xem</option>
+                    <option value="interviewing" {{#if (eq this.status 'interviewing')}}selected{{/if}}>💬 PV</option>
+                    <option value="hired" {{#if (eq this.status 'hired')}}selected{{/if}}>✅ Tuyển</option>
+                    <option value="rejected" {{#if (eq this.status 'rejected')}}selected{{/if}}>❌ Từ chối</option>
+                  </select>
+                </td>
+                <td><span class="badge bg-info">{{this.jobTitle}}</span></td>
+                <td>
+                  <div class="matching-score" data-user-id="{{this.user_id}}" data-job-id="{{this.job_id}}">
+                    <span class="score-placeholder">-</span>
+                  </div>
+                </td>
+                <td><small class="text-muted">{{formatDate this.createdAt}}</small></td>
+                <td>
+                  <div class="btn-group btn-group-sm">
+                    <a href="/business/cv/view/{{this.cvId}}" class="btn btn-outline-primary" target="_blank">
+                      <i class="fas fa-eye"></i>
+                    </a>
+                    <button class="btn btn-outline-danger delete-btn" data-id="{{this._id}}">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              {{/each}}
+            {{else}}
+              <tr>
+                <td colspan="7" class="text-center py-5">
+                  <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                  <h5>Chưa có ứng viên</h5>
+                </td>
+              </tr>
+            {{/if}}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- Delete Confirmation Modal -->
-  <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+  <!-- Delete Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">
-            <i class="fas fa-exclamation-triangle"></i>
-            Xác Nhận Xóa
-          </h5>
+          <h5 class="modal-title">Xác Nhận Xóa</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
-          <i class="fas fa-user-times"></i>
-          <h6>Bạn có chắc chắn muốn xóa ứng viên này?</h6>
-          <p class="text-muted">Hành động này không thể hoàn tác.</p>
+        <div class="modal-body text-center">
+          <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+          <h6>Bạn có chắc chắn muốn xóa?</h6>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            <i class="fas fa-times me-2"></i>Hủy
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Modal -->
+  <div class="modal fade" id="aiModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title"><i class="fas fa-robot me-2"></i>AI Matching</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Chọn công việc</label>
+            <select class="form-select" id="jobSelect">
+              <option value="">-- Chọn --</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Số lượng</label>
+            <select class="form-select" id="limitSelect">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="20">20</option>
+            </select>
+          </div>
+          <button class="btn btn-primary w-100" id="findBtn">
+            <i class="fas fa-search me-2"></i>Tìm ứng viên
           </button>
-          <button type="button" class="btn btn-danger" id="confirmDelete">
-            <i class="fas fa-trash me-2"></i>Xóa
-          </button>
+          <div id="results" class="mt-3"></div>
         </div>
       </div>
     </div>
@@ -697,149 +464,105 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Register Handlebars helpers
-    if (typeof Handlebars !== 'undefined') {
-      Handlebars.registerHelper('substring', function(str, start, end) {
-        if (!str) return '';
-        str = String(str);
-        return str.substring(start, end);
-      });
+    const $ = id => document.getElementById(id);
+    const $$ = sel => document.querySelectorAll(sel);
+    let selectedId = null;
+    const deleteModal = new bootstrap.Modal($('deleteModal'));
+
+    // Toast
+    function toast(msg, type = 'success') {
+      const el = document.createElement('div');
+      el.className = `toast-notification ${type}`;
+      el.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i>${msg}`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      let selectedId = null;
-      const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    // Update stats
+    function updateStats() {
+      const rows = $$('table tbody tr:not(:has(.text-center))');
+      const hired = $$('select option:checked[value="hired"]').length;
+      const pending = $$('select option:checked[value="pending"]').length;
+      $('totalCandidates').textContent = rows.length;
+      $('approvedCandidates').textContent = hired;
+      $('pendingCandidates').textContent = pending;
+    }
 
-      // Update stats counters
-      function updateStats() {
-        const rows = document.querySelectorAll('#candidateTable tbody tr:not(:has(.no-data))');
-        const hired = document.querySelectorAll('select.status-select option:checked[value="hired"]').length;
-        const pending = document.querySelectorAll('select.status-select option:checked[value="pending"]').length;
-        
-        document.getElementById('totalCandidates').textContent = rows.length;
-        document.getElementById('approvedCandidates').textContent = hired;
-        document.getElementById('pendingCandidates').textContent = pending;
-      }
-
-      updateStats();
-
-      // Animate counter function
-      function animateCounter(elementId, target) {
-        const element = document.getElementById(elementId);
-        const start = parseInt(element.textContent) || 0;
-        if (start === target) return;
-        
-        const increment = target > start ? 1 : -1;
-        const duration = 1000;
-        const stepTime = Math.abs(duration / (target - start));
-
-        const timer = setInterval(() => {
-          const current = parseInt(element.textContent);
-          if (current === target) {
-            clearInterval(timer);
-          } else {
-            element.textContent = current + increment;
-          }
-        }, stepTime);
-      }
-
-      // Show success toast
-      function showSuccessToast(message) {
-        const toast = document.createElement('div');
-        toast.className = 'success-toast';
-        toast.innerHTML = `<i class="fas fa-check-circle"></i>${message}`;
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-          toast.style.animation = 'slideOutRight 0.5s ease';
-          setTimeout(() => toast.remove(), 500);
-        }, 3000);
-      }
-
-      // Handle delete button clicks
-      document.querySelectorAll('.delete-candidate').forEach(btn => {
-        btn.addEventListener('click', function() {
-          selectedId = this.dataset.id;
-          deleteModal.show();
-        });
-      });
-
-      // Confirm delete
-      document.getElementById('confirmDelete').addEventListener('click', function() {
-        if (selectedId) {
-          // Submit delete form
-          const deleteForm = document.createElement('form');
-          deleteForm.method = 'POST';
-          deleteForm.action = `/business/jobApplied/${selectedId}?_method=DELETE`;
-          deleteForm.style.display = 'none';
-          document.body.appendChild(deleteForm);
-          deleteForm.submit();
-        }
-      });
-
-      // Handle status change
-      document.querySelectorAll('.status-select').forEach(select => {
-        select.setAttribute('data-old-value', select.value);
-        
-        select.addEventListener('change', async function() {
-          const applicationId = this.dataset.id;
-          const newStatus = this.value;
-          const oldStatus = this.getAttribute('data-old-value');
-          
-          this.disabled = true;
-          this.classList.add('loading');
-
-          try {
-            const response = await fetch(`/business/${applicationId}/update`, {
-              method: 'PUT',
-              headers: { 
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-              },
-              body: JSON.stringify({ status: newStatus })
-            });
-            
-            const data = await response.json();
-            
-            if (!response.ok || !data.success) {
-              throw new Error('Cập nhật thất bại');
-            }
-            
-            this.setAttribute('data-old-value', newStatus);
-            showSuccessToast('Cập nhật trạng thái thành công!');
-            updateStats();
-            
-          } catch (error) {
-            console.error('Error updating status:', error);
-            this.value = oldStatus;
-            
-            const errorToast = document.createElement('div');
-            errorToast.className = 'success-toast';
-            errorToast.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
-            errorToast.innerHTML = `<i class="fas fa-exclamation-circle"></i>Có lỗi xảy ra khi cập nhật trạng thái`;
-            document.body.appendChild(errorToast);
-            
-            setTimeout(() => {
-              errorToast.style.animation = 'slideOutRight 0.5s ease';
-              setTimeout(() => errorToast.remove(), 500);
-            }, 3000);
-          } finally {
-            this.disabled = false;
-            this.classList.remove('loading');
-          }
-        });
-      });
-
-      // Add fadeOut animation
-      const style = document.createElement('style');
-      style.textContent = `
-        @keyframes fadeOut {
-          from { opacity: 1; transform: translateX(0); }
-          to { opacity: 0; transform: translateX(-20px); }
-        }
-      `;
-      document.head.appendChild(style);
+    // Delete
+    $$('.delete-btn').forEach(btn => {
+      btn.onclick = () => {
+        selectedId = btn.dataset.id;
+        deleteModal.show();
+      };
     });
+
+    $('confirmDelete').onclick = async () => {
+      try {
+        const res = await fetch(`/business/jobApplied/${selectedId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          $$(`[data-id="${selectedId}"]`)[0].closest('tr').remove();
+          deleteModal.hide();
+          toast('Xóa thành công');
+          updateStats();
+        }
+      } catch (err) {
+        toast('Lỗi xóa', 'error');
+      }
+    };
+
+    // Status change
+    $$('.status-select').forEach(sel => {
+      const old = sel.value;
+      sel.onchange = async function() {
+        this.disabled = true;
+        try {
+          const res = await fetch(`/business/${this.dataset.id}/update`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: this.value })
+          });
+          const data = await res.json();
+          if (!data.success) throw new Error();
+          toast('Cập nhật thành công');
+          updateStats();
+        } catch {
+          this.value = old;
+          toast('Lỗi cập nhật', 'error');
+        } finally {
+          this.disabled = false;
+        }
+      };
+    });
+
+    // Fetch scores
+    async function fetchScores() {
+      const elements = $$('.matching-score');
+      for (const el of elements) {
+        const userId = el.dataset.userId;
+        const jobId = el.dataset.jobId;
+        if (!userId || !jobId) continue;
+
+        try {
+          const res = await fetch(`/business/api/applicant/${userId}/profile?jobId=${jobId}`);
+          const data = await res.json();
+          const score = data.data?.matchingScore;
+          
+          if (score) {
+            const cls = score >= 70 ? 'score-high' : score >= 40 ? 'score-medium' : 'score-low';
+            el.innerHTML = `<span class="score-badge ${cls}">${score}%</span>`;
+          } else {
+            el.innerHTML = '<span class="score-badge score-none">null</span>';
+          }
+        } catch {
+          el.innerHTML = '<span class="score-badge score-none">-</span>';
+        }
+      }
+    }
+
+    // Init
+    updateStats();
+    setTimeout(fetchScores, 500);
   </script>
 </body>
 </html>

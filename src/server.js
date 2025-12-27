@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const port = process.env.PORT || 3000;
 const app = express();
+const compression = require('compression');
 const route = require('./routes');
 const db = require('./config/db');
 const methodOverride = require('method-override');
@@ -352,6 +353,9 @@ hbs.registerHelper('paginationRange', (currentPage, totalPages) => {
 
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'resources', 'views')); //_dirname == contextPath
+
+// Enable compression for all responses
+app.use(compression());
 
 route(app);
 

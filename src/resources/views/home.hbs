@@ -1568,7 +1568,11 @@ let jobsToShow = 6;
 let currentIndex = 0;
 
 function renderJobs() {
-    const jobsGrid = document.getElementById("jobsGrid");
+    const jobsGrid = document.getElementById("jobsGrid3");
+    if (!jobsGrid) {
+        console.warn('jobsGrid3 not found, skipping renderJobs');
+        return;
+    }
     const jobsToLoad = allJobs.slice(currentIndex, currentIndex + jobsToShow);
 
     if (currentIndex === 0) {
@@ -1759,10 +1763,10 @@ function scrollToJobs() {
     });
 }
 
-// Initialize on page load
-document.addEventListener("DOMContentLoaded", () => {
-    renderJobs();
-    renderRecommendations();
+// Initialize on page load - DISABLED to avoid conflicts with infinite scroll
+// document.addEventListener("DOMContentLoaded", () => {
+//     renderJobs();
+//     renderRecommendations();
 
     // Auto-scroll functionality for horizontal jobs grid
     const jobsGrid = document.getElementById('jobsGrid');
@@ -1829,7 +1833,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 2000);
         });
     }
-});
+// });
 </script>
 
 <style>
@@ -2847,7 +2851,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let isLoading = false;
     let hasMoreJobs = true;
     let currentFilter = 'all';
-    const jobsPerPage = 9; // 3 rows × 3 columns
+    const jobsPerPage = 6; // Reduced from 9 for faster loading
 
     // Real job data from database (passed from server)
     const databaseJobs = {{{json validJobs}}};
@@ -2876,10 +2880,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Debounce function to prevent excessive API calls
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Debounced reset and load jobs
+    const debouncedResetAndLoadJobs = debounce(async function() {
+        await resetAndLoadJobs();
+    }, 300);
+
     // Refresh functionality
     fabRefresh.addEventListener('click', async function() {
         this.classList.add('spinning');
-        await resetAndLoadJobs();
+        await debouncedResetAndLoadJobs();
         setTimeout(() => {
             this.classList.remove('spinning');
         }, 1000);

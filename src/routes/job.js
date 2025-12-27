@@ -9,6 +9,30 @@ const saveJobController = require('../app/controllers/job/SaveJobController');
 const jobCategoryController = require('../app/controllers/job/JobCategoryController');
 const {isLogin} = require('../middlewares/isLogin');
 
+// Simple in-memory cache for API responses
+const cache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function getCacheKey(query, page, limit, filter) {
+    return `${JSON.stringify(query)}_${page}_${limit}_${filter}`;
+}
+
+function getFromCache(key) {
+    const cached = cache.get(key);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+        return cached.data;
+    }
+    cache.delete(key);
+    return null;
+}
+
+function setCache(key, data) {
+    cache.set(key, {
+        data,
+        timestamp: Date.now()
+    });
+}
+
 // Add smart search API endpoint
 const SmartSearchService = require('../services/SmartSearchService');
 const AIFilteringService = require('../services/AIFilteringService');
@@ -141,7 +165,7 @@ router.get('/api/load-more', async (req, res, next) => {
 
         const {
             page = 1,
-            limit = 24, // 4 rows × 6 columns (updated for better display)
+            limit = 12, // Reduced from 24 for faster initial loading
             filter = 'all', // all, remote, featured
         } = req.query;
 
@@ -157,12 +181,25 @@ router.get('/api/load-more', async (req, res, next) => {
             query.isRecommended = true;
         }
 
-        // Fetch jobs from database
-        const jobs = await Job.find(query)
-            .populate('businessId')
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(parseInt(limit));
+        // Check cache first
+        const cacheKey = getCacheKey(query, page, limit, filter);
+        const cachedData = getFromCache(cacheKey);
+        if (cachedData) {
+            console.log('Cache hit for jobs API');
+            return res.json(cachedData);
+        }
+
+        // Use parallel queries for better performance
+        const [jobs, totalCount] = await Promise.all([
+            Job.find(query)
+                .select('slug title companyName city type salary description isRecommended logoPath businessId createdAt')
+                .lean()
+                .populate('businessId', 'companyName logo')
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(parseInt(limit)),
+            Job.countDocuments(query)
+        ]);
 
         // Format jobs for response
         const formattedJobs = jobs.map((job) => ({
@@ -182,16 +219,18 @@ router.get('/api/load-more', async (req, res, next) => {
             companyLogo: job.logoPath || job.businessId?.logo || null,
         }));
 
-        // Get total count for pagination
-        const totalCount = await Job.countDocuments(query);
         const hasMore = skip + jobs.length < totalCount;
-
-        res.json({
+        const responseData = {
             jobs: formattedJobs,
             hasMore,
             currentPage: parseInt(page),
             totalCount,
-        });
+        };
+
+        // Cache the response
+        setCache(cacheKey, responseData);
+
+        res.json(responseData);
     } catch (error) {
         console.error('Error loading more jobs:', error);
         res.status(500).json({

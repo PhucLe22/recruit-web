@@ -138,10 +138,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Enhanced Scroll-based header transparency effect
+  // Enhanced Scroll-based header transparency effect with smoother transitions
   if (header) {
     let lastScrollY = window.scrollY;
     let ticking = false;
+    let scrollTimeout;
 
     function updateHeader() {
       const scrollY = window.scrollY;
@@ -153,10 +154,11 @@ document.addEventListener('DOMContentLoaded', function() {
         header.classList.remove('scrolled');
       }
 
-      // Calculate transparency based on scroll position (0.8 to 0.98)
-      const opacity = Math.min(0.8 + (scrollY / 300), 0.98);
-      const blur = Math.min(20 + (scrollY / 20), 30);
+      // Calculate transparency based on scroll position (0.9 to 0.98) - more gradual
+      const opacity = Math.min(0.9 + (scrollY / 600), 0.98);
+      const blur = Math.min(15 + (scrollY / 40), 25);
 
+      // Apply styles without inline transitions (CSS handles transitions)
       header.style.background = `rgba(255, 255, 255, ${opacity})`;
       header.style.backdropFilter = `blur(${blur}px)`;
       header.style.webkitBackdropFilter = `blur(${blur}px)`;
@@ -172,23 +174,17 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
-    // Listen for scroll events with performance optimization
-    let scrollTimeout;
-    window.addEventListener('scroll', () => {
-      // Throttle the scroll events
-      if (!scrollTimeout) {
-        scrollTimeout = setTimeout(() => {
-          scrollTimeout = null;
-        }, 16); // ~60fps
-      }
-      requestTick();
-    }, { passive: true });
+    // Debounced scroll handler to prevent excessive updates
+    function handleScroll() {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(requestTick, 16); // ~60fps throttling
+    }
 
-    // Initial check in case page is already scrolled
+    // Use passive listeners for better performance
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Initial header state
     updateHeader();
-
-    // Handle window resize
-    window.addEventListener('resize', requestTick);
   }
 
   console.log('Header script initialized');

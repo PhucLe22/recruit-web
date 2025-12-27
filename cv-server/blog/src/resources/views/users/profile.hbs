@@ -1,508 +1,1105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV Assistant - AI Services</title>
+    <title>Hồ Sơ Cá Nhân - {{user.username}}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --success: #4cc9f0;
-            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-600: #4b5563;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
         }
-        
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background: var(--gradient);
-            min-height: 100vh;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-        
-        .hero {
-            background: linear-gradient(135deg, rgba(67, 97, 238, 0.95), rgba(63, 55, 201, 0.95));
-            color: white;
-            padding: 3rem 0;
-            text-align: center;
-            margin-bottom: 2rem;
-            border-radius: 0 0 24px 24px;
-        }
-        
-        .hero h1 { 
-            font-size: 2.5rem; 
-            font-weight: 800; 
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        
-        .service-card {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
-            scroll-margin-top: 2rem;
+            color: var(--gray-900);
+            line-height: 1.6;
         }
-        
-        .service-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-        }
-        
-        .service-header {
-            background: var(--gradient);
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            padding: 2rem;
-            text-align: center;
+            padding: 4rem 0 6rem;
+            position: relative;
+            overflow: hidden;
         }
-        
-        .service-icon {
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.4;
+        }
+
+        .hero-content { position: relative; z-index: 1; }
+
+        .hero h1 {
             font-size: 2.5rem;
-            margin-bottom: 0.75rem;
-            opacity: 0.95;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
         }
-        
-        .upload-zone {
-            border: 2px dashed #cbd5e1;
+
+        .hero-subtitle {
+            font-size: 1.125rem;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
             border-radius: 12px;
-            padding: 2rem;
+            padding: 1.25rem;
             text-align: center;
-            background: #f8fafc;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Avatar Section */
+        .avatar-wrapper {
+            margin-top: -80px;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 6px solid white;
+            box-shadow: var(--shadow-lg);
+            margin: 0 auto 1rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .avatar:hover { transform: scale(1.05); }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .avatar:hover .avatar-overlay { opacity: 1; }
+
+        .avatar input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .avatar-status {
+            min-height: 24px;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .avatar-status.success { color: var(--success); }
+        .avatar-status.error { color: var(--danger); }
+
+        /* Cards */
+        .card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .card-body { padding: 1.5rem; }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .info-item {
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 10px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            color: var(--gray-900);
+            font-weight: 500;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--gray-200);
+            border-radius: 12px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
-        .upload-zone:hover, .upload-zone.dragover {
+
+        .upload-zone:hover {
             border-color: var(--primary);
-            background: #f0f4ff;
+            background: var(--gray-50);
         }
-        
-        .btn-primary {
-            background: var(--gradient);
-            border: none;
+
+        .upload-zone i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* CV Display */
+        .cv-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: var(--gray-50);
             border-radius: 10px;
-            padding: 0.75rem 1.5rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .cv-card i {
+            font-size: 2.5rem;
+            color: #ef4444;
+        }
+
+        .cv-info { flex: 1; }
+
+        .cv-filename {
             font-weight: 600;
-            transition: transform 0.2s ease;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
         }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(67, 97, 238, 0.3);
+
+        .cv-date {
+            font-size: 0.875rem;
+            color: var(--gray-600);
         }
-        
-        .result-box {
-            background: #f8fafc;
+
+        .cv-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--gray-200);
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .tab {
+            background: none;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab:hover { color: var(--primary); }
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Assessment Card */
+        .assessment-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
             border-radius: 12px;
             padding: 1.5rem;
-            margin-top: 1.5rem;
-            border-left: 4px solid var(--success);
+            border-left: 4px solid var(--primary);
+        }
+
+        .assessment-type {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .assessment-desc {
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+        }
+
+        .assessment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .assessment-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .assessment-item-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .assessment-item-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .progress-bar-wrapper {
+            width: 100%;
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .trait-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .trait-tag {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--gray-600);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-left: 4px solid;
+        }
+
+        .alert.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-color: #3b82f6;
+        }
+
+        .alert.warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #f59e0b;
+        }
+
+        /* Loading */
+        .loading {
             display: none;
-            animation: slideDown 0.3s ease;
+            text-align: center;
+            padding: 2rem;
         }
-        
-        .result-box.show { display: block; }
-        .result-box.error { border-left-color: #ef4444; }
-        
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
+
+        .loading.active { display: block; }
+
         .spinner {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 3px solid #e5e7eb;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
             border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
         }
-        
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        
-        .badge-custom {
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            font-weight: 500;
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
         }
-        
-        .job-card {
-            border-radius: 12px;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            color: inherit;
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-600);
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover { color: var(--gray-900); }
+
+        /* Form */
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--gray-900);
             display: block;
         }
-        
-        .job-card:hover {
-            transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+        .form-control, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 1rem;
         }
-        
+
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .hero h1 { font-size: 1.75rem; }
-            .service-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 1.875rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .info-grid { grid-template-columns: 1fr; }
+            .cv-card { flex-direction: column; text-align: center; }
+            .cv-actions { width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
+    <!-- Hero -->
     <div class="hero">
-        <div class="container">
-            <h1><i class="fas fa-robot me-2"></i>CV Assistant</h1>
-            <p class="mb-0 opacity-90">AI-powered career development tools</p>
+        <div class="container hero-content">
+            <h1><i class="fas fa-user-circle"></i> Hồ Sơ Cá Nhân</h1>
+            <p class="hero-subtitle">@{{user.username}} • {{user.major}}</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value" id="assessmentCount">0</span>
+                    <span class="stat-label">Bài kiểm tra</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="profileCompleteness">0%</span>
+                    <span class="stat-label">Hoàn thiện</span>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Avatar -->
+    <div class="avatar-wrapper">
+        <div class="avatar">
+            <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/avatars/default-avatar.png{{/if}}" 
+                 alt="Avatar" id="avatarPreview" onerror="this.src='/avatars/default-avatar.png'">
+            <div class="avatar-overlay">Thay đổi ảnh</div>
+            <input type="file" accept="image/*" id="avatarInput">
+        </div>
+        <div id="avatarStatus" class="avatar-status"></div>
+        <button class="btn btn-primary btn-sm" onclick="openEditModal()">
+            <i class="fas fa-edit"></i> Chỉnh sửa thông tin
+        </button>
+    </div>
+
+    <!-- Main Content -->
     <div class="container pb-5">
         {{#if isLogin}}
-            <div class="alert alert-info mb-4">
-                <i class="fas fa-user-check me-2"></i>
-                <strong>Welcome, {{#if user.name}}{{user.name}}{{else}}{{user.username}}{{/if}}!</strong>
-                {{#if userCVData}}
-                    <small class="d-block text-muted mt-1">CV: {{userCVData.filename}} ({{userCVData.file_size}}KB)</small>
-                {{else}}
-                    <small class="d-block text-muted mt-1">Upload your CV to get started</small>
-                {{/if}}
+            <div class="alert info">
+                <i class="fas fa-user-check"></i>
+                <div>
+                    <strong>Chào mừng, {{#if user.name}}{{user.name}}{{else}}{{user.username}}{{/if}}!</strong>
+                    <small class="d-block">
+                        {{#if userCVData}}CV: {{userCVData.filename}}{{else}}Hãy tải lên CV để bắt đầu{{/if}}
+                    </small>
+                </div>
             </div>
         {{else}}
-            <div class="alert alert-warning mb-4">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                <strong>Please log in</strong> to access CV analysis and job recommendations
+            <div class="alert warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Vui lòng đăng nhập để truy cập đầy đủ tính năng</strong>
             </div>
         {{/if}}
 
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-xl-7">
-                <!-- CV Analysis -->
-                <div class="service-card mb-4">
-                    <div class="service-header">
-                        <div class="service-icon"><i class="fas fa-file-medical"></i></div>
-                        <h3 class="h5 mb-1">CV Analysis</h3>
-                        <small class="opacity-90">Get AI-powered feedback and improvement suggestions</small>
+        <div class="row">
+            <!-- Personal Info -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-id-card"></i>
+                            Thông tin cá nhân
+                        </h3>
                     </div>
-                    <div class="p-4">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Username</label>
-                            <input type="text" id="cvUsername" class="form-control" 
-                                   value="{{#if user.username}}{{user.username}}{{/if}}" 
-                                   {{#if user}}readonly{{/if}} placeholder="Enter username">
+                    <div class="card-body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Email</div>
+                                <div class="info-value">{{user.email}}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Số điện thoại</div>
+                                <div class="info-value">{{#if user.phone}}{{user.phone}}{{else}}Chưa cập nhật{{/if}}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Ngày sinh</div>
+                                <div class="info-value">{{#if user.birthday}}{{formatDate user.birthday}}{{else}}Chưa cập nhật{{/if}}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Giới tính</div>
+                                <div class="info-value">{{#if user.gender}}{{user.gender}}{{else}}Chưa cập nhật{{/if}}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Bằng cấp</div>
+                                <div class="info-value">{{#if user.degree}}{{user.degree}}{{else}}Chưa cập nhật{{/if}}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Kinh nghiệm</div>
+                                <div class="info-value">{{#if user.experience}}{{user.experience}}{{else}}Chưa cập nhật{{/if}}</div>
+                            </div>
                         </div>
-                        
-                        <div class="upload-zone mb-3" id="uploadZone">
-                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-2"></i>
-                            <h6>Upload Your CV</h6>
-                            <small class="text-muted">Drag & drop or click (PDF, DOC, DOCX, TXT)</small>
-                            <input type="file" id="cvFile" accept=".pdf,.doc,.docx,.txt" hidden>
-                        </div>
-                        
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-primary" onclick="analyzeCV()">
-                                <i class="fas fa-search me-2"></i>Analyze CV
-                            </button>
-                            <button class="btn btn-outline-primary" onclick="getImprovements()">
-                                <i class="fas fa-lightbulb me-2"></i>Get Improvements
-                            </button>
-                        </div>
-                        
-                        <div id="cvResult" class="result-box"></div>
                     </div>
-                </div>
-                </div>
-
-                <!-- Job Recommendations -->
-                <div class="service-card">
-                    <div class="service-header">
-                        <div class="service-icon"><i class="fas fa-briefcase"></i></div>
-                        <h3 class="h5 mb-1">Job Recommendations</h3>
-                        <small class="opacity-90">Find personalized job matches based on your profile</small>
-                    </div>
-                    <div class="p-4">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Username</label>
-                            <input type="text" id="jobUsername" class="form-control" 
-                                   value="{{#if user.username}}{{user.username}}{{/if}}" 
-                                   {{#if user}}readonly{{/if}} placeholder="Enter username">
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Filters</label>
-                            <select class="form-select mb-2" id="location">
-                                <option value="">All Locations</option>
-                                <option value="Ho Chi Minh">Ho Chi Minh City</option>
-                                <option value="Hanoi">Hanoi</option>
-                                <option value="Da Nang">Da Nang</option>
-                                <option value="Remote">Remote</option>
-                            </select>
-                            <select class="form-select" id="jobType">
-                                <option value="">All Types</option>
-                                <option value="full-time">Full-time</option>
-                                <option value="part-time">Part-time</option>
-                                <option value="contract">Contract</option>
-                                <option value="internship">Internship</option>
-                            </select>
-                        </div>
-                        
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-primary" onclick="getJobs()">
-                                <i class="fas fa-search me-2"></i>Find Jobs
-                            </button>
-                            <button class="btn btn-outline-primary" onclick="refreshJobs()">
-                                <i class="fas fa-sync me-2"></i>Refresh Listings
-                            </button>
-                        </div>
-                        
-                        <div id="jobResult" class="result-box"></div>
-                    </div>
-                </div>
                 </div>
             </div>
+
+            <!-- CV Upload -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-file-alt"></i>
+                            Hồ sơ xin việc
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        {{#if user.cvData.hasCV}}
+                            <div class="cv-card">
+                                <i class="fas fa-file-pdf"></i>
+                                <div class="cv-info">
+                                    <div class="cv-filename">{{user.cvData.filename}}</div>
+                                    <div class="cv-date">{{formatDate user.cvData.uploadedAt}}</div>
+                                </div>
+                                <div class="cv-actions">
+                                    <a href="/cv/view/{{user._id}}" class="btn btn-primary btn-sm" target="_blank">
+                                        <i class="fas fa-eye"></i> Xem
+                                    </a>
+                                    <button class="btn btn-outline btn-sm" onclick="document.getElementById('cvUpload').click()">
+                                        <i class="fas fa-sync-alt"></i> Cập nhật
+                                    </button>
+                                </div>
+                            </div>
+                        {{else}}
+                            <div class="upload-zone" onclick="document.getElementById('cvUpload').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <h6>Tải lên CV của bạn</h6>
+                                <small>PDF, DOC, DOCX • Tối đa 5MB</small>
+                            </div>
+                        {{/if}}
+                        <input type="file" id="cvUpload" accept=".pdf,.doc,.docx" style="display:none">
+                        <div id="cvUploadStatus" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessments -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-brain"></i>
+                            Kết quả đánh giá tính cách
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="tabs">
+                            <button class="tab active" onclick="switchTab('mbti')">MBTI</button>
+                            <button class="tab" onclick="switchTab('bigfive')">Big Five</button>
+                            <button class="tab" onclick="switchTab('disc')">DISC</button>
+                        </div>
+
+                        <div id="mbti" class="tab-content active">
+                            <div class="loading" id="mbti-loading"><div class="spinner"></div><p>Đang tải...</p></div>
+                            <div id="mbti-results"></div>
+                        </div>
+
+                        <div id="bigfive" class="tab-content">
+                            <div class="loading" id="bigfive-loading"><div class="spinner"></div><p>Đang tải...</p></div>
+                            <div id="bigfive-results"></div>
+                        </div>
+
+                        <div id="disc" class="tab-content">
+                            <div class="loading" id="disc-loading"><div class="spinner"></div><p>Đang tải...</p></div>
+                            <div id="disc-results"></div>
+                        </div>
+
+                        <div class="d-flex gap-2 flex-wrap mt-3">
+                            <button class="btn btn-primary" onclick="takeAssessment('mbti')">
+                                <i class="fas fa-clipboard-check"></i> Làm bài MBTI
+                            </button>
+                            <button class="btn btn-outline" onclick="takeAssessment('big-five')">
+                                <i class="fas fa-clipboard-check"></i> Làm bài Big Five
+                            </button>
+                            <button class="btn btn-outline" onclick="takeAssessment('disc')">
+                                <i class="fas fa-clipboard-check"></i> Làm bài DISC
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applied Jobs -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-briefcase"></i>
+                            Việc làm đã ứng tuyển
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="/users/applied-jobs" class="btn btn-primary">
+                                <i class="fas fa-list"></i> Xem chi tiết
+                            </a>
+                            <a href="/jobs/search-results" class="btn btn-outline">
+                                <i class="fas fa-search"></i> Tìm việc mới
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal" onclick="if(event.target===this) closeEditModal()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Chỉnh sửa thông tin</h3>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form action="/users/profile" method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Tên người dùng</label>
+                    <input type="text" name="username" class="form-control" value="{{user.username}}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="{{user.email}}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="tel" name="phone" class="form-control" value="{{user.phone}}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Ngày sinh</label>
+                    <input type="date" name="birthday" class="form-control" value="{{#if user.birthday}}{{formatISODate user.birthday}}{{/if}}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Giới tính</label>
+                    <select name="gender" class="form-select">
+                        <option value="Nam" {{#if (eq user.gender "Nam")}}selected{{/if}}>Nam</option>
+                        <option value="Nữ" {{#if (eq user.gender "Nữ")}}selected{{/if}}>Nữ</option>
+                        <option value="Khác" {{#if (eq user.gender "Khác")}}selected{{/if}}>Khác</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Bằng cấp</label>
+                    <input type="text" name="degree" class="form-control" value="{{user.degree}}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Kinh nghiệm</label>
+                    <input type="text" name="experience" class="form-control" value="{{user.experience}}">
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">
+                        <i class="fas fa-save"></i> Lưu
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="closeEditModal()">Hủy</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const API = {
-            base: '/ai-service',
-            direct: 'http://localhost:8000'
-        };
+        let assessmentData = {};
 
-        // Utility functions
-        const $ = id => document.getElementById(id);
-        const showResult = (id, html, success = true) => {
-            const el = $(id);
-            el.innerHTML = html;
-            el.className = `result-box show ${success ? '' : 'error'}`;
-        };
-        const showLoading = id => showResult(id, '<div class="text-center"><span class="spinner"></span> Processing...</div>');
-        const parseData = obj => typeof obj === 'string' ? obj : obj?.improvements || JSON.stringify(obj, null, 2);
-
-        // CV Analysis
-        async function analyzeCV() {
-            const username = $('cvUsername').value;
-            if (!username) return alert('Please enter username');
-            
-            showLoading('cvResult');
-            try {
-                const res = await fetch(`${API.base}/resume/${username}`);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                if (data.error) throw new Error(data.error);
-                
-                const skills = (data.parsed_output?.technical_skills || [])
-                    .map(s => `<span class="badge bg-light text-dark me-1 mb-1">${typeof s === 'string' ? s : s.name || s}</span>`)
-                    .join('') || '<small class="text-muted">No skills detected</small>';
-                
-                showResult('cvResult', `
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <h6 class="mb-0">CV Found</h6>
-                    </div>
-                    <div class="row g-3 mb-3">
-                        <div class="col-6"><small class="text-muted">Uploaded:</small><br>${new Date(data.uploaded_at).toLocaleDateString()}</div>
-                        <div class="col-6"><small class="text-muted">Size:</small><br>${(data.file_size / 1024).toFixed(1)} KB</div>
-                    </div>
-                    ${data.parsed_output ? `
-                    <div class="mb-3">
-                        <small class="text-muted d-block mb-2">Skills:</small>
-                        ${skills}
-                    </div>
-                    ${data.parsed_output.experience_str ? `
-                    <div class="alert alert-info py-2 mb-0">
-                        <small><strong>Experience:</strong> ${data.parsed_output.experience_str}</small>
-                    </div>
-                    ` : ''}` : ''}
-                    <button class="btn btn-sm btn-outline-primary mt-3" onclick="getImprovements()">
-                        <i class="fas fa-lightbulb me-1"></i>Get Detailed Analysis
-                    </button>
-                `);
-            } catch (err) {
-                showResult('cvResult', `
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-times-circle text-danger me-2"></i>
-                        <h6 class="mb-0">CV Not Found</h6>
-                    </div>
-                    <p class="text-muted small mb-0">${err.message}</p>
-                `, false);
-            }
-        }
-
-        async function getImprovements() {
-            const username = $('cvUsername').value;
-            if (!username) return alert('Please enter username');
-            
-            showLoading('cvResult');
-            try {
-                const res = await fetch(`${API.direct}/resume/${username}/suggest_improvements`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                if (data.error) throw new Error(data.error);
-                
-                showResult('cvResult', `
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <h6 class="mb-0">Analysis Complete</h6>
-                    </div>
-                    <div class="alert alert-info mb-0">
-                        <h6 class="mb-2"><i class="fas fa-robot me-2"></i>AI Suggestions</h6>
-                        <div style="white-space: pre-line;">${parseData(data.improvements)}</div>
-                    </div>
-                `);
-            } catch (err) {
-                showResult('cvResult', `
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-times-circle text-danger me-2"></i>
-                        <h6 class="mb-0">Analysis Failed</h6>
-                    </div>
-                    <p class="text-muted small mb-0">${err.message}</p>
-                `, false);
-            }
-        }
-
-        // Job Recommendations
-        async function getJobs() {
-            const username = $('jobUsername').value;
-            if (!username) return alert('Please enter username');
-            
-            showLoading('jobResult');
-            try {
-                const res = await fetch(`${API.direct}/api/jobs-suggestion/${username}`);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                if (data.error) throw new Error(data.error);
-                
-                const jobs = (data.matching_jobs || data.jobs || []).slice(0, 10);
-                if (!jobs.length) throw new Error('No jobs found');
-                
-                const jobCards = jobs.map((job, i) => {
-                    const match = job.match_percentage || 0;
-                    const color = match >= 80 ? 'success' : match >= 60 ? 'info' : match >= 40 ? 'warning' : 'danger';
-                    return `
-                    <a href="/jobs/${job.slug}" class="job-card card mb-2 border-${i === 0 ? 'success' : 'light'}">
-                        <div class="card-body p-3">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="mb-0">${job.title || 'Job Title'}</h6>
-                                <span class="badge bg-${color}">${match}%</span>
-                            </div>
-                            <p class="mb-2 small">
-                                <strong>${job.company || 'Company'}</strong><br>
-                                <small class="text-muted">
-                                    <i class="fas fa-map-marker-alt me-1"></i>${job.location || 'Location'}
-                                    • ${job.type || 'Full-time'}
-                                </small>
-                            </p>
-                            <div class="progress" style="height: 4px;">
-                                <div class="progress-bar bg-${color}" style="width: ${match}%"></div>
-                            </div>
-                        </div>
-                    </a>
-                    `;
-                }).join('');
-                
-                showResult('jobResult', `
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <h6 class="mb-0">${jobs.length} Job Matches</h6>
-                    </div>
-                    ${jobCards}
-                `);
-            } catch (err) {
-                showResult('jobResult', `
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-times-circle text-danger me-2"></i>
-                        <h6 class="mb-0">Search Failed</h6>
-                    </div>
-                    <p class="text-muted small mb-0">${err.message}</p>
-                `, false);
-            }
-        }
-
-        async function refreshJobs() {
-            const username = $('jobUsername').value;
-            if (!username) return alert('Please enter username');
-            
-            showLoading('jobResult');
-            try {
-                const res = await fetch(`${API.base}/users/${username}/jobs`);
-                const data = await res.json();
-                if (data.error) throw new Error(data.error);
-                
-                showResult('jobResult', `
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <h6 class="mb-0">Listings Updated</h6>
-                    </div>
-                    <p class="text-muted small">Found ${data.count || 0} new opportunities</p>
-                    <button class="btn btn-sm btn-outline-primary" onclick="getJobs()">View Jobs</button>
-                `);
-            } catch (err) {
-                showResult('jobResult', `
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-times-circle text-danger me-2"></i>
-                        <h6 class="mb-0">Update Failed</h6>
-                    </div>
-                    <p class="text-muted small mb-0">${err.message}</p>
-                `, false);
-            }
-        }
-
-        // File Upload
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            const zone = $('uploadZone');
-            const input = $('cvFile');
-            
-            if (zone && input) {
-                zone.onclick = () => input.click();
-                zone.ondragover = e => { e.preventDefault(); zone.classList.add('dragover'); };
-                zone.ondragleave = () => zone.classList.remove('dragover');
-                zone.ondrop = e => {
-                    e.preventDefault();
-                    zone.classList.remove('dragover');
-                    uploadFile(e.dataTransfer.files[0]);
-                };
-                input.onchange = e => uploadFile(e.target.files[0]);
-            }
+            loadProfileData();
+            setupEventListeners();
         });
 
-        async function uploadFile(file) {
-            if (!file) return alert('Please select a file');
-            const username = $('cvUsername').value;
-            if (!username) return alert('Please enter username');
-            
-            showLoading('cvResult');
-            const form = new FormData();
-            form.append('file', file);
-            form.append('username', username);
+        function setupEventListeners() {
+            // Avatar upload
+            document.getElementById('avatarInput').onchange = e => {
+                const file = e.target.files[0];
+                if (file) {
+                    if (!validateFile(file, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'], 5)) {
+                        showStatus('avatarStatus', 'File không hợp lệ', 'error');
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = e => document.getElementById('avatarPreview').src = e.target.result;
+                    reader.readAsDataURL(file);
+                    uploadAvatar(file);
+                }
+            };
+
+            // CV upload
+            document.getElementById('cvUpload').onchange = e => {
+                if (e.target.files[0]) uploadCV(e.target.files[0]);
+            };
+        }
+
+        function validateFile(file, types, maxMB) {
+            return types.includes(file.type) && file.size <= maxMB * 1024 * 1024;
+        }
+
+        function showStatus(id, msg, type) {
+            const el = document.getElementById(id);
+            el.className = `avatar-status ${type}`;
+            el.textContent = msg;
+            setTimeout(() => el.textContent = '', 3000);
+        }
+
+        async function uploadAvatar(file) {
+            const formData = new FormData();
+            formData.append('avatar', file);
+            showStatus('avatarStatus', 'Đang tải...', 'uploading');
             
             try {
-                const res = await fetch(`${API.base}/upload_resume`, { method: 'POST', body: form });
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const res = await fetch('/users/upload-avatar', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
                 const data = await res.json();
-                if (data.error) throw new Error(data.error);
                 
-                showResult('cvResult', `
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <h6 class="mb-0">Upload Success</h6>
-                    </div>
-                    <p class="mb-2"><strong>File:</strong> ${data.filename || file.name}</p>
-                    <p class="mb-3"><strong>Size:</strong> ${(data.size / 1024).toFixed(1)} KB</p>
-                    <button class="btn btn-sm btn-outline-primary" onclick="analyzeCV()">Analyze Now</button>
-                `);
+                if (data.success) {
+                    document.getElementById('avatarPreview').src = data.avatar + '?t=' + Date.now();
+                    showStatus('avatarStatus', 'Tải lên thành công!', 'success');
+                } else {
+                    throw new Error(data.message);
+                }
             } catch (err) {
-                showResult('cvResult', `
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-times-circle text-danger me-2"></i>
-                        <h6 class="mb-0">Upload Failed</h6>
-                    </div>
-                    <p class="text-muted small mb-0">${err.message}</p>
-                `, false);
+                showStatus('avatarStatus', err.message || 'Lỗi tải ảnh', 'error');
             }
+        }
+
+        async function uploadCV(file) {
+            const status = document.getElementById('cvUploadStatus');
+            status.innerHTML = '<div class="loading active"><div class="spinner"></div><p>Đang tải CV...</p></div>';
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('username', '{{user.username}}');
+            
+            try {
+                const res = await fetch('/upload_resume', { method: 'POST', body: formData });
+                const data = await res.json();
+                
+                if (data.success) {
+                    status.innerHTML = `<div class="alert info"><i class="fas fa-check"></i><strong>Thành công!</strong></div>`;
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (err) {
+                status.innerHTML = `<div class="alert warning"><i class="fas fa-times"></i><strong>Lỗi: ${err.message}</strong></div>`;
+            }
+        }
+
+        async function loadProfileData() {
+            await loadAssessments();
+            updateStats();
+        }
+
+        async function loadAssessments() {
+            const types = ['mbti', 'big-five', 'disc'];
+            
+            for (const type of types) {
+                const normalized = type === 'big-five' ? 'bigfive' : type;
+                showLoading(`${normalized}-loading`, true);
+                
+                try {
+                    const res = await fetch(`/personality-assessments/${type}/latest/{{user._id}}`);
+                    const data = await res.json();
+                    
+                    if (data.success && data.result) {
+                        displayResult(normalized, data.result);
+                        assessmentData[normalized] = data.result;
+                    } else {
+                        showEmpty(normalized);
+                    }
+                } catch (err) {
+                    showEmpty(normalized);
+                } finally {
+                    showLoading(`${normalized}-loading`, false);
+                }
+            }
+        }
+
+        function displayResult(type, result) {
+            const container = document.getElementById(`${type}-results`);
+            
+            if (type === 'mbti') {
+                const desc = {
+                    'INTJ': 'Kiến trúc sư - Tư duy chiến lược',
+                    'INTP': 'Logic học - Phân tích sâu sắc',
+                    'ENTJ': 'Chỉ huy - Lãnh đạo tự nhiên',
+                    'ENTP': 'Tranh luận - Sáng tạo đổi mới',
+                    'INFJ': 'Nhà ủng hộ - Lý tưởng cao',
+                    'INFP': 'Người hòa giải - Giá trị cá nhân',
+                    'ENFJ': 'Người thầy - Truyền cảm hứng',
+                    'ENFP': 'Nhà vô địch - Đam mê sáng tạo',
+                    'ISTJ': 'Người kiểm toán - Thực tế trách nhiệm',
+                    'ISFJ': 'Người bảo vệ - Ấm áp chu đáo',
+                    'ESTJ': 'Giám đốc - Tổ chức hiệu quả',
+                    'ESFJ': 'Người cung ứng - Thân thiện hòa đồng',
+                    'ISTP': 'Nghệ nhân - Linh hoạt thực tế',
+                    'ISFP': 'Nhà thám hiểm - Nhạy cảm thẩm mỹ',
+                    'ESTP': 'Doanh nhân - Năng động mạo hiểm',
+                    'ESFP': 'Người giải trí - Vui vẻ tự phát'
+                };
+                
+                container.innerHTML = `
+                    <div class="assessment-card">
+                        <div class="assessment-type">${result.type}</div>
+                        <div class="assessment-desc">${desc[result.type] || 'Loại hình tính cách'}</div>
+                        <div class="assessment-grid">
+                            <div class="assessment-item">
+                                <div class="assessment-item-label">Năng lượng</div>
+                                <div class="assessment-item-value">${result.type[0] === 'E' ? 'Hướng ngoại' : 'Hướng nội'}</div>
+                            </div>
+                            <div class="assessment-item">
+                                <div class="assessment-item-label">Thông tin</div>
+                                <div class="assessment-item-value">${result.type[1] === 'S' ? 'Cảm nhận' : 'Trực giác'}</div>
+                            </div>
+                            <div class="assessment-item">
+                                <div class="assessment-item-label">Quyết định</div>
+                                <div class="assessment-item-value">${result.type[2] === 'T' ? 'Lý trí' : 'Tình cảm'}</div>
+                            </div>
+                            <div class="assessment-item">
+                                <div class="assessment-item-label">Lối sống</div>
+                                <div class="assessment-item-value">${result.type[3] === 'J' ? 'Kế hoạch' : 'Linh hoạt'}</div>
+                            </div>
+                        </div>
+                        ${result.traits ? `<div class="trait-tags">${result.traits.map(t => `<span class="trait-tag">${t}</span>`).join('')}</div>` : ''}
+                    </div>
+                `;
+            } else if (type === 'bigfive') {
+                const labels = {
+                    openness: 'Cởi mở',
+                    conscientiousness: 'Tận tâm',
+                    extraversion: 'Hướng ngoại',
+                    agreeableness: 'Hòa đồng',
+                    neuroticism: 'Ổn định'
+                };
+                
+                container.innerHTML = `
+                    <div class="assessment-card">
+                        <div class="assessment-grid">
+                            ${Object.entries(result.scores || {}).map(([k, v]) => `
+                                <div class="assessment-item">
+                                    <div class="assessment-item-label">${labels[k] || k}</div>
+                                    <div class="assessment-item-value">${v}%</div>
+                                    <div class="progress-bar-wrapper">
+                                        <div class="progress-fill" style="width:${v}%"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'disc') {
+                const labels = { D: 'Thống trị', I: 'Ảnh hưởng', S: 'Kiên định', C: 'Tuân thủ' };
+                
+                container.innerHTML = `
+                    <div class="assessment-card">
+                        <div class="assessment-type">${result.primaryTrait || 'N/A'}</div>
+                        <div class="assessment-desc">Phong cách hành vi chủ đạo</div>
+                        <div class="assessment-grid">
+                            ${Object.entries(result.scores || {}).map(([k, v]) => `
+                                <div class="assessment-item">
+                                    <div class="assessment-item-label">${labels[k] || k}</div>
+                                    <div class="assessment-item-value">${v}%</div>
+                                    <div class="progress-bar-wrapper">
+                                        <div class="progress-fill" style="width:${v}%"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function showEmpty(type) {
+            document.getElementById(`${type}-results`).innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <p>Chưa có kết quả đánh giá</p>
+                    <button class="btn btn-primary" onclick="takeAssessment('${type}')">
+                        <i class="fas fa-clipboard-check"></i> Làm bài đánh giá
+                    </button>
+                </div>
+            `;
+        }
+
+        function showLoading(id, show) {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('active', show);
+        }
+
+        function updateStats() {
+            document.getElementById('assessmentCount').textContent = Object.keys(assessmentData).length;
+            
+            const fields = ['email', 'phone', 'birthday', 'gender', 'degree', 'experience'];
+            const user = {{json user}};
+            const filled = fields.filter(f => user[f]).length;
+            document.getElementById('profileCompleteness').textContent = `${Math.round((filled / fields.length) * 100)}%`;
+        }
+
+        function switchTab(name) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(name).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function takeAssessment(type) {
+            window.location.href = `/personality-assessments/${type}`;
+        }
+
+        function openEditModal() {
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
         }
     </script>
 </body>

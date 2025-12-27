@@ -8,12 +8,20 @@ const UserBehaviorService = require('../../services/UserBehaviorService');
 class HomeControllerEnhanced {
     async index(req, res, next) {
         try {
-            const jobs = await Job.find({}).populate('businessId');
-            const jobFields = await JobField.find({});
             const now = new Date();
             let nowCount = 0;
             let twoDaysCount = 0;
-            let validJobs = [];
+            
+            // Only load valid jobs with limit for initial page load
+            const validJobsQuery = { expiryTime: { $gte: now } };
+            const jobs = await Job.find(validJobsQuery)
+                .select('title companyName city type salary slug logoPath businessId createdAt expiryTime updatedAt field jobField')
+                .populate('businessId', 'companyName logo')
+                .lean()
+                .sort({ createdAt: -1 })
+                .limit(50); // Limit to 50 most recent jobs for initial load
+            
+            const jobFields = await JobField.find({});
 
             // Tính số lượng job thực tế cho từng ngành nghề
             const jobFieldCounters = {};
@@ -47,7 +55,8 @@ class HomeControllerEnhanced {
                 return `${day}/${month}/${year}`;
             };
 
-            // Đếm số lượng job theo ngành nghề
+            // Process jobs (already filtered and limited from database)
+            const validJobs = [];
             for (let job of jobs) {
                 const createdAt = new Date(job.createdAt);
 
@@ -57,75 +66,57 @@ class HomeControllerEnhanced {
                 if (diffDays === 0) nowCount++;
                 if (diffDays === 2) twoDaysCount++;
 
-                // Lọc job còn hợp lệ
-                if (job.expiryTime >= now) {
-                    const formattedJob = {
-                        ...job.toObject(),
-                        companyName:
-                            job.businessId?.companyName ||
-                            job.companyName ||
-                            'Công ty',
-                        companyLogo:
-                            job.logoPath || job.businessId?.logo || null,
-                        createdAt: formatRelativeTime(job.createdAt),
-                        expiryTime: formatDate(job.expiryTime),
-                        updatedAt: job.updatedAt
-                            ? formatDate(job.updatedAt)
-                            : null,
-                    };
+                // Format job for frontend
+                const formattedJob = {
+                    ...job,
+                    companyName: job.businessId?.companyName || job.companyName || 'Công ty',
+                    companyLogo: job.logoPath || job.businessId?.logo || null,
+                    createdAt: formatRelativeTime(job.createdAt),
+                    expiryTime: formatDate(job.expiryTime),
+                    updatedAt: job.updatedAt ? formatDate(job.updatedAt) : null,
+                };
 
-                    validJobs.push(formattedJob);
+                validJobs.push(formattedJob);
 
-                    // Tăng counter cho ngành nghề tương ứng
-                    const jobField = job.field || job.jobField;
-                    if (jobField) {
-                        const jobFieldLower = jobField.toLowerCase();
-                        const matchedField = jobFields.find((field) => {
-                            const fieldNameLower = field.name.toLowerCase();
-                            // Check for exact match or partial match
-                            return (
-                                fieldNameLower === jobFieldLower ||
-                                jobFieldLower.includes(fieldNameLower) ||
-                                fieldNameLower.includes(jobFieldLower)
-                            );
-                        });
-                        if (matchedField) {
-                            jobFieldCounters[matchedField._id.toString()]++;
-                        }
+                // Tăng counter cho ngành nghề tương ứng
+                const jobField = job.field || job.jobField;
+                if (jobField) {
+                    const jobFieldLower = jobField.toLowerCase();
+                    const matchedField = jobFields.find((field) => {
+                        const fieldNameLower = field.name.toLowerCase();
+                        return (
+                            fieldNameLower === jobFieldLower ||
+                            jobFieldLower.includes(fieldNameLower) ||
+                            fieldNameLower.includes(jobFieldLower)
+                        );
+                    });
+                    if (matchedField) {
+                        jobFieldCounters[matchedField._id.toString()]++;
                     }
                 }
             }
 
-            // Lấy 6 công việc đại diện cho mỗi ngành nghề
+            // Get jobs for each field from already loaded jobs
             const jobFieldsWithJobs = [];
             
             for (const field of jobFields) {
-                // Lấy 6 công việc thuộc ngành nghề này
-                const fieldJobs = await Job.find({
-                    $or: [
-                        { field: { $regex: field.name, $options: 'i' } },
-                        { jobField: { $regex: field.name, $options: 'i' } }
-                    ],
-                    expiryTime: { $gte: now }
-                })
-                .sort({ createdAt: -1 })
-                .limit(6)
-                .populate('businessId');
-
-                // Format jobs
-                const formattedJobs = fieldJobs.map(job => ({
-                    ...job.toObject(),
-                    companyName: job.businessId?.companyName || job.companyName || 'Công ty',
-                    companyLogo: job.logoPath || job.businessId?.logo || null,
-                    createdAt: HomeControllerEnhanced.formatRelativeTime(job.createdAt),
-                    expiryTime: formatDate(job.expiryTime),
-                    updatedAt: job.updatedAt ? formatDate(job.updatedAt) : null,
-                }));
+                // Filter jobs from already loaded data
+                const fieldJobs = validJobs.filter(job => {
+                    const jobField = job.field || job.jobField;
+                    if (!jobField) return false;
+                    const jobFieldLower = jobField.toLowerCase();
+                    const fieldNameLower = field.name.toLowerCase();
+                    return (
+                        fieldNameLower === jobFieldLower ||
+                        jobFieldLower.includes(fieldNameLower) ||
+                        fieldNameLower.includes(jobFieldLower)
+                    );
+                }).slice(0, 6); // Limit to 6 jobs per field
 
                 jobFieldsWithJobs.push({
                     ...field.toObject(),
                     jobCount: jobFieldCounters[field._id.toString()] || 0,
-                    jobs: formattedJobs
+                    jobs: fieldJobs
                 });
             }
 

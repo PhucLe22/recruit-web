@@ -9,33 +9,6 @@ const DISCAssessment = require('../../models/DISCAssessment');
 const CV = require('../../models/CV');
 
 class UserController{
-    // PUT /user/profile
-    async updateProfile(req, res) {
-        try {
-        const userId = req.session.user._id;
-        const { username, email, phone, gender, degree, experience } = req.body;
-
-        await User.findByIdAndUpdate(userId, {
-            username,
-            email,
-            phone,
-            gender,
-            degree,
-            experience
-        });
-
-        // Update session
-        const updatedUser = await User.findById(userId);
-        req.session.user = updatedUser;
-
-        req.flash('success', 'Cập nhật hồ sơ thành công');
-        res.redirect('/users/profile');
-        } catch (error) {
-        console.error('Update profile error:', error);
-        req.flash('error', 'Cập nhật hồ sơ thất bại');
-        res.redirect('/users/profile');
-        }
-    }
 
     // [GET] /profile/:userId
     async showProfile(req, res, next) {
@@ -124,32 +97,53 @@ class UserController{
         return Math.round((completedFields.length / requiredFields.length) * 100);
     }
 
+    // Format date to Vietnamese locale
+    formatDate(date) {
+        if (!date) return '';
+        const d = new Date(date);
+        const options = { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Asia/Ho_Chi_Minh'
+        };
+        return d.toLocaleString('vi-VN', options);
+    }
+
     // Format MBTI result for display
     formatMBTIResult(result) {
+        if (!result) return null;
         return {
             type: result.personalityType,
             scores: result.scores,
             description: result.analysis,
-            lastUpdated: result.updatedAt || result.createdAt
+            lastUpdated: this.formatDate(result.updatedAt || result.createdAt),
+            rawDate: result.updatedAt || result.createdAt
         };
     }
 
     // Format Big Five result for display
     formatBigFiveResult(result) {
+        if (!result) return null;
         return {
             scores: result.scores,
             description: result.analysis,
-            lastUpdated: result.updatedAt || result.createdAt
+            lastUpdated: this.formatDate(result.updatedAt || result.createdAt),
+            rawDate: result.updatedAt || result.createdAt
         };
     }
 
     // Format DISC result for display
     formatDISResult(result) {
+        if (!result) return null;
         return {
             type: result.dominantTrait,
             scores: result.scores,
             description: result.analysis,
-            lastUpdated: result.updatedAt || result.createdAt
+            lastUpdated: this.formatDate(result.updatedAt || result.createdAt),
+            rawDate: result.updatedAt || result.createdAt
         };
     }
 
@@ -166,16 +160,10 @@ class UserController{
         try {
             const userId = req.session.user._id; // Get userId from session
             const updateData = req.body;
-            
-            console.log('=== DEBUG: Profile Update ===');
-            console.log('User ID:', userId);
-            console.log('Update Data:', updateData);
-            console.log('Has file:', !!req.file);
 
             // Handle file upload if avatar is being updated
             if (req.file) {
                 updateData.avatar = `/uploads/avatars/${req.file.filename}`;
-                console.log('Avatar updated:', updateData.avatar);
             }
 
             const updatedUser = await User.findByIdAndUpdate(
@@ -184,15 +172,26 @@ class UserController{
                 { new: true, runValidators: true }
             ).select('-password -__v');
 
-            console.log('Updated User:', updatedUser);
-
             // Update session if user is updating their own profile
-            if (req.user && req.user._id.toString() === userId) {
+            if (req.user && req.user._id === userId) {
                 req.session.user = {
                     ...req.session.user,
                     ...updateData,
                     avatar: updateData.avatar || req.session.user.avatar
                 };
+            }
+            if (updatedUser.birthday) {
+                updatedUser.birthday = new Date(updatedUser.birthday)
+                    .toISOString()
+                    .split('T')[0]; // YYYY-MM-DD
+            }
+            // Check if this is an AJAX request
+            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+                return res.json({
+                    success: true,
+                    message: 'Cập nhật hồ sơ thành công',
+                    user: updatedUser
+                });
             }
 
             req.flash('success', 'Cập nhật hồ sơ thành công');
@@ -200,6 +199,15 @@ class UserController{
 
         } catch (error) {
             console.error('Error updating profile:', error);
+            
+            // Check if this is an AJAX request
+            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+                return res.status(500).json({
+                    success: false,
+                    message: 'Có lỗi xảy ra khi cập nhật hồ sơ'
+                });
+            }
+            
             req.flash('error', 'Có lỗi xảy ra khi cập nhật hồ sơ');
             res.redirect('back');
         }

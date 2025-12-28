@@ -1,5 +1,6 @@
 // File: /src/app/controllers/AIServiceController.js
 const axios = require('axios');
+const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
 class AIServiceController {
@@ -76,17 +77,25 @@ class AIServiceController {
                     error: 'Username and file are required'
                 });
             }
-
+            
+            // Read file content as buffer
+            const fileContent = fs.readFileSync(file.path);
+            
+            // Use built-in FormData for Node.js
+            const FormData = require('form-data');
             const formData = new FormData();
             formData.append('username', username);
-            formData.append('file', file.buffer, file.originalname);
+            formData.append('file', fileContent, file.originalname);
 
             const response = await axios.post(`${this.AI_SERVICE_URL}/upload_resume`, formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    ...formData.getHeaders()
                 },
                 timeout: 60000 // 60 seconds for file upload
             });
+
+            // Clean up uploaded file
+            fs.unlinkSync(file.path);
 
             return res.json(response.data);
         } catch (error) {

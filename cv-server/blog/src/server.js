@@ -4,7 +4,6 @@ const port = process.env.PORT || 3000;
 const app = express();
 const compression = require('compression');
 const route = require('./routes');
-const db = require('./config/db');
 const methodOverride = require('method-override');
 const session = require('express-session');
 const exphbs = require('express-handlebars');
@@ -14,7 +13,6 @@ const cookieParser = require('cookie-parser');
 const { isLogin, userDataMiddleware } = require('./middlewares/isLogin');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const flash = require('connect-flash');
-const hbs = require('handlebars');
 
 require('dotenv').config();
 
@@ -36,6 +34,12 @@ app.engine(
             firstLetter: (str) => {
                 if (!str || typeof str !== 'string') return '';
                 return str.charAt(0).toUpperCase();
+            },
+            formatDateInput: (date) => {
+                if (!date) return '';
+                const d = new Date(date);
+                if (isNaN(d.getTime())) return '';
+                return d.toISOString().split('T')[0];
             },
             formatSalary: (salary) => {
                 if (!salary) return salary;
@@ -316,40 +320,40 @@ passport.use(
     ),
 );
 
-hbs.registerHelper('formatDate', function (date) {
-    const d = new Date(date);
-    const day = d.getDate().toString().padStart(2, '0');
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-});
+// hbs.registerHelper('formatDate', function (date) {
+//     const d = new Date(date);
+//     const day = d.getDate().toString().padStart(2, '0');
+//     const month = (d.getMonth() + 1).toString().padStart(2, '0');
+//     const year = d.getFullYear();
+//     return `${day}/${month}/${year}`;
+// });
 
-hbs.registerHelper('formatISODate', function (date) {
-    if (!date) return '';
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const day = d.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-});
+// hbs.registerHelper('formatISODate', function (date) {
+//     if (!date) return '';
+//     const d = new Date(date);
+//     const year = d.getFullYear();
+//     const month = (d.getMonth() + 1).toString().padStart(2, '0');
+//     const day = d.getDate().toString().padStart(2, '0');
+//     return `${year}-${month}-${day}`;
+// });
 
-// Register additional helpers
-hbs.registerHelper('eq', (a, b) => a === b);
-hbs.registerHelper('gt', (a, b) => a > b);
-hbs.registerHelper('lt', (a, b) => a < b);
-hbs.registerHelper('sub', (a, b) => a - b);
-hbs.registerHelper('add', (a, b) => a + b);
-hbs.registerHelper('paginationRange', (currentPage, totalPages) => {
-    const range = [];
-    const start = Math.max(1, currentPage - 2);
-    const end = Math.min(totalPages, currentPage + 2);
+// // Register additional helpers
+// hbs.registerHelper('eq', (a, b) => a === b);
+// hbs.registerHelper('gt', (a, b) => a > b);
+// hbs.registerHelper('lt', (a, b) => a < b);
+// hbs.registerHelper('sub', (a, b) => a - b);
+// hbs.registerHelper('add', (a, b) => a + b);
+// hbs.registerHelper('paginationRange', (currentPage, totalPages) => {
+//     const range = [];
+//     const start = Math.max(1, currentPage - 2);
+//     const end = Math.min(totalPages, currentPage + 2);
     
-    for (let i = start; i <= end; i++) {
-        range.push(i);
-    }
+//     for (let i = start; i <= end; i++) {
+//         range.push(i);
+//     }
     
-    return range;
-});
+//     return range;
+// });
 
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'resources', 'views')); //_dirname == contextPath

@@ -90,3 +90,9 @@ Thumbs.db
 
 # Environment Variables
 .env
+
+# AI Agent
+ai-agent/chatbot_backend/venv/
+ai-agent/chatbot_backend/uploads
+ai-agent/chatbot_backend/ocr_output
+ai-agent/chatbot_backend/page_images

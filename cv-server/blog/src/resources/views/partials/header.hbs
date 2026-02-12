@@ -40,93 +40,94 @@
     <!-- Right Actions -->
     <div class="header__actions">
       {{#if isLogin}}
-        {{#if (eq userType 'user')}}
-          <div class="header__user" id="userDropdown">
-            <button class="header__user-btn" type="button">
-              <div class="header__avatar">
-                {{#if user.avatar}}
-                  <img src="{{user.avatar}}" alt="{{user.name}}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                  <span class="header__avatar-fallback" style="display:none;">
-                    {{#if user.name}}{{substring (uppercase user.name) 0 1}}{{else}}<i class="fas fa-user"></i>{{/if}}
-                  </span>
-                {{else}}
-                  <span class="header__avatar-fallback">
-                    {{#if user.name}}{{substring (uppercase user.name) 0 1}}{{else}}<i class="fas fa-user"></i>{{/if}}
-                  </span>
-                {{/if}}
-              </div>
-              <span class="header__user-name">{{user.name}}</span>
-              <i class="fas fa-chevron-down header__chevron"></i>
-            </button>
-            <div class="header__dropdown">
-              <div class="header__dropdown-info">
-                <strong>{{user.name}}</strong>
-                <small>{{user.email}}</small>
-              </div>
-              <div class="header__dropdown-divider"></div>
-              <a href="/users/profile" class="header__dropdown-item">
-                <i class="fas fa-user"></i> Ho so ca nhan
-              </a>
-              <a href="/users/applied-jobs" class="header__dropdown-item">
-                <i class="fas fa-clipboard-list"></i> Viec da ung tuyen
-              </a>
-              <a href="/users/saved-jobs" class="header__dropdown-item">
-                <i class="fas fa-heart"></i> Viec da luu
-              </a>
-              <a href="/users/upload-avatar" class="header__dropdown-item">
-                <i class="fas fa-camera"></i> Doi anh dai dien
-              </a>
-              <div class="header__dropdown-divider"></div>
-              <a href="/auth/logout" class="header__dropdown-item header__dropdown-item--danger">
-                <i class="fas fa-sign-out-alt"></i> Dang xuat
-              </a>
-            </div>
+      {{#if (eq userType 'user')}}
+      <div class="header__user" id="userDropdown">
+        <button class="header__user-btn" type="button">
+          <div class="header__avatar">
+            {{#if user.avatar}}
+            <img src="{{user.avatar}}" alt="{{user.name}}"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="header__avatar-fallback" style="display:none;">
+              {{#if user.name}}{{substring (uppercase user.name) 0 1}}{{else}}<i class="fas fa-user"></i>{{/if}}
+            </span>
+            {{else}}
+            <span class="header__avatar-fallback">
+              {{#if user.name}}{{substring (uppercase user.name) 0 1}}{{else}}<i class="fas fa-user"></i>{{/if}}
+            </span>
+            {{/if}}
           </div>
-        {{else if (eq userType 'business')}}
-          <div class="header__user" id="userDropdown">
-            <button class="header__user-btn" type="button">
-              <div class="header__avatar">
-                {{#if business.logoPath}}
-                  <img src="{{business.logoPath}}" alt="{{business.companyName}}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                  <span class="header__avatar-fallback" style="display:none;">
-                    {{#if business.companyName}}{{substring (uppercase business.companyName) 0 1}}{{else}}<i class="fas fa-building"></i>{{/if}}
-                  </span>
-                {{else}}
-                  <span class="header__avatar-fallback">
-                    {{#if business.companyName}}{{substring (uppercase business.companyName) 0 1}}{{else}}<i class="fas fa-building"></i>{{/if}}
-                  </span>
-                {{/if}}
-              </div>
-              <span class="header__user-name">{{business.companyName}}</span>
-              <i class="fas fa-chevron-down header__chevron"></i>
-            </button>
-            <div class="header__dropdown">
-              <div class="header__dropdown-info">
-                <strong>{{business.companyName}}</strong>
-                <small>{{business.email}}</small>
-              </div>
-              <div class="header__dropdown-divider"></div>
-              <a href="/business/dashboard" class="header__dropdown-item">
-                <i class="fas fa-chart-bar"></i> Bang dieu khien
-              </a>
-              <a href="/business/jobs" class="header__dropdown-item">
-                <i class="fas fa-briefcase"></i> Quan ly tuyen dung
-              </a>
-              <a href="/business/applications" class="header__dropdown-item">
-                <i class="fas fa-file-alt"></i> Ho so ung tuyen
-              </a>
-              <div class="header__dropdown-divider"></div>
-              <a href="/auth/logout" class="header__dropdown-item header__dropdown-item--danger">
-                <i class="fas fa-sign-out-alt"></i> Dang xuat
-              </a>
-            </div>
+          <span class="header__user-name">{{user.name}}</span>
+          <i class="fas fa-chevron-down header__chevron"></i>
+        </button>
+        <div class="header__dropdown">
+          <div class="header__dropdown-info">
+            <strong>{{user.name}}</strong>
+            <small>{{user.email}}</small>
           </div>
-        {{/if}}
-      {{else}}
-        <div class="header__auth">
-          <a href="/auth/login" class="header__btn header__btn--outline">Dang nhap</a>
-          <a href="/auth/register" class="header__btn header__btn--primary">Dang ky</a>
+          <div class="header__dropdown-divider"></div>
+          <a href="/users/profile" class="header__dropdown-item">
+            <i class="fas fa-user"></i> Ho so ca nhan
+          </a>
+          <a href="/users/applied-jobs" class="header__dropdown-item">
+            <i class="fas fa-clipboard-list"></i> Viec da ung tuyen
+          </a>
+          <a href="/users/saved-jobs" class="header__dropdown-item">
+            <i class="fas fa-heart"></i> Viec da luu
+          </a>
+          <div class="header__dropdown-divider"></div>
+          <a href="/auth/logout" class="header__dropdown-item header__dropdown-item--danger">
+            <i class="fas fa-sign-out-alt"></i> Dang xuat
+          </a>
         </div>
+      </div>
+      {{else if (eq userType 'business')}}
+      <div class="header__user" id="userDropdown">
+        <button class="header__user-btn" type="button">
+          <div class="header__avatar">
+            {{#if business.logoPath}}
+            <img src="{{business.logoPath}}" alt="{{business.companyName}}"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="header__avatar-fallback" style="display:none;">
+              {{#if business.companyName}}{{substring (uppercase business.companyName) 0 1}}{{else}}<i
+                class="fas fa-building"></i>{{/if}}
+            </span>
+            {{else}}
+            <span class="header__avatar-fallback">
+              {{#if business.companyName}}{{substring (uppercase business.companyName) 0 1}}{{else}}<i
+                class="fas fa-building"></i>{{/if}}
+            </span>
+            {{/if}}
+          </div>
+          <span class="header__user-name">{{business.companyName}}</span>
+          <i class="fas fa-chevron-down header__chevron"></i>
+        </button>
+        <div class="header__dropdown">
+          <div class="header__dropdown-info">
+            <strong>{{business.companyName}}</strong>
+            <small>{{business.email}}</small>
+          </div>
+          <div class="header__dropdown-divider"></div>
+          <a href="/business/dashboard" class="header__dropdown-item">
+            <i class="fas fa-chart-bar"></i> Bang dieu khien
+          </a>
+          <a href="/business/jobs" class="header__dropdown-item">
+            <i class="fas fa-briefcase"></i> Quan ly tuyen dung
+          </a>
+          <a href="/business/applications" class="header__dropdown-item">
+            <i class="fas fa-file-alt"></i> Ho so ung tuyen
+          </a>
+          <div class="header__dropdown-divider"></div>
+          <a href="/auth/logout" class="header__dropdown-item header__dropdown-item--danger">
+            <i class="fas fa-sign-out-alt"></i> Dang xuat
+          </a>
+        </div>
+      </div>
+      {{/if}}
+      {{else}}
+      <div class="header__auth">
+        <a href="/auth/login" class="header__btn header__btn--outline">Dang nhap</a>
+        <a href="/auth/register" class="header__btn header__btn--primary">Dang ky</a>
+      </div>
       {{/if}}
 
       <!-- Mobile Toggle -->

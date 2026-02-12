@@ -144,7 +144,7 @@ class ApplyController {
           .replace(/\{\{companyName\}\}/g, business?.companyName || 'Unknown Company')
           .replace(/\{\{appliedDate\}\}/g, new Date().toLocaleDateString())
           .replace(/\{\{applicationId\}\}/g, application._id)
-          .replace(/\{\{dashboardUrl\}\}/g, 'http://localhost:3000/dashboard');
+          .replace(/\{\{dashboardUrl\}\}/g, `${process.env.BASE_URL}/dashboard`);
 
         console.log('Email content preview:', emailContent.substring(0, 500));
 

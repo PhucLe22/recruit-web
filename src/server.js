@@ -387,6 +387,32 @@ app.use(compression());
 
 route(app);
 
+// 404 handler - must be after all routes
+app.use((req, res) => {
+    if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(404).json({ success: false, message: 'Route not found' });
+    }
+    res.status(404).render('404', { title: '404 - Not Found' });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error('Unhandled error:', err.stack || err.message || err);
+
+    if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(err.status || 500).json({
+            success: false,
+            message: err.message || 'Internal server error',
+        });
+    }
+
+    res.status(err.status || 500).render('error', {
+        title: 'Error',
+        message: err.message || 'Something went wrong',
+        error: process.env.NODE_ENV !== 'production' ? err.stack : null,
+    });
+});
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });

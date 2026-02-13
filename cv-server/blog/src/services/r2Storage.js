@@ -22,6 +22,7 @@ mongoose.connection.on('connected', () => {
 });
 
 async function uploadFile(buffer, key, contentType) {
+    if (!buffer) throw new Error('Upload failed: file buffer is empty');
     const gfs = getBucket();
 
     // Delete existing file with same key if exists

@@ -1,55 +1,48 @@
-const { createClient } = require('@supabase/supabase-js');
+const admin = require('firebase-admin');
 
-const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+// Initialize Firebase Admin with service account
+if (!admin.apps.length) {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    });
+}
 
-const BUCKET = process.env.SUPABASE_STORAGE_BUCKET;
-const PUBLIC_URL = (process.env.SUPABASE_STORAGE_PUBLIC_URL || '').replace(/\/$/, '');
+const bucket = admin.storage().bucket();
+const PUBLIC_URL = (process.env.FIREBASE_STORAGE_PUBLIC_URL || '').replace(/\/$/, '');
+const BUCKET = process.env.FIREBASE_STORAGE_BUCKET;
 
 async function uploadFile(buffer, key, contentType) {
-    const { error } = await supabase.storage
-        .from(BUCKET)
-        .upload(key, buffer, {
-            contentType,
-            upsert: true,
-        });
-
-    if (error) throw new Error(`Storage upload error: ${error.message}`);
+    const file = bucket.file(key);
+    await file.save(buffer, {
+        metadata: { contentType },
+        public: true,
+    });
     return getPublicUrl(key);
 }
 
 async function deleteFile(key) {
     try {
-        const { error } = await supabase.storage
-            .from(BUCKET)
-            .remove([key]);
-        if (error) console.error('Storage delete error:', error.message);
+        const file = bucket.file(key);
+        const [exists] = await file.exists();
+        if (exists) await file.delete();
     } catch (err) {
         console.error('Storage delete error:', err.message);
     }
 }
 
 async function getFileBuffer(key) {
-    const { data, error } = await supabase.storage
-        .from(BUCKET)
-        .download(key);
-
-    if (error) throw new Error(`Storage download error: ${error.message}`);
-    const arrayBuffer = await data.arrayBuffer();
-    return Buffer.from(arrayBuffer);
+    const file = bucket.file(key);
+    const [buffer] = await file.download();
+    return buffer;
 }
 
 async function fileExists(key) {
     try {
-        const dir = key.substring(0, key.lastIndexOf('/'));
-        const filename = key.substring(key.lastIndexOf('/') + 1);
-        const { data, error } = await supabase.storage
-            .from(BUCKET)
-            .list(dir, { search: filename, limit: 1 });
-        if (error) return false;
-        return data.some(f => f.name === filename);
+        const file = bucket.file(key);
+        const [exists] = await file.exists();
+        return exists;
     } catch {
         return false;
     }
@@ -87,7 +80,7 @@ function extractKey(dbPath) {
 }
 
 module.exports = {
-    supabase,
+    bucket,
     uploadFile,
     deleteFile,
     getFileBuffer,

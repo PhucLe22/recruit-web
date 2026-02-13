@@ -41,7 +41,7 @@ app.engine(
                 if (!filePath) return '/images/default-avatar.png';
                 if (filePath.startsWith('http://') || filePath.startsWith('https://')) return filePath;
                 const key = filePath.startsWith('/') ? filePath.substring(1) : filePath;
-                return `${process.env.SUPABASE_STORAGE_PUBLIC_URL || ''}/${key}`;
+                return `${process.env.FIREBASE_STORAGE_PUBLIC_URL || ''}/${key}`;
             },
             json: (context) => JSON.stringify(context),
             uppercase: (str) => {
@@ -280,7 +280,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Redirect legacy upload URLs to cloud storage
-const STORAGE_PUBLIC_URL = process.env.SUPABASE_STORAGE_PUBLIC_URL || '';
+const STORAGE_PUBLIC_URL = process.env.FIREBASE_STORAGE_PUBLIC_URL || '';
 app.use('/uploads', (req, res) => {
     res.redirect(301, `${STORAGE_PUBLIC_URL}/uploads${req.path}`);
 });

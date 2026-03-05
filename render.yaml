@@ -9,7 +9,6 @@ services:
     startCommand: "npm start"
     healthCheckPath: /
     rootDir: cv-server/blog
-    # Ensure we're using the correct Node.js version
     nodeVersion: 20.20.0
     envVars:
       - key: NODE_ENV

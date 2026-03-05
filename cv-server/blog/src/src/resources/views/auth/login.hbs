@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 32px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1a1a1a;
+            transition: border-color 0.2s;
+            background: #fff;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        .form-control.error {
+            border-color: #dc2626;
+        }
+
+        .form-control::placeholder { color: #9ca3af; }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            font-size: 14px;
+        }
+
+        .password-toggle:hover { color: #6b7280; }
+
+        .input-wrapper .form-control { padding-right: 38px; }
+
+        .error-text {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .error-text.show { display: block; }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .forgot-link {
+            font-size: 13px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover { text-decoration: underline; }
+
+        .btn-primary {
+            width: 100%;
+            padding: 11px;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .btn-primary:hover { background: #1d4ed8; }
+
+        .btn-primary.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-primary.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 18px; height: 18px;
+            margin: -9px 0 0 -9px;
+            border: 2px solid transparent;
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider span {
+            padding: 0 14px;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .btn-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 10px;
+            background: #fff;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .btn-google:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+            color: #374151;
+            text-decoration: none;
+        }
+
+        .btn-google svg { width: 18px; height: 18px; }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .footer-text a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-text a:hover { text-decoration: underline; }
+
+        .demo-box {
+            margin-top: 20px;
+            padding: 14px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+        }
+
+        .demo-box-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #166534;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .demo-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+
+        .demo-row code {
+            background: #dcfce7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #166534;
+        }
+
+        .btn-demo {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+            background: #16a34a;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-demo:hover { background: #15803d; }
+
+        /* Alerts */
+        .alert-container {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 1100;
+            max-width: 380px;
+            width: 90%;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .alert-danger {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert .btn-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: inherit;
+            opacity: 0.5;
+            padding: 0 4px;
+        }
+
+        .alert .btn-close:hover { opacity: 1; }
+
+        @keyframes slideIn {
+            from { transform: translateY(-8px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 28px 20px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="alertContainer" class="alert-container">
+        {{#if error_msg}}
+            {{#each error_msg}}
+                <div class="alert alert-danger">
+                    <span>{{this}}</span>
+                    <button type="button" class="btn-close" onclick="this.parentElement.remove()">&times;</button>
+                </div>
+            {{/each}}
+        {{/if}}
+        {{#if success_msg}}
+            {{#each success_msg}}
+                <div class="alert alert-success">
+                    <span>{{this}}</span>
+                    <button type="button" class="btn-close" onclick="this.parentElement.remove()">&times;</button>
+                </div>
+            {{/each}}
+        {{/if}}
+        {{#if error}}
+            {{#each error}}
+                <div class="alert alert-danger">
+                    <span>{{this}}</span>
+                    <button type="button" class="btn-close" onclick="this.parentElement.remove()">&times;</button>
+                </div>
+            {{/each}}
+        {{/if}}
+    </div>
+
+    <div class="card">
+        <div class="logo">
+            <h1>Đăng Nhập</h1>
+            <p>Chào mừng bạn quay trở lại</p>
+        </div>
+
+        <a href="/auth/google" class="btn-google">
+            <svg viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            Đăng nhập bằng Google
+        </a>
+
+        <div class="divider"><span>hoặc</span></div>
+
+        <form action="/auth/login" method="POST" id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control" required placeholder="you@example.com">
+                <div class="error-text" id="emailError">Vui lòng nhập email hợp lệ</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mật khẩu</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" class="form-control" required placeholder="Nhập mật khẩu" minlength="6">
+                    <button type="button" class="password-toggle" onclick="togglePassword()">
+                        <i class="fas fa-eye" id="password-icon"></i>
+                    </button>
+                </div>
+                <div class="error-text" id="passwordError">Mật khẩu phải có ít nhất 6 ký tự</div>
+            </div>
+
+            <div class="form-row">
+                <span></span>
+                <a href="/auth/forgot-password" class="forgot-link">Quên mật khẩu?</a>
+            </div>
+
+            <button type="submit" class="btn-primary" id="loginButton">Đăng Nhập</button>
+        </form>
+
+        <div class="footer-text">
+            Chưa có tài khoản? <a href="/auth/register">Đăng ký ngay</a>
+        </div>
+
+        <div class="demo-box">
+            <div class="demo-box-title">Tài khoản Demo</div>
+            <div class="demo-row">
+                <span>Email:</span>
+                <code>demo@gmail.com</code>
+            </div>
+            <div class="demo-row">
+                <span>Mật khẩu:</span>
+                <code>123456</code>
+            </div>
+            <button type="button" class="btn-demo" onclick="fillDemo()">
+                <i class="fas fa-arrow-right-to-bracket"></i> Dùng tài khoản Demo
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function fillDemo() {
+            document.getElementById('email').value = 'demo@gmail.com';
+            document.getElementById('password').value = '123456';
+            document.getElementById('loginForm').submit();
+        }
+
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('password-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            let valid = true;
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const emailErr = document.getElementById('emailError');
+            const passErr = document.getElementById('passwordError');
+
+            emailErr.classList.remove('show');
+            passErr.classList.remove('show');
+            email.classList.remove('error');
+            password.classList.remove('error');
+
+            if (!email.value || !email.validity.valid) {
+                email.classList.add('error');
+                emailErr.classList.add('show');
+                valid = false;
+            }
+
+            if (!password.value || password.value.length < 6) {
+                password.classList.add('error');
+                passErr.classList.add('show');
+                valid = false;
+            }
+
+            if (!valid) {
+                e.preventDefault();
+                return;
+            }
+
+            const btn = document.getElementById('loginButton');
+            btn.classList.add('loading');
+            btn.textContent = '';
+        });
+
+        // Auto-dismiss alerts
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(el => el.remove());
+        }, 5000);
+    </script>
+</body>
+
+</html>

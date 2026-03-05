@@ -1,10 +1,17 @@
 services:
-  # Web Service using Docker
+  # Web Service
   - type: web
     name: recruit-web
-    env: docker
+    env: node
     plan: free
+    runtime: node
+    buildCommand: "npm install"
+    startCommand: "npm start"
     healthCheckPath: /
+    # Set root directory to src where package.json is located
+    rootDir: src
+    # Ensure we're using the correct Node.js version
+    nodeVersion: 20.20.0
     envVars:
       - key: NODE_ENV
         value: production

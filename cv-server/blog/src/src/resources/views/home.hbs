@@ -1,0 +1,356 @@
+<!-- Inline data injection for JS (Handlebars expressions must stay in .hbs) -->
+<script>
+    window.__validJobs = {{{json validJobs}}};
+    {{#if recommendations}}
+    window.__recommendations = {{{json recommendations}}};
+    {{/if}}
+</script>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Tìm Kiếm Cơ Hội Nghề Nghiệp</h1>
+                <p class="hero-subtitle">Kết nối với hàng ngàn công ty hàng đầu và tìm kiếm công việc mơ ước của bạn</p>
+            </div>
+
+            <!-- Search Bar -->
+            <form action="/jobs/search-results" method="GET" class="search-form">
+                <div class="search-bar">
+                    <div class="search-input-group">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" name="q" class="search-input"
+                            placeholder="Tìm kiếm công việc, công ty, kỹ năng...">
+                    </div>
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                        Tìm Kiếm
+                    </button>
+                </div>
+            </form>
+
+            <!-- Quick Stats -->
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">{{validJobs.length}}</div>
+                    <div class="stat-label">Việc làm mới</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Công ty</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-label">Ứng viên</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-header" style="text-align: center; display: block; margin-bottom: 3rem;">
+            <h2 class="section-title" style="font-size: 2.2rem; font-weight: 700; color: #1a202c; margin-bottom: 12px;">
+                Công Cụ Tuyệt Vời Cho Sự Nghiệp</h2>
+            <p class="section-subtitle" style="color: #64748b; font-size: 1.1rem; max-width: 600px; margin: 0 auto;">
+                Khám phá các tính năng thông minh giúp bạn tìm kiếm và phát triển sự nghiệp hiệu quả</p>
+        </div>
+        <div class="features-grid">
+            <!-- CV Assistant -->
+            <div class="feature-card cv-assistant">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="feature-content">
+                    <h3 class="feature-title">CV AI Assistant</h3>
+                    <p class="feature-description">Công cụ AI thông minh giúp tạo và tối ưu CV chuyên nghiệp trong vài
+                        phút với hơn 50 mẫu thiết kế hiện đại</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Tự động tối ưu nội dung</li>
+                        <li><i class="fas fa-check"></i> Gợi ý từ khóa phù hợp</li>
+                        <li><i class="fas fa-check"></i> Xuất PDF chất lượng cao</li>
+                    </ul>
+                </div>
+                <a href="/cv-assistant" class="feature-btn">
+                    <i class="fas fa-magic"></i>
+                    Trải nghiệm ngay
+                </a>
+            </div>
+
+            <!-- Browse Companies -->
+            <div class="feature-card companies">
+                <div class="feature-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Công Ty Hàng Đầu</h3>
+                    <p class="feature-description">Khám phá danh sách 500+ công ty uy tín với thông tin chi tiết về văn
+                        hóa, phúc lợi và cơ hội phát triển</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Đánh giá từ nhân viên</li>
+                        <li><i class="fas fa-check"></i> Lương và phúc lợi</li>
+                        <li><i class="fas fa-check"></i> Cơ hội thăng tiến</li>
+                    </ul>
+                </div>
+                <a href="/business/list" class="feature-btn">
+                    <i class="fas fa-arrow-right"></i>
+                    Khám phá ngay
+                </a>
+            </div>
+
+            <!-- Job Categories -->
+            <div class="feature-card categories">
+                <div class="feature-icon">
+                    <i class="fas fa-th-large"></i>
+                </div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Ngành Nghề HOT</h3>
+                    <p class="feature-description">Cập nhật các ngành nghề đang tuyển dụng nhiều nhất: IT, Marketing, Kế
+                        toán, Nhân sự, Kinh doanh với lương cạnh tranh</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Xu hướng thị trường</li>
+                        <li><i class="fas fa-check"></i> Mức lương trung bình</li>
+                        <li><i class="fas fa-check"></i> Kỹ năng cần thiết</li>
+                    </ul>
+                </div>
+                <button class="feature-btn" onclick="scrollToJobs()">
+                    <i class="fas fa-briefcase"></i>
+                    Xem việc làm
+                </button>
+            </div>
+
+            <!-- Personality Assessment -->
+            <div class="feature-card personality">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Bài Kiểm Tra Tính Cách</h3>
+                    <p class="feature-description">MBTI, Big Five, DISC - Khám phá bản thân, điểm mạnh/yếu và tìm công
+                        việc phù hợp nhất với tính cách của bạn</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Phân tích chi tiết</li>
+                        <li><i class="fas fa-check"></i> Gợi ý nghề nghiệp</li>
+                        <li><i class="fas fa-check"></i> Báo cáo chuyên sâu</li>
+                    </ul>
+                </div>
+                <a href="/personality-assessments" class="feature-btn">
+                    <i class="fas fa-clipboard-check"></i>
+                    Bắt đầu ngay
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Personalized Recommendations (for logged-in users) -->
+{{#if req.account}}
+{{#if recommendations}}
+<section class="recommendations-section">
+    <div class="container">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">
+                    <i class="fas fa-star"></i>
+                    Gợi Ý Dành Riêng Cho Bạn
+                </h2>
+                <p class="section-subtitle">Các công việc phù hợp nhất với hồ sơ và thói quen tìm kiếm của bạn</p>
+            </div>
+            <div class="match-badge">
+                <i class="fas fa-chart-line"></i>
+                <span>Mức độ phù hợp cao</span>
+            </div>
+        </div>
+
+        <div class="recommendations-grid" id="recommendationsGrid">
+            <!-- Personalized recommendations will be loaded here -->
+        </div>
+    </div>
+</section>
+{{/if}}
+{{/if}}
+
+<!-- Enhanced Latest Jobs with 3-column layout and infinite scroll -->
+<section class="jobs-section" id="jobsSection">
+    <div class="container">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">
+                    <i class="fas fa-fire"></i>
+                    Việc Làm Mới Nhất
+                </h2>
+                <p class="section-subtitle">Khám phá cơ hội nghề nghiệp phù hợp với bạn</p>
+                <div class="job-stats" style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px;">
+                    {{#if personalized}}
+                    <div class="personalized-badge"
+                        style="padding: 6px 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 16px; display: inline-block; font-size: 0.85rem; font-weight: 600;">
+                        <i class="fas fa-user-check"></i> Đã cá nhân hóa
+                    </div>
+                    {{/if}}
+                    {{#if recommendedCount}}
+                    <div class="recommended-count"
+                        style="padding: 6px 12px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border-radius: 16px; display: inline-block; font-size: 0.85rem; font-weight: 600;">
+                        <i class="fas fa-star"></i> {{recommendedCount}} việc làm đề xuất
+                    </div>
+                    {{/if}}
+                    {{#if userProfile}}
+                    <div class="profile-info"
+                        style="padding: 6px 12px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border-radius: 16px; display: inline-block; font-size: 0.85rem; font-weight: 600;">
+                        <i class="fas fa-chart-line"></i> {{userProfile.interests.length}} sở thích
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="section-actions">
+                <a href="/jobs/all" class="view-all-btn">
+                    Xem tất cả
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Jobs Grid with 3 columns -->
+        <div class="jobs-grid-3" id="jobsGrid3">
+            <!-- Jobs will be dynamically loaded here -->
+        </div>
+
+        <!-- Loading Skeleton -->
+        <div class="loading-skeleton" id="loadingSkeleton" style="display: none;">
+            <div class="skeleton-job-card"></div>
+            <div class="skeleton-job-card"></div>
+            <div class="skeleton-job-card"></div>
+        </div>
+
+        <!-- Load More / End Indicator -->
+        <div class="load-more-container" id="loadMoreContainer">
+            <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreJobs()">
+                <i class="fas fa-plus-circle"></i>
+                <span>Tải thêm công việc</span>
+            </button>
+            <div class="loading-spinner" id="loadingSpinner" style="display: none;">
+                <div class="spinner"></div>
+                <span>Đang tải thêm công việc...</span>
+            </div>
+            <div class="end-message" id="endMessage" style="display: none;">
+                <i class="fas fa-check-circle"></i>
+                <span>Bạn đã xem tất cả công việc</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Floating Action Buttons -->
+<div class="floating-actions">
+    <button class="fab scroll-to-top" id="scrollToTop" title="Quay lên đầu">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    <button class="fab fab-refresh" id="fabRefresh" title="Làm mới">
+        <i class="fas fa-sync-alt"></i>
+    </button>
+</div>
+
+<!-- Grouped Jobs by Category -->
+{{#if fieldsWithJobs.length}}
+<section class="grouped-jobs-section" style="padding: 60px 0; background-color: #f8fafc;">
+    <div class="container">
+        <div class="section-header" style="margin-bottom: 40px; text-align: center;">
+            <h2 class="section-title" style="font-size: 2rem; color: #2d3748; margin-bottom: 10px;">
+                <i class="fas fa-th-large" style="margin-right: 10px; color: #4a6cf7;"></i>
+                Ngành Nghề Phổ Biến
+            </h2>
+            <p class="section-subtitle" style="color: #64748b; font-size: 1.1rem;">
+                Khám phá các cơ hội việc làm theo ngành nghề
+            </p>
+        </div>
+
+        {{#each fieldsWithJobs}}
+        <div class="category-jobs-group"
+            style="margin-bottom: 3rem; background: #fff; border-radius: 12px; box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05); padding: 1.5rem; transition: all 0.3s ease;">
+            <div class="category-header"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #eee;">
+                <h3 class="category-title"
+                    style="font-size: 1.4rem; color: #2d3748; margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas {{this.icon}}" style="color: #4a6cf7;"></i>
+                    {{this.name}}
+                    <span class="job-count"
+                        style="font-size: 0.9rem; background: #f0f4ff; color: #4a6cf7; padding: 2px 10px; border-radius: 20px; font-weight: 500;">
+                        {{this.jobCount}} việc làm
+                    </span>
+                </h3>
+                <a href="/jobs/category/{{this.slug}}" class="view-more-link"
+                    style="color: #4a6cf7; font-weight: 500; text-decoration: none; display: flex; align-items: center; gap: 5px; transition: all 0.3s ease;">
+                    Xem tất cả <i class="fas fa-arrow-right" style="font-size: 0.8rem;"></i>
+                </a>
+            </div>
+
+            <div class="jobs-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                {{#each this.jobs}}
+                <a href="/jobs/{{this.slug}}" class="job-card"
+                    style="background: #fff; border-radius: 10px; padding: 1.5rem; transition: all 0.3s ease; border: 1px solid #eee; text-decoration: none; color: inherit; display: block;">
+                    <div class="job-card-inner">
+                        <div class="job-company-logo"
+                            style="width: 50px; height: 50px; border-radius: 10px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; overflow: hidden;">
+                            {{#if this.logoPath}}
+                            <img src="{{this.logoPath}}" alt="{{this.companyName}}"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                            {{else}}
+                            <div class="company-initial" style="font-size: 1.5rem; font-weight: 700; color: #4a6cf7;">
+                                {{firstLetter this.companyName}}
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="job-details">
+                            <h4 class="job-title"
+                                style="font-size: 1.1rem; font-weight: 600; margin: 0 0 0.5rem 0; color: #2d3748; line-height: 1.4;">
+                                {{this.title}}
+                            </h4>
+                            <div class="company-name" style="color: #64748b; font-size: 0.95rem; margin-bottom: 1rem;">
+                                {{this.company}}
+                            </div>
+                            <div class="job-meta"
+                                style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.9rem; color: #64748b;">
+                                <span class="job-location" style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-map-marker-alt" style="color: #94a3b8;"></i>
+                                    {{this.location}}
+                                </span>
+                                <span class="job-salary" style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-coins" style="color: #94a3b8;"></i>
+                                    {{this.salary}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {{/each}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</section>
+{{/if}}
+
+<!-- Newsletter Section -->
+<section class="newsletter-section">
+    <div class="container">
+        <div class="newsletter-content">
+            <div class="newsletter-text">
+                <h2 class="newsletter-title">Đừng Bỏ Lỡ Cơ Hội</h2>
+                <p class="newsletter-subtitle">Đăng ký nhận thông báo việc làm mới nhất qua email</p>
+            </div>
+            <form class="newsletter-form">
+                <div class="newsletter-input-group">
+                    <input type="email" class="newsletter-input" placeholder="Nhập email của bạn" required>
+                    <button type="submit" class="newsletter-btn">
+                        <i class="fas fa-bell"></i>
+                        Đăng ký
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

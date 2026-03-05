@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài kiểm tra tính cách MBTI - JobLife</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/mbti-assessment.css" rel="stylesheet">
+</head>
+<body>
+    {{> header}}
+
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="main-container">
+        <aside class="sidebar" id="sidebar">
+            <h2><i class="fas fa-brain"></i> MBTI</h2>
+
+            <div class="progress-circle">
+                <svg class="progress-ring" viewBox="0 0 120 120">
+                    <circle class="progress-ring-bg" cx="60" cy="60" r="54"></circle>
+                    <circle class="progress-ring-fill" cx="60" cy="60" r="54"
+                            stroke-dasharray="0 339.292" id="progressRing"></circle>
+                </svg>
+                <div class="progress-text">
+                    <div id="progressPercent">0%</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">Hoàn thành</div>
+                </div>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value" id="answeredCount">0</div>
+                    <div class="stat-label">Đã trả lời</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="flaggedCount">0</div>
+                    <div class="stat-label">Đã đánh dấu</div>
+                </div>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem; font-size: 1.1rem; opacity: 0.9;">Danh sách câu hỏi</h3>
+            <div class="question-grid" id="questionGrid">
+                <!-- Question items will be generated here -->
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <button class="btn btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="showFlaggedQuestions()">
+                    <i class="fas fa-flag"></i> Xem câu đã đánh dấu
+                </button>
+                <button class="btn btn-success" style="width: 100%;" onclick="submitAssessment()" id="submitBtn" disabled>
+                    <i class="fas fa-check"></i> Hoàn thành bài kiểm tra
+                </button>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="assessment-header">
+                <h1><i class="fas fa-brain"></i> Bài kiểm tra tính cách MBTI</h1>
+                <p>Khám phá loại tính cách của bạn - 16 loại tính cách Myers-Briggs</p>
+            </div>
+
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="setViewMode('single')">
+                    <i class="fas fa-list"></i> Từng câu
+                </button>
+                <button class="view-btn" onclick="setViewMode('grid')">
+                    <i class="fas fa-th"></i> Lưới
+                </button>
+            </div>
+
+            <div id="introSection" class="intro-section">
+                <h2><i class="fas fa-info-circle"></i> Giới thiệu bài kiểm tra MBTI</h2>
+                <p>
+                    MBTI (Myers-Briggs Type Indicator) là một trong những bài kiểm tra tính cách phổ biến nhất thế giới,
+                    giúp phân loại 16 nhóm tính cách dựa trên 4 cặp đặc điểm. Hãy trả lời các câu hỏi một cách trung thực
+                    để có kết quả chính xác nhất.
+                </p>
+
+                <div class="instruction-box">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>Hướng dẫn:</strong> Với mỗi câu hỏi, hãy chọn phương án mô tả chính xác nhất cách bạn thường hành động hoặc suy nghĩ trong cuộc sống hàng ngày.
+                </div>
+
+                <div class="mbti-grid">
+                    <div class="mbti-item">
+                        <div class="mbti-letter">E / I</div>
+                        <div class="mbti-name">Extraversion / Introversion</div>
+                        <div class="mbti-desc">Hướng ngoại / Hướng nội</div>
+                    </div>
+                    <div class="mbti-item">
+                        <div class="mbti-letter">S / N</div>
+                        <div class="mbti-name">Sensing / Intuition</div>
+                        <div class="mbti-desc">Cảm giác / Trực giác</div>
+                    </div>
+                    <div class="mbti-item">
+                        <div class="mbti-letter">T / F</div>
+                        <div class="mbti-name">Thinking / Feeling</div>
+                        <div class="mbti-desc">Lý trí / Cảm xúc</div>
+                    </div>
+                    <div class="mbti-item">
+                        <div class="mbti-letter">J / P</div>
+                        <div class="mbti-name">Judging / Perceiving</div>
+                        <div class="mbti-desc">Nguyên tắc / Linh hoạt</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="startAssessment()">
+                    <i class="fas fa-play"></i> Bắt đầu bài kiểm tra
+                </button>
+            </div>
+
+            <div id="questionContainer" class="question-container">
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-number" id="questionNumber">1</div>
+                        <div class="question-actions">
+                            <button class="flag-btn" id="flagBtn" onclick="toggleFlag()">
+                                <i class="fas fa-flag"></i> Đánh dấu
+                            </button>
+                        </div>
+                    </div>
+                    <div class="question-text" id="questionText">
+                        Question text will appear here
+                    </div>
+                    <div class="options-container" id="optionsContainer">
+                        <!-- Options will be generated here -->
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>
+                        <i class="fas fa-arrow-left"></i> Câu trước
+                    </button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">
+                        Câu tiếp theo <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="gridContainer" class="questions-grid-container">
+                <div class="questions-grid" id="questionsGrid">
+                    <!-- Grid questions will be generated here -->
+                </div>
+            </div>
+
+            <div id="loadingSection" class="loading">
+                <div class="spinner"></div>
+                <h3>Đang phân tích kết quả...</h3>
+                <p>Hệ thống AI đang phân tích câu trả lời của bạn. Vui lòng chờ trong giây lát.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/mbti-assessment.js"></script>
+</body>
+</html>

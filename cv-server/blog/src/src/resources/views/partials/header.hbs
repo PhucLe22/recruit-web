@@ -1,0 +1,171 @@
+<link href="/css/header.css" rel="stylesheet">
+
+<header class="header" id="siteHeader">
+  <div class="header__inner">
+    <!-- Logo -->
+    <a href="/" class="header__logo">
+      <div class="header__logo-icon">
+        <i class="fas fa-briefcase"></i>
+      </div>
+      <div class="header__logo-text">
+        <span class="header__logo-name">JobLife</span>
+        <span class="header__logo-tagline">Tìm việc nhanh</span>
+      </div>
+    </a>
+
+    <!-- Navigation -->
+    <nav class="header__nav" id="headerNav">
+      <a href="/jobs/search-results" class="header__nav-link">
+        <i class="fas fa-search"></i>
+        <span>Việc Làm</span>
+      </a>
+      <a href="/business/list" class="header__nav-link">
+        <i class="fas fa-building"></i>
+        <span>Công Ty</span>
+      </a>
+      <a href="/cv/uploadCV" class="header__nav-link">
+        <i class="fas fa-file-alt"></i>
+        <span>Tải CV</span>
+      </a>
+      <a href="/personality-assessments" class="header__nav-link">
+        <i class="fas fa-brain"></i>
+        <span>Trắc Nghiệm</span>
+      </a>
+      <a href="/cv-assistant" class="header__nav-link">
+        <i class="fas fa-robot"></i>
+        <span>CV AI</span>
+      </a>
+    </nav>
+
+    <!-- Right Actions -->
+    <div class="header__actions">
+      {{#if isLogin}}
+      {{#if (eq userType 'user')}}
+      <div class="header__user" id="userDropdown">
+        <button class="header__user-btn" type="button">
+          <div class="header__avatar">
+            {{#if user.avatar}}
+            <img src="{{user.avatar}}" alt="{{user.name}}"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="header__avatar-fallback" style="display:none;">
+              {{#if user.name}}{{substring (uppercase user.name) 0 1}}{{else}}<i class="fas fa-user"></i>{{/if}}
+            </span>
+            {{else}}
+            <span class="header__avatar-fallback">
+              {{#if user.name}}{{substring (uppercase user.name) 0 1}}{{else}}<i class="fas fa-user"></i>{{/if}}
+            </span>
+            {{/if}}
+          </div>
+          <span class="header__user-name">{{user.name}}</span>
+          <i class="fas fa-chevron-down header__chevron"></i>
+        </button>
+        <div class="header__dropdown">
+          <div class="header__dropdown-info">
+            <strong>{{user.name}}</strong>
+            <small>{{user.email}}</small>
+          </div>
+          <div class="header__dropdown-divider"></div>
+          <a href="/users/profile" class="header__dropdown-item">
+            <i class="fas fa-user"></i> Hồ sơ cá nhân
+          </a>
+          <a href="/users/applied-jobs" class="header__dropdown-item">
+            <i class="fas fa-clipboard-list"></i> Việc đã ứng tuyển
+          </a>
+          <a href="/users/saved-jobs" class="header__dropdown-item">
+            <i class="fas fa-heart"></i> Việc đã lưu
+          </a>
+          <div class="header__dropdown-divider"></div>
+          <a href="/auth/logout" class="header__dropdown-item header__dropdown-item--danger">
+            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+          </a>
+        </div>
+      </div>
+      {{else if (eq userType 'business')}}
+      <div class="header__user" id="userDropdown">
+        <button class="header__user-btn" type="button">
+          <div class="header__avatar">
+            {{#if business.logoPath}}
+            <img src="{{business.logoPath}}" alt="{{business.companyName}}"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="header__avatar-fallback" style="display:none;">
+              {{#if business.companyName}}{{substring (uppercase business.companyName) 0 1}}{{else}}<i
+                class="fas fa-building"></i>{{/if}}
+            </span>
+            {{else}}
+            <span class="header__avatar-fallback">
+              {{#if business.companyName}}{{substring (uppercase business.companyName) 0 1}}{{else}}<i
+                class="fas fa-building"></i>{{/if}}
+            </span>
+            {{/if}}
+          </div>
+          <span class="header__user-name">{{business.companyName}}</span>
+          <i class="fas fa-chevron-down header__chevron"></i>
+        </button>
+        <div class="header__dropdown">
+          <div class="header__dropdown-info">
+            <strong>{{business.companyName}}</strong>
+            <small>{{business.email}}</small>
+          </div>
+          <div class="header__dropdown-divider"></div>
+          <a href="/business/dashboard" class="header__dropdown-item">
+            <i class="fas fa-chart-bar"></i> Bảng điều khiển
+          </a>
+          <a href="/business/jobs" class="header__dropdown-item">
+            <i class="fas fa-briefcase"></i> Quản lý tuyển dụng
+          </a>
+          <a href="/business/applications" class="header__dropdown-item">
+            <i class="fas fa-file-alt"></i> Hồ sơ ứng tuyển
+          </a>
+          <div class="header__dropdown-divider"></div>
+          <a href="/auth/logout" class="header__dropdown-item header__dropdown-item--danger">
+            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+          </a>
+        </div>
+      </div>
+      {{/if}}
+      {{else}}
+      <div class="header__auth">
+        <a href="/auth/login" class="header__btn header__btn--outline">Đăng nhập</a>
+        <a href="/auth/register" class="header__btn header__btn--primary">Đăng ký</a>
+      </div>
+      {{/if}}
+
+      <!-- Mobile Toggle -->
+      <button class="header__mobile-toggle" id="mobileToggle" type="button" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="header__spacer"></div>
+
+<script>
+  // Mobile menu toggle
+  document.getElementById('mobileToggle')?.addEventListener('click', function () {
+    document.getElementById('headerNav')?.classList.toggle('is-open');
+    this.classList.toggle('is-active');
+  });
+
+  // User dropdown toggle
+  document.getElementById('userDropdown')?.addEventListener('click', function (e) {
+    e.stopPropagation();
+    this.classList.toggle('is-open');
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener('click', function () {
+    document.getElementById('userDropdown')?.classList.remove('is-open');
+  });
+
+  // Scroll effect
+  window.addEventListener('scroll', function () {
+    const header = document.getElementById('siteHeader');
+    if (window.scrollY > 20) {
+      header?.classList.add('is-scrolled');
+    } else {
+      header?.classList.remove('is-scrolled');
+    }
+  });
+</script>

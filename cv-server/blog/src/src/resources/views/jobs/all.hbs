@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tất cả việc làm - Job Life</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="/css/all-jobs.css" rel="stylesheet">
+</head>
+
+<body>
+  {{> header}}
+
+  <div class="main-container">
+    <div class="page-header">
+      <h1 class="page-title">
+        <i class="fas fa-briefcase"></i>
+        Tất Cả Việc Làm
+      </h1>
+      <p class="page-subtitle">Khám phá hơn {{pagination.totalJobs}} cơ hội nghề nghiệp</p>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-filter-section">
+      <form id="searchFilterForm" method="GET" action="/jobs/all" class="search-filter-form">
+        <div class="search-bar">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" name="keyWord" class="search-input" placeholder="Tìm kiếm công việc, công ty, kỹ năng..." value="{{req.query.keyWord}}">
+          </div>
+          <button type="submit" class="search-btn">
+            <i class="fas fa-search"></i>
+            Tìm Kiếm
+          </button>
+        </div>
+
+        <div class="filters-row">
+          <!-- Location Filter -->
+          <div class="filter-group">
+            <label class="filter-label">
+              <i class="fas fa-map-marker-alt"></i>
+              Vị trí
+            </label>
+            <select name="location" class="filter-select">
+              <option value="">Tất cả địa điểm</option>
+              <option value="TP.HCM" {{#if (eq req.query.location "TP.HCM")}}selected{{/if}}>TP.HCM</option>
+              <option value="Hà Nội" {{#if (eq req.query.location "Hà Nội")}}selected{{/if}}>Hà Nội</option>
+              <option value="Đà Nẵng" {{#if (eq req.query.location "Đà Nẵng")}}selected{{/if}}>Đà Nẵng</option>
+              <option value="Remote" {{#if (eq req.query.location "Remote")}}selected{{/if}}>Remote</option>
+            </select>
+          </div>
+
+          <!-- Job Type Filter -->
+          <div class="filter-group">
+            <label class="filter-label">
+              <i class="fas fa-clock"></i>
+              Loại hình
+            </label>
+            <select name="type" class="filter-select">
+              <option value="">Tất cả loại hình</option>
+              <option value="Full-time" {{#if (eq req.query.type "Full-time")}}selected{{/if}}>Full-time</option>
+              <option value="Part-time" {{#if (eq req.query.type "Part-time")}}selected{{/if}}>Part-time</option>
+              <option value="Internship" {{#if (eq req.query.type "Internship")}}selected{{/if}}>Internship</option>
+              <option value="Remote" {{#if (eq req.query.type "Remote")}}selected{{/if}}>Remote</option>
+              <option value="Contract" {{#if (eq req.query.type "Contract")}}selected{{/if}}>Contract</option>
+            </select>
+          </div>
+
+          <!-- Salary Filter -->
+          <div class="filter-group">
+            <label class="filter-label">
+              <i class="fas fa-dollar-sign"></i>
+              Mức lương
+            </label>
+            <select name="salaryRange" class="filter-select">
+              <option value="">Tất cả mức lương</option>
+              <option value="0-500" {{#if (eq req.query.salaryRange "0-500")}}selected{{/if}}>Dưới $500</option>
+              <option value="500-1000" {{#if (eq req.query.salaryRange "500-1000")}}selected{{/if}}>$500 - $1,000</option>
+              <option value="1000-1500" {{#if (eq req.query.salaryRange "1000-1500")}}selected{{/if}}>$1,000 - $1,500</option>
+              <option value="1500-2000" {{#if (eq req.query.salaryRange "1500-2000")}}selected{{/if}}>$1,500 - $2,000</option>
+              <option value="2000-9999" {{#if (eq req.query.salaryRange "2000-9999")}}selected{{/if}}>$2,000+</option>
+            </select>
+          </div>
+
+          <!-- Experience Filter -->
+          <div class="filter-group">
+            <label class="filter-label">
+              <i class="fas fa-user-tie"></i>
+              Kinh nghiệm
+            </label>
+            <select name="experience" class="filter-select">
+              <option value="">Tất cả kinh nghiệm</option>
+              <option value="Không yêu cầu" {{#if (eq req.query.experience "Không yêu cầu")}}selected{{/if}}>Không yêu cầu</option>
+              <option value="Dưới 1 năm" {{#if (eq req.query.experience "Dưới 1 năm")}}selected{{/if}}>Dưới 1 năm</option>
+              <option value="1-2 năm" {{#if (eq req.query.experience "1-2 năm")}}selected{{/if}}>1-2 năm</option>
+              <option value="2-4 năm" {{#if (eq req.query.experience "2-4 năm")}}selected{{/if}}>2-4 năm</option>
+              <option value="3-5 năm" {{#if (eq req.query.experience "3-5 năm")}}selected{{/if}}>3-5 năm</option>
+              <option value="5-10 năm" {{#if (eq req.query.experience "5-10 năm")}}selected{{/if}}>5-10 năm</option>
+              <option value="Trên 10 năm" {{#if (eq req.query.experience "Trên 10 năm")}}selected{{/if}}>Trên 10 năm</option>
+            </select>
+          </div>
+
+          <!-- Clear Filters Button -->
+          <button type="button" id="clearFilters" class="clear-filters-btn">
+            <i class="fas fa-times"></i>
+            Xóa bộ lọc
+          </button>
+        </div>
+      </form>
+    </div>
+
+    {{#if jobs}}
+      <div class="results-info">
+        <h3>Hiển thị {{jobs.length}} việc làm</h3>
+      </div>
+
+      <div class="jobs-grid">
+        {{#each jobs}}
+        <div class="job-card">
+          <div class="job-card-header">
+            <div class="company-info">
+              <div class="company-logo">
+                {{#if companyLogo}}
+                  <img src="{{companyLogo}}" alt="{{companyName}}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+                {{else}}
+                  <i class="fas fa-building"></i>
+                {{/if}}
+              </div>
+              <div>
+                <div class="company-name">{{companyName}}</div>
+                <div class="job-date">{{createdAt}}</div>
+              </div>
+            </div>
+            <h3 class="job-title">{{title}}</h3>
+            <div class="job-tags">
+              <span class="job-tag">{{type}}</span>
+              {{#if city}}<span class="job-tag">{{city}}</span>{{/if}}
+            </div>
+            <div class="job-salary">{{salary}}</div>
+          </div>
+
+          <div class="job-card-body">
+            <div class="job-description">
+              {{#if description}}
+                {{description}}
+              {{else}}
+                Công việc hấp dẫn với nhiều cơ hội phát triển trong môi trường chuyên nghiệp.
+              {{/if}}
+            </div>
+          </div>
+
+          <div class="job-card-footer">
+            <div class="job-date">
+              <i class="far fa-clock"></i>
+              Hạn nộp: {{expiryTime}}
+            </div>
+            <a href="/jobs/{{slug}}" class="job-apply-btn">
+              <i class="fas fa-eye"></i>
+              Xem chi tiết
+            </a>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        {{#if pagination.hasPrev}}
+          <a href="/jobs/all?page={{subtract pagination.currentPage 1}}" class="pagination-btn">
+            <i class="fas fa-chevron-left"></i>
+            Trước
+          </a>
+        {{else}}
+          <span class="pagination-btn disabled">
+            <i class="fas fa-chevron-left"></i>
+            Trước
+          </span>
+        {{/if}}
+
+        <!-- Page Numbers with Smart Pagination -->
+        {{#each (pagination pagination.currentPage pagination.totalPages)}}
+          {{#if (eq this '...')}}
+            <span class="pagination-btn disabled">...</span>
+          {{else if (eq this ../pagination.currentPage)}}
+            <span class="pagination-btn active">{{this}}</span>
+          {{else}}
+            <a href="/jobs/all?page={{this}}" class="pagination-btn">{{this}}</a>
+          {{/if}}
+        {{/each}}
+
+        {{#if pagination.hasNext}}
+          <a href="/jobs/all?page={{add pagination.currentPage 1}}" class="pagination-btn">
+            Tiếp
+            <i class="fas fa-chevron-right"></i>
+          </a>
+        {{else}}
+          <span class="pagination-btn disabled">
+            Tiếp
+            <i class="fas fa-chevron-right"></i>
+          </span>
+        {{/if}}
+      </div>
+    {{else}}
+      <div class="no-jobs">
+        <div class="no-jobs-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <h3 class="no-jobs-title">Không tìm thấy việc làm</h3>
+        <p class="no-jobs-text">
+          Hiện tại không có công việc nào phù hợp. Hãy thử lại với bộ lọc khác hoặc quay lại sau.
+        </p>
+      </div>
+    {{/if}}
+  </div>
+
+  {{> footer}}
+
+  <script src="/js/all-jobs.js"></script>
+</body>
+
+</html>

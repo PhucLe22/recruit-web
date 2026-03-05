@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{job.title}} - Chi Tiết Công Việc | Job Portal</title>
+    <meta name="description"
+        content="{{job.title}} tại {{job.companyName}}. {{job.field}} với mức lương {{job.salary}} tại {{job.city}}.">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/job-detail.css" rel="stylesheet">
+</head>
+
+<body>
+    {{> header}}
+
+    <!-- Notification Cart -->
+    <div class="notification-cart" id="notificationCart">
+        <!-- Notifications will be added here dynamically -->
+    </div>
+
+    {{#if messages.success}}
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i> {{messages.success}}
+    </div>
+    {{/if}}
+
+    {{#if messages.error}}
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i> {{messages.error}}
+        <form action="/auth/login-page" style="margin-top: 12px; display: inline-block;">
+            <button type="submit" class="apply-btn" style="padding: 8px 20px; font-size: 0.9rem;">
+                <i class="fas fa-sign-in-alt"></i> Đăng nhập ngay
+            </button>
+        </form>
+    </div>
+    {{/if}}
+
+    <!-- Job Detail Header -->
+    <div class="job-detail-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Trang chủ</a>
+                <span class="separator">/</span>
+                <a href="/jobs/all">Việc làm</a>
+                <span class="separator">/</span>
+                <span>{{job.title}}</span>
+            </nav>
+
+            <div class="job-title-header">
+                <h1 class="job-title-main">{{job.title}}</h1>
+                <div class="company-info-top">
+                    <div class="company-badge">
+                        <i class="fas fa-building"></i>
+                        {{job.companyName}}
+                    </div>
+                    <div class="company-badge location-badge">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{job.city}}
+                    </div>
+                    <div class="company-badge deadline-badge">
+                        <i class="fas fa-calendar-times"></i>
+                        Hạn: {{formatDate job.expiryTime}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="content-wrapper">
+                <!-- Left Column - Job Details -->
+                <div class="job-content">
+                    <!-- Job Information Section -->
+                    <div class="job-info-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <h2 class="section-title">Thông tin công việc</h2>
+                        </div>
+
+                        <div class="job-info-grid">
+                            <div class="info-item salary">
+                                <div class="info-icon">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Mức lương</div>
+                                    <div class="info-value">{{job.salary}}</div>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-industry"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Ngành nghề</div>
+                                    <div class="info-value">{{job.field}}</div>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Loại hình</div>
+                                    <div class="info-value">{{job.type}}</div>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Thời gian làm việc</div>
+                                    <div class="info-value">{{job.workTime}}</div>
+                                </div>
+                            </div>
+
+                            <div class="info-item technology">
+                                <div class="info-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Công nghệ yêu cầu</div>
+                                    <div class="info-value">{{job.technique}}</div>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Kinh nghiệm</div>
+                                    <div class="info-value">{{job.experience}}</div>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Email liên hệ</div>
+                                    <div class="info-value">
+                                        <a href="mailto:{{job.email}}">{{job.email}}</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Số điện thoại</div>
+                                    <div class="info-value">
+                                        <span id="contact-display" data-contact="{{business.phone}}"
+                                            data-email="{{job.email}}"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Job Description Section -->
+                    <div class="job-description-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <h2 class="section-title">Mô tả công việc</h2>
+                        </div>
+
+                        <div class="description-content">
+                            {{#if job.description}}
+                            {{job.description}}
+                            {{else}}
+                            <p>Chúng tôi đang tìm kiếm một ứng viên tài năng và nhiệt huyết với vị trí
+                                <strong>{{job.title}}</strong> tại công ty <strong>{{job.companyName}}</strong>.</p>
+
+                            <h3>Vị trí này phù hợp với bạn nếu bạn có:</h3>
+                            <ul>
+                                <li>Kinh nghiệm phù hợp: {{job.experience}}</li>
+                                <li>Kỹ năng công nghệ: {{job.technique}}</li>
+                                <li>Sẵn sàng làm việc với loại hình: {{job.type}}</li>
+                            </ul>
+
+                            <p>Hãy ứng tuyển ngay để trở thành một phần của đội ngũ của chúng tôi!</p>
+                            {{/if}}
+                        </div>
+                    </div>
+
+                    <!-- Apply Section -->
+                    <div class="apply-section">
+                        <h2 class="apply-title">
+                            <i class="fas fa-rocket"></i> Sẵn sàng ứng tuyển?
+                        </h2>
+                        <p class="apply-subtitle">
+                            {{#if job.salary}}
+                            Mức lương hấp dẫn: {{job.salary}}
+                            {{else}}
+                            Cơ hội phát triển sự nghiệp tuyệt vời
+                            {{/if}}
+                        </p>
+
+                        {{#if isStatus}}
+                        <button class="apply-btn applied" disabled>
+                            <i class="fas fa-check-circle"></i>
+                            Đã ứng tuyển
+                        </button>
+                        {{else if (eq isStatus 'closed')}}
+                        <button class="apply-btn applied" disabled>
+                            <i class="fas fa-times-circle"></i>
+                            Vị trí đã đóng
+                        </button>
+                        {{else}}
+                        <form action="/jobs/apply/{{job.slug}}" method="post" enctype="multipart/form-data">
+                            {{#if hasExistingCV}}
+                            <div class="cv-status-info">
+                                <i class="fas fa-check-circle"></i>
+                                <span>CV hiện tại: <strong>{{existingCVName}}</strong></span>
+                            </div>
+                            <p class="cv-upload-hint">Hoặc tải lên CV mới để thay thế</p>
+                            {{else}}
+                            <p class="cv-upload-hint cv-required">Vui lòng tải lên CV để ứng tuyển</p>
+                            {{/if}}
+
+                            <div class="cv-upload-area">
+                                <input type="file" id="cv-file-input" name="cvFile"
+                                       accept=".pdf,.doc,.docx" class="cv-file-hidden">
+                                <label for="cv-file-input" class="cv-file-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span id="cv-file-name">Chọn file CV (PDF, DOCX - tối đa 5MB)</span>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="apply-btn">
+                                <i class="fas fa-paper-plane"></i>
+                                Ứng tuyển ngay
+                            </button>
+                        </form>
+                        {{/if}}
+                    </div>
+                </div>
+
+                <!-- Right Column - Sidebar -->
+                <div class="sidebar">
+                    <!-- Company Card -->
+                    <div class="sidebar-card company-card">
+                        <h3 class="section-title" style="margin-bottom: 20px;">
+                            <i class="fas fa-building"></i> Công ty tuyển dụng
+                        </h3>
+
+                        {{#if business.logoPath}}
+                        <img src="{{business.logoPath}}" alt="{{job.companyName}}" class="company-logo">
+                        {{else}}
+                        <div class="company-logo"
+                            style="background: linear-gradient(135deg, #1e3a5f, #1d4ed8); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; font-weight: bold;">
+                            {{job.companyName.charAt 0}}
+                        </div>
+                        {{/if}}
+
+                        <h4 class="company-name">{{job.companyName}}</h4>
+                        <div class="company-meta">
+                            <div><i class="fas fa-briefcase"></i> {{job.field}}</div>
+                            <div><i class="fas fa-map-marker-alt"></i> {{job.city}}</div>
+                        </div>
+
+                        {{#if isLogin}}
+                        {{#if isSaved}}
+                        <button type="button" class="save-job-btn saved" id="saveJobBtn" data-job-id="{{job._id}}">
+                            <i class="fas fa-check-circle"></i>
+                            Đã lưu
+                        </button>
+                        {{else}}
+                        <button type="button" class="save-job-btn" id="saveJobBtn" data-job-id="{{job._id}}">
+                            <i class="fas fa-bookmark"></i>
+                            Lưu tin tuyển dụng
+                        </button>
+                        {{/if}}
+                        {{else}}
+                        <form action="/auth/login" method="get">
+                            <button type="submit" class="save-job-btn">
+                                <i class="fas fa-bookmark"></i>
+                                Đăng nhập để lưu
+                            </button>
+                        </form>
+                        {{/if}}
+                    </div>
+
+                    <!-- Other Jobs -->
+                    {{#if jobs}}
+                    <div class="sidebar-card">
+                        <h3 class="section-title" style="margin-bottom: 20px;">
+                            <i class="fas fa-list"></i> Việc làm khác
+                        </h3>
+
+                        <div class="other-jobs">
+                            <ul class="other-jobs-list">
+                                {{#each jobs}}
+                                <li class="other-jobs-item">
+                                    <a href="/jobs/{{this.slug}}" class="other-jobs-link">
+                                        {{this.title}}
+                                    </a>
+                                    <div class="other-jobs-salary">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        {{this.salary}}
+                                    </div>
+                                </li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/job-detail.js"></script>
+</body>
+
+</html>

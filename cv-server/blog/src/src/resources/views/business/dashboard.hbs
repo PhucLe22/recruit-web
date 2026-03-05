@@ -1,0 +1,794 @@
+{{! business/dashboard.hbs }}
+
+<!-- Dashboard Header -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Dashboard</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        {{!-- <button type="button" class="btn btn-sm btn-outline-secondary me-2">
+            <i class="fas fa-download me-1"></i> Export
+        </button> --}}
+        <a href="/business/job/create-page" class="btn btn-sm btn-primary">
+            <i class="fas fa-plus me-1"></i> Post New Job
+        </a>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <a href="/business/jobs" class="text-decoration-none">
+            <div class="card text-white bg-primary h-100 hover-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Active Jobs</h6>
+                            <h2 class="mb-0">{{stats.activeJobs}}</h2>
+                        </div>
+                        <i class="fas fa-briefcase fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 mb-3">
+        <a href="/business/applications?status=pending" class="text-decoration-none">
+            <div class="card text-white bg-success h-100 hover-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">New Applicants</h6>
+                            <h2 class="mb-0">{{applicationStats.pending}}</h2>
+                        </div>
+                        <i class="fas fa-user-plus fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 mb-3">
+        <a href="/business/applications?status=shortlisted" class="text-decoration-none">
+            <div class="card text-white bg-warning h-100 hover-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Interviews</h6>
+                            <h2 class="mb-0">{{applicationStats.shortlisted}}</h2>
+                        </div>
+                        <i class="fas fa-calendar-alt fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 mb-3">
+        <a href="/business/profile-views" class="text-decoration-none">
+            <div class="card text-white bg-info h-100 hover-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Profile Views</h6>
+                            <h2 class="mb-0">{{stats.totalViews}}</h2>
+                        </div>
+                        <i class="fas fa-eye fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Recent Activity and Quick Actions -->
+<div class="row">
+    <!-- Recent Applications -->
+    <div class="col-md-8 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Applications</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-user me-1"></i> Applicant</th>
+                                <th><i class="fas fa-briefcase me-1"></i> Position</th>
+                                <th><i class="fas fa-calendar me-1"></i> Applied</th>
+                                <th><i class="fas fa-info-circle me-1"></i> Status</th>
+                                <th><i class="fas fa-file-pdf me-1"></i> View CV</th>
+                                {{!-- <th><i class="fas fa-envelope me-1"></i> Contact</th> --}}
+                                <th><i class="fas fa-eye me-1"></i> View Profile</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-applications-tbody">
+                            {{#each recentApplications}}
+                            <tr data-application-id="{{_id}}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-primary text-white rounded-circle me-2 d-flex align-items-center justify-content-center">
+                                            {{#if user_id.username}}
+                                                {{firstLetter user_id.username}}
+                                            {{else}}
+                                                U
+                                            {{/if}}
+                                        </div>
+                                        <div>
+                                            <div class="fw-medium">{{user_id.username}}</div>
+                                            <small class="text-muted"><i class="fas fa-envelope me-1"></i>{{user_id.email}}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-medium">{{job_id.title}}</div>
+                                    <small class="text-muted">{{job_id.field}}</small>
+                                </td>
+                                <td>
+                                    <div class="text-muted" title="{{applied_at}}">{{formatTime applied_at}}</div>
+                                </td>
+                                <td>
+                                    {{#if (eq status 'pending')}}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {{else if (eq status 'viewed')}}
+                                        <span class="badge bg-info">Viewed</span>
+                                    {{else if (eq status 'shortlisted')}}
+                                        <span class="badge bg-primary">Shortlisted</span>
+                                    {{else if (eq status 'rejected')}}
+                                        <span class="badge bg-danger">Rejected</span>
+                                    {{else if (eq status 'hired')}}
+                                        <span class="badge bg-success">Hired</span>
+                                    {{else}}
+                                        <span class="badge bg-secondary">{{status}}</span>
+                                    {{/if}}
+                                </td>
+                                <td>
+                                    {{#if cv_id}}
+                                        <button class="btn btn-sm btn-outline-primary cv-popup-btn" 
+                                                data-cv-id="{{cv_id._id}}" 
+                                                data-applicant-name="{{user_id.username}}"
+                                                title="View CV">
+                                            <i class="fas fa-file-pdf"></i> View CV
+                                        </button>
+                                    {{else}}
+                                        <span class="text-muted small">No CV</span>
+                                    {{/if}}
+                                </td>
+                                {{!-- <td>
+                                    <a href="mailto:{{user_id.email}}" class="btn btn-sm btn-outline-info me-1" title="Email">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                    {{#if user_id.phone}}
+                                        <a href="tel:{{user_id.phone}}" class="btn btn-sm btn-outline-success" title="Call">
+                                            <i class="fas fa-phone"></i>
+                                        </a>
+                                    {{/if}}
+                                </td> --}}
+                                <td>
+                                    <a href="/business/applicants/{{_id}}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye me-1"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            {{/each}}
+                            {{#unless recentApplications}}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No recent applications</td>
+                            </tr>
+                            {{/unless}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="/business/job/create-page" class="btn btn-primary btn-lg mb-2">
+                        <i class="fas fa-plus me-2"></i> Post New Job
+                    </a>
+                    <a href="/business/applications" class="btn btn-outline-secondary btn-lg mb-2">
+                        <i class="fas fa-search me-2"></i> Browse Candidates
+                    </a>
+                    <a href="/business/applicants-scheduled-list" class="btn btn-outline-secondary btn-lg mb-2">
+                        <i class="fas fa-envelope me-2"></i> Message Candidates
+                    </a>
+                    <a href="/business/profile-page" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-cog me-2"></i> Account Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CV Modal -->
+<div class="modal fade" id="cvModal" tabindex="-1" aria-labelledby="cvModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cvModalLabel">
+                    <i class="fas fa-file-alt me-2"></i>Xem CV gốc
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="cvLoadingSpinner" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Loading CV...</p>
+                </div>
+                <div id="cvContent" style="display: none;">
+                    <!-- CV content will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="downloadCvBtn">
+                    <i class="fas fa-download me-1"></i> Tải xuống PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Real-time Updates Script -->
+<style>
+    .avatar-sm {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        font-weight: 600;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: 2px solid #fff;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    .fw-medium {
+        font-weight: 500;
+    }
+    
+    .new-application {
+        animation: slideInRight 0.5s ease-out;
+        background-color: #d4edda !important;
+    }
+    
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    .hover-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .hover-card .card-body {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-card:hover .card-body {
+        background-color: rgba(255,255,255,0.1);
+    }
+    
+    .hover-card i {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-card:hover i {
+        opacity: 1 !important;
+        transform: scale(1.1);
+    }
+    
+    .hover-card h2 {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-card:hover h2 {
+        transform: scale(1.05);
+    }
+    
+    .table td, .table th {
+        vertical-align: middle;
+    }
+    
+    .avatar-sm {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .fw-medium {
+        font-weight: 500;
+    }
+    
+    .new-application {
+        animation: highlightNew 2s ease-in-out;
+        background-color: #d1ecf1d;
+    }
+    
+    @keyframes highlightNew {
+        0% { background-color: #d1ecf1d; }
+        50% { background-color: #fff3cd; }
+        100% { background-color: #d1ecf1d; }
+    }
+    
+    .notification-badge {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+        vertical-align: middle;
+    }
+    
+    .table th {
+        border-top: none;
+        font-weight: 600;
+        color: #495057;
+        background-color: #f8f9fa;
+    }
+    
+    /* Enhanced applicant section styles */
+    .table tbody tr {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .table tbody tr:hover {
+        background-color: #f8f9ff;
+        transform: scale(1.01);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    }
+    
+    .table tbody tr:hover .avatar-sm {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: scale(1.1);
+    }
+    
+    .table tbody tr:hover .fw-medium {
+        color: #667eea;
+        font-weight: 600;
+    }
+    
+    .table tbody tr:hover .text-muted {
+        color: #6c757d !important;
+    }
+    
+    .badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.375rem 0.75rem;
+        border-radius: 50px;
+        letter-spacing: 0.5px;
+    }
+    
+    .btn-sm {
+        font-size: 0.875rem;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-sm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .btn-outline-info:hover {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+    }
+    
+    .btn-outline-success:hover {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    
+    .btn-primary:hover {
+        background-color: #5a67d8;
+        border-color: #5a67d8;
+    }
+    
+    /* CV File Viewer Styles - Matching cv-review.hbs */
+    .cv-file-viewer {
+        width: 100%;
+        height: 600px;
+        background-color: #f8f9fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: auto;
+    }
+    
+    .cv-document-image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* PDF Viewer Styles */
+    .cv-pdf-viewer {
+        background-color: #525659;
+        padding: 20px;
+        min-height: 600px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+    
+    .pdf-page {
+        background-color: white;
+        width: 100%;
+        max-width: 800px;
+        min-height: 11in;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    
+    .pdf-content {
+        padding: 40px 50px;
+        height: 100%;
+    }
+    
+    .cv-pdf-text {
+        white-space: pre-wrap;
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 12px;
+        line-height: 1.4;
+        color: #000;
+        margin: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    /* Modal adjustments */
+    .modal-dialog.modal-lg {
+        max-width: 95vw;
+    }
+    
+    @media (max-width: 768px) {
+        .cv-file-viewer {
+            height: 400px;
+        }
+        
+        .pdf-content {
+            padding: 20px 25px;
+        }
+        
+        .cv-pdf-text {
+            font-size: 11px;
+        }
+        
+        .modal-dialog.modal-lg {
+            max-width: 98vw;
+            margin: 10px;
+        }
+    }
+</style>
+<script>
+    // CV Modal functionality
+    let cvModal;
+    let currentCvId = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Bootstrap modal
+        cvModal = new bootstrap.Modal(document.getElementById('cvModal'));
+        
+        // CV popup button click handlers
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.cv-popup-btn')) {
+                const button = e.target.closest('.cv-popup-btn');
+                const cvId = button.getAttribute('data-cv-id');
+                const applicantName = button.getAttribute('data-applicant-name');
+                openCvModal(cvId, applicantName);
+            }
+        });
+
+        // Download CV button click handler
+        document.getElementById('downloadCvBtn').addEventListener('click', function() {
+            if (currentCvId) {
+                window.open(`/business/cv/download/${currentCvId}`, '_blank');
+            }
+        });
+
+        // Reset modal when hidden
+        document.getElementById('cvModal').addEventListener('hidden.bs.modal', function() {
+            resetCvModal();
+        });
+    });
+
+    function openCvModal(cvId, applicantName) {
+        currentCvId = cvId;
+        document.getElementById('cvModalLabel').innerHTML = `
+            <i class="fas fa-file-alt me-2"></i>Xem CV gốc - ${applicantName}
+        `;
+        document.getElementById('cvLoadingSpinner').style.display = 'block';
+        document.getElementById('cvContent').style.display = 'none';
+        
+        cvModal.show();
+        
+        // Load CV content
+        loadCvContent(cvId);
+    }
+
+    function loadCvContent(cvId) {
+        // Fetch CV data from the API
+        fetch(`/business/api/cv/${cvId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load CV');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    displayCvContent(data.data);
+                } else {
+                    throw new Error(data.message || 'Failed to load CV');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading CV:', error);
+                showCvError('Failed to load CV. Please try again.');
+            });
+    }
+
+    function displayCvContent(cvData) {
+        const cvContent = document.getElementById('cvContent');
+        const loadingSpinner = document.getElementById('cvLoadingSpinner');
+        
+        // Display CV exactly like the "Xem CV gốc" modal
+        let cvHtml = '';
+        
+        if (cvData.file_path) {
+            // Display PDF converted to image (like in cv-review.hbs)
+            cvHtml = `
+                <div class="cv-file-viewer">
+                    <!-- Convert PDF to image and display as image -->
+                    <img src="/pdf-converter/convert-pdf-to-image?file=${cvData.file_path}" 
+                         alt="CV Document" 
+                         class="cv-document-image"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                    <!-- Fallback to processed text if conversion fails -->
+                    <div class="cv-pdf-viewer" style="display:none;">
+                        <div class="pdf-page">
+                            <div class="pdf-content">
+                                <pre class="cv-pdf-text">${cvData.processed_text || 'CV content not available'}</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (cvData.processed_text) {
+            // Display processed text
+            cvHtml = `
+                <div class="cv-pdf-viewer">
+                    <div class="pdf-page">
+                        <div class="pdf-content">
+                            <pre class="cv-pdf-text">${cvData.processed_text}</pre>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            // No CV content available
+            cvHtml = `
+                <div class="text-center py-4">
+                    <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Không có file CV để hiển thị</p>
+                </div>
+            `;
+        }
+        
+        cvContent.innerHTML = cvHtml;
+        
+        // Hide loading spinner and show content
+        loadingSpinner.style.display = 'none';
+        cvContent.style.display = 'block';
+    }
+
+    function showCvError(message) {
+        const cvContent = document.getElementById('cvContent');
+        const loadingSpinner = document.getElementById('cvLoadingSpinner');
+        
+        cvContent.innerHTML = `
+            <div class="alert alert-danger text-center">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Error:</strong> ${message}
+            </div>
+        `;
+        
+        loadingSpinner.style.display = 'none';
+        cvContent.style.display = 'block';
+    }
+
+    function resetCvModal() {
+        currentCvId = null;
+        document.getElementById('cvLoadingSpinner').style.display = 'block';
+        document.getElementById('cvContent').style.display = 'none';
+        document.getElementById('cvContent').innerHTML = '';
+    }
+
+    // Real-time updates for recent applications
+    document.addEventListener('DOMContentLoaded', function() {
+        const tbody = document.getElementById('recent-applications-tbody');
+        if (!tbody) return;
+
+        // Create EventSource for real-time updates
+        const eventSource = new EventSource('/business/applications/stream');
+        
+        eventSource.onmessage = function(event) {
+            try {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'new_application') {
+                    // Add new application to the top of table
+                    const newRow = createApplicationRow(data.application);
+                    const firstRow = tbody.querySelector('tr');
+                    
+                    if (firstRow && firstRow.textContent.includes('No recent applications')) {
+                        // Remove "No recent applications" row
+                        tbody.innerHTML = '';
+                    }
+                    
+                    tbody.insertBefore(newRow, tbody.firstChild);
+                    
+                    // Highlight new row
+                    newRow.classList.add('table-success');
+                    setTimeout(() => {
+                        newRow.classList.remove('table-success');
+                    }, 3000);
+                    
+                    // Update notification badge if exists
+                    updateNotificationBadge();
+                }
+            } catch (error) {
+                console.error('Error parsing real-time update:', error);
+            }
+        };
+        
+        eventSource.onerror = function(error) {
+            console.error('EventSource error:', error);
+            // Retry connection after 5 seconds
+            setTimeout(() => {
+                eventSource.close();
+                location.reload(); // Simple fallback
+            }, 5000);
+        };
+    });
+
+    // Helper function to format time in a user-friendly way
+    function formatTimeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+        
+        if (diffInSeconds < 60) {
+            return 'Just now';
+        } else if (diffInSeconds < 3600) {
+            const minutes = Math.floor(diffInSeconds / 60);
+            return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        } else if (diffInSeconds < 86400) {
+            const hours = Math.floor(diffInSeconds / 3600);
+            return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        } else if (diffInSeconds < 604800) {
+            const days = Math.floor(diffInSeconds / 86400);
+            return `${days} day${days > 1 ? 's' : ''} ago`;
+        } else {
+            // For older dates, show the actual date
+            return date.toLocaleDateString('vi-VN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+    }
+
+    function createApplicationRow(application) {
+        const row = document.createElement('tr');
+        row.setAttribute('data-application-id', application._id);
+        row.className = 'new-application';
+        
+        const appliedDate = formatTimeAgo(application.applied_at);
+        const firstLetter = application.user_id?.username ? application.user_id.username.charAt(0).toUpperCase() : 'U';
+        
+        row.innerHTML = `
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm bg-primary text-white rounded-circle me-2 d-flex align-items-center justify-content-center">
+                        ${firstLetter}
+                    </div>
+                    <div>
+                        <div class="fw-medium">${application.user_id?.username || 'Unknown User'}</div>
+                        <small class="text-muted">${application.user_id?.username || 'No username'}</small>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="fw-medium">${application.job_id?.title || 'Unknown Position'}</div>
+                <small class="text-muted">${application.job_id?.field || 'No field'}</small>
+            </td>
+            <td>
+                <div class="text-muted">${appliedDate}</div>
+            </td>
+            <td>
+                ${getStatusBadge(application.status)}
+            </td>
+            <td>
+                ${application.cv_id ? `
+                    <button class="btn btn-sm btn-outline-primary cv-popup-btn" 
+                            data-cv-id="${application.cv_id._id}" 
+                            data-applicant-name="${application.user_id?.username || 'Unknown'}"
+                            title="View CV">
+                        <i class="fas fa-file-pdf"></i> View CV
+                    </button>
+                ` : '<span class="text-muted small">No CV</span>'}
+            </td>
+            <td>
+                <a href="mailto:${application.user_id?.email || ''}" class="btn btn-sm btn-outline-info me-1" title="username">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                ${application.user_id?.phone ? `
+                    <a href="tel:${application.user_id.phone}" class="btn btn-sm btn-outline-success" title="Call">
+                        <i class="fas fa-phone"></i>
+                    </a>
+                ` : ''}
+            </td>
+            <td>
+                <a href="/business/applicants/${application._id}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-eye me-1"></i> View
+                </a>
+            </td>
+        `;
+        
+        return row;
+    }
+
+    function getStatusBadge(status) {
+        const statusMap = {
+            'pending': '<span class="badge bg-warning">Pending</span>',
+            'viewed': '<span class="badge bg-info">Viewed</span>',
+            'shortlisted': '<span class="badge bg-primary">Shortlisted</span>',
+            'rejected': '<span class="badge bg-danger">Rejected</span>',
+            'hired': '<span class="badge bg-success">Hired</span>'
+        };
+        return statusMap[status] || `<span class="badge bg-secondary">${status}</span>`;
+    }
+
+    function updateNotificationBadge() {
+        // Update any notification badges in UI
+        const badges = document.querySelectorAll('.notification-badge');
+        badges.forEach(badge => {
+            const currentCount = parseInt(badge.textContent) || 0;
+            badge.textContent = currentCount + 1;
+            badge.classList.add('badge-pulse');
+            setTimeout(() => {
+                badge.classList.remove('badge-pulse');
+            }, 2000);
+        });
+    }
+</script>

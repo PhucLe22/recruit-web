@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài kiểm tra tính cách Big Five (OCEAN) - JobLife</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/big-five-assessment.css" rel="stylesheet">
+</head>
+<body>
+    {{> header}}
+
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="main-container">
+        <aside class="sidebar" id="sidebar">
+            <h2><i class="fas fa-water"></i> Big Five</h2>
+
+            <div class="progress-circle">
+                <svg class="progress-ring" viewBox="0 0 120 120">
+                    <circle class="progress-ring-bg" cx="60" cy="60" r="54"></circle>
+                    <circle class="progress-ring-fill" cx="60" cy="60" r="54"
+                            stroke-dasharray="0 339.292" id="progressRing"></circle>
+                </svg>
+                <div class="progress-text">
+                    <div id="progressPercent">0%</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">Hoàn thành</div>
+                </div>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value" id="answeredCount">0</div>
+                    <div class="stat-label">Đã trả lời</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="flaggedCount">0</div>
+                    <div class="stat-label">Đã đánh dấu</div>
+                </div>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem; font-size: 1.1rem; opacity: 0.9;">Danh sách câu hỏi</h3>
+            <div class="question-grid" id="questionGrid">
+                <!-- Question items will be generated here -->
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <button class="btn btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="showFlaggedQuestions()">
+                    <i class="fas fa-flag"></i> Xem câu đã đánh dấu
+                </button>
+                <button class="btn btn-success" style="width: 100%;" onclick="submitAssessment()" id="submitBtn" disabled>
+                    <i class="fas fa-check"></i> Hoàn thành bài kiểm tra
+                </button>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="assessment-header">
+                <h1><i class="fas fa-water"></i> Bài kiểm tra tính cách Big Five</h1>
+                <p>Khám phá 5 yếu tố tính cách chính: Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism</p>
+            </div>
+
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="setViewMode('single')">
+                    <i class="fas fa-list"></i> Từng câu
+                </button>
+                <button class="view-btn" onclick="setViewMode('grid')">
+                    <i class="fas fa-th"></i> Lưới
+                </button>
+            </div>
+
+            <div id="introSection" class="intro-section">
+                <h2><i class="fas fa-info-circle"></i> Giới thiệu bài kiểm tra Big Five</h2>
+                <p>
+                    Mô hình Big Five (OCEAN) là một trong những lý thuyết tính cách được khoa học công nhận rộng rãi nhất.
+                    Bài kiểm tra này giúp bạn hiểu rõ hơn về 5 yếu tố chính tạo nên tính cách của bạn thông qua 25 câu hỏi
+                    được thiết kế khoa học.
+                </p>
+
+                <div class="instruction-box">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>Hướng dẫn:</strong> Với mỗi câu hỏi, hãy đánh giá mức độ đồng ý của bạn trên thang điểm từ 1 (Hoàn toàn không đồng ý) đến 5 (Hoàn toàn đồng ý).
+                </div>
+
+                <div class="traits-grid">
+                    <div class="trait-item">
+                        <div class="trait-name">O - Openness</div>
+                        <div class="trait-desc">Sự cởi mở với trải nghiệm mới</div>
+                    </div>
+                    <div class="trait-item">
+                        <div class="trait-name">C - Conscientiousness</div>
+                        <div class="trait-desc">Sự tận tâm và có tổ chức</div>
+                    </div>
+                    <div class="trait-item">
+                        <div class="trait-name">E - Extraversion</div>
+                        <div class="trait-desc">Sự hướng ngoại và năng lượng</div>
+                    </div>
+                    <div class="trait-item">
+                        <div class="trait-name">A - Agreeableness</div>
+                        <div class="trait-desc">Sự hòa đồng và hợp tác</div>
+                    </div>
+                    <div class="trait-item">
+                        <div class="trait-name">N - Neuroticism</div>
+                        <div class="trait-desc">Sự ổn định cảm xúc</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="startAssessment()">
+                    <i class="fas fa-play"></i> Bắt đầu bài kiểm tra
+                </button>
+            </div>
+
+            <div id="questionContainer" class="question-container">
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-number" id="questionNumber">1</div>
+                        <div class="question-actions">
+                            <button class="flag-btn" id="flagBtn" onclick="toggleFlag()">
+                                <i class="fas fa-flag"></i> Đánh dấu
+                            </button>
+                        </div>
+                    </div>
+                    <div class="question-text" id="questionText">
+                        Question text will appear here
+                    </div>
+                    <div class="scale-container">
+                        <div class="scale-labels">
+                            <span>Hoàn toàn không đồng ý</span>
+                            <span>Hoàn toàn đồng ý</span>
+                        </div>
+                        <div class="scale-options" id="scaleOptions">
+                            <!-- Scale options will be generated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>
+                        <i class="fas fa-arrow-left"></i> Câu trước
+                    </button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">
+                        Câu tiếp theo <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="gridContainer" class="questions-grid-container">
+                <div class="questions-grid" id="questionsGrid">
+                    <!-- Grid questions will be generated here -->
+                </div>
+            </div>
+
+            <div id="loadingSection" class="loading">
+                <div class="spinner"></div>
+                <h3>Đang phân tích kết quả...</h3>
+                <p>Hệ thống AI đang phân tích câu trả lời của bạn. Vui lòng chờ trong giây lát.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/big-five-assessment.js"></script>
+</body>
+</html>

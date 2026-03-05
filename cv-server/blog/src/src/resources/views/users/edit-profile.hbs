@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chỉnh sửa hồ sơ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      padding-top: 2rem;
+    }
+    .profile-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      padding: 2rem;
+    }
+    .avatar-upload {
+      position: relative;
+      width: 150px;
+      margin: 0 auto 2rem;
+    }
+    .avatar-preview {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid #e9ecef;
+      margin-bottom: 1rem;
+    }
+    .avatar-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .btn-upload {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: #6c757d;
+      color: white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .btn-upload:hover {
+      background: #5a6268;
+    }
+    .form-label {
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="profile-container">
+      <h2 class="text-center mb-4">Chỉnh sửa thông tin cá nhân</h2>
+      
+      <form action="/profile/{{user._id}}?_method=PUT" method="POST" enctype="multipart/form-data">
+        <div class="avatar-upload">
+          <div class="avatar-preview">
+            <img src="{{user.avatar || '/images/default-avatar.png'}}" id="avatarPreview" alt="Avatar">
+          </div>
+          <label for="avatar" class="btn-upload" title="Đổi ảnh đại diện">
+            <i class="fas fa-camera"></i>
+          </label>
+          <input type="file" id="avatar" name="avatar" accept="image/*" class="d-none">
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="username" class="form-label">Tên đăng nhập</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{user.username}}" required>
+          </div>
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{user.email}}" required>
+          </div>
+          <div class="col-md-6">
+            <label for="phone" class="form-label">Số điện thoại</label>
+            <input type="tel" class="form-control" id="phone" name="phone" value="{{user.phone}}">
+          </div>
+          <div class="col-md-6">
+            <label for="gender" class="form-label">Giới tính</label>
+            <select class="form-select" id="gender" name="gender">
+              <option value="">Chọn giới tính</option>
+              <option value="male" {{#if_eq user.gender 'male'}}selected{{/if_eq}}>Nam</option>
+              <option value="female" {{#if_eq user.gender 'female'}}selected{{/if_eq}}>Nữ</option>
+              <option value="other" {{#if_eq user.gender 'other'}}selected{{/if_eq}}>Khác</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="birthday" class="form-label">Ngày sinh</label>
+            <input type="date" class="form-control" id="birthday" name="birthday" value="{{formatDate user.birthday 'YYYY-MM-DD'}}">
+          </div>
+          <div class="col-md-6">
+            <label for="level" class="form-label">Trình độ</label>
+            <select class="form-select" id="level" name="level">
+              <option value="">Chọn trình độ</option>
+              <option value="student" {{#if_eq user.level 'student'}}selected{{/if_eq}}>Sinh viên</option>
+              <option value="fresher" {{#if_eq user.level 'fresher'}}selected{{/if_eq}}>Mới ra trường</option>
+              <option value="junior" {{#if_eq user.level 'junior'}}selected{{/if_eq}}>Junior</option>
+              <option value="senior" {{#if_eq user.level 'senior'}}selected{{/if_eq}}>Senior</option>
+              <option value="manager" {{#if_eq user.level 'manager'}}selected{{/if_eq}}>Quản lý</option>
+              <option value="leader" {{#if_eq user.level 'leader'}}selected{{/if_eq}}>Trưởng nhóm</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="degree" class="form-label">Bằng cấp</label>
+            <select class="form-select" id="degree" name="degree">
+              <option value="">Chọn bằng cấp</option>
+              <option value="high_school" {{#if_eq user.degree 'high_school'}}selected{{/if_eq}}>THPT</option>
+              <option value="college" {{#if_eq user.degree 'college'}}selected{{/if_eq}}>Cao đẳng</option>
+              <option value="bachelor" {{#if_eq user.degree 'bachelor'}}selected{{/if_eq}}>Đại học</option>
+              <option value="master" {{#if_eq user.degree 'master'}}selected{{/if_eq}}>Thạc sĩ</option>
+              <option value="phd" {{#if_eq user.degree 'phd'}}selected{{/if_eq}}>Tiến sĩ</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="experience" class="form-label">Kinh nghiệm</label>
+            <select class="form-select" id="experience" name="experience">
+              <option value="">Chọn số năm kinh nghiệm</option>
+              <option value="no_experience" {{#if_eq user.experience 'no_experience'}}selected{{/if_eq}}>Chưa có kinh nghiệm</option>
+              <option value="under_1_year" {{#if_eq user.experience 'under_1_year'}}selected{{/if_eq}}>Dưới 1 năm</option>
+              <option value="1_2_years" {{#if_eq user.experience '1_2_years'}}selected{{/if_eq}}>1-2 năm</option>
+              <option value="2_5_years" {{#if_eq user.experience '2_5_years'}}selected{{/if_eq}}>2-5 năm</option>
+              <option value="5_10_years" {{#if_eq user.experience '5_10_years'}}selected{{/if_eq}}>5-10 năm</option>
+              <option value="over_10_years" {{#if_eq user.experience 'over_10_years'}}selected{{/if_eq}}>Trên 10 năm</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label for="major" class="form-label">Chuyên ngành</label>
+            <input type="text" class="form-control" id="major" name="major" value="{{user.major}}" placeholder="Ví dụ: Công nghệ thông tin, Kế toán, Marketing...">
+          </div>
+          <div class="col-12 mt-4">
+            <div class="d-flex justify-content-between">
+              <a href="/profile/{{user._id}}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Quay lại
+              </a>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>Lưu thay đổi
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Preview avatar before upload
+    document.getElementById('avatar').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('avatarPreview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Format date for date input
+    function formatDate(date) {
+      if (!date) return '';
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+  </script>
+</body>
+</html>

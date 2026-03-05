@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{pageTitle}}</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="/css/search-results.css">
+</head>
+
+<body>
+  {{> header}}
+
+  <!-- Hidden element to pass server data to JS -->
+  <div id="search-data" style="display:none;"
+    data-keyword="{{keyword}}"
+    data-sort-by="{{sortBy}}"
+    data-sort-order="{{sortOrder}}"
+    {{#if filters.cities}}data-cities='{{{json filters.cities}}}'{{/if}}
+    {{#if filters.types}}data-types='{{{json filters.types}}}'{{/if}}
+    {{#if filters.fields}}data-fields='{{{json filters.fields}}}'{{/if}}
+    {{#if filters.experienceLevel}}data-experience-level="{{filters.experienceLevel}}"{{/if}}
+  ></div>
+
+  <div class="container">
+    <!-- Search Header -->
+    <div class="search-header">
+      <div class="text-center">
+        {{#if keyword}}
+        <h1>Kết quả tìm kiếm</h1>
+        <div class="search-keyword-highlight">
+          <span class="search-label">Từ khóa:</span>
+          <span class="search-term">"{{keyword}}"</span>
+        </div>
+        <div class="results-count">
+          Tìm thấy <strong>{{totalCount}}</strong> công việc phù hợp
+        </div>
+        {{else}}
+        <h1>Tất cả việc làm</h1>
+        <div class="results-count">
+          Hiển thị tất cả <strong>{{totalCount}}</strong> công việc
+        </div>
+        {{/if}}
+        </div>
+        <div class="results-meta justify-content-center">
+          <div class="meta-item">
+            <i class="fas fa-file-alt"></i>
+            <span>Trang {{currentPage}}/{{totalPages}}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-filter"></i>
+            <span id="activeFilterCount">0 bộ lọc</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+      <form id="searchForm" method="GET" action="/jobs/search-results">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <div class="search-input-group">
+              <input type="text" name="q" id="searchInput" class="search-input"
+                placeholder="Nhập từ khóa tìm kiếm (vị trí, công ty, kỹ năng...)" value="{{keyword}}">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn-primary-custom w-100">
+              <i class="fas fa-search"></i>
+              Tìm kiếm
+            </button>
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn-secondary-custom w-100" id="toggleFilters">
+              <i class="fas fa-filter"></i>
+              Bộ lọc
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section" id="filterSection">
+      <form id="filterForm">
+        <input type="hidden" name="q" value="{{keyword}}">
+
+        <!-- Location Filter -->
+        <div class="filter-row">
+          <div class="filter-group col-md-6">
+            <div class="filter-label">
+              <i class="fas fa-map-marker-alt"></i>
+              Địa điểm
+            </div>
+            <div class="filter-options" id="cityFilters">
+              {{#each (array "TP.HCM" "Hà Nội" "Đà Nẵng" "Hải Phòng" "Cần Thơ" "Biên Hòa" "Remote")}}
+              <div class="filter-chip" data-filter-type="cities" data-value="{{this}}">
+                {{this}}
+              </div>
+              {{/each}}
+            </div>
+          </div>
+
+          <!-- Job Type Filter -->
+          <div class="filter-group col-md-6">
+            <div class="filter-label">
+              <i class="fas fa-briefcase"></i>
+              Loại công việc
+            </div>
+            <div class="filter-options" id="typeFilters">
+              {{#each (array "Full-time" "Part-time" "Internship" "Remote" "Contract" "Freelance")}}
+              <div class="filter-chip" data-filter-type="types" data-value="{{this}}">
+                {{this}}
+              </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <!-- Field Filter -->
+          <div class="filter-group col-md-6">
+            <div class="filter-label">
+              <i class="fas fa-tags"></i>
+              Ngành nghề
+            </div>
+            <div class="filter-options" id="fieldFilters">
+              {{#each (array "IT - Phần mềm" "IT - Phần cứng" "Marketing" "Sales - Kinh doanh" "Kế toán" "Nhân sự" "Thiết kế - Đồ họa")}}
+              <div class="filter-chip" data-filter-type="fields" data-value="{{this}}">
+                {{this}}
+              </div>
+              {{/each}}
+            </div>
+          </div>
+
+          <!-- Experience Filter -->
+          <div class="filter-group col-md-6">
+            <div class="filter-label">
+              <i class="fas fa-chart-line"></i>
+              Kinh nghiệm
+            </div>
+            <div class="filter-options" id="experienceFilters">
+              {{#each (array "Không yêu cầu" "Dưới 1 năm" "1-2 năm" "2-4 năm" "3-5 năm" "5-10 năm" "Trên 10 năm")}}
+              <div class="filter-chip" data-filter-type="experienceLevel" data-value="{{this}}">
+                {{this}}
+              </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+
+        <!-- Salary Filter -->
+        <div class="filter-row">
+          <div class="filter-group col-md-12">
+            <div class="filter-label">
+              <i class="fas fa-dollar-sign"></i>
+              Mức lương
+            </div>
+            <div class="salary-inputs">
+              <input type="number" name="salaryMin" id="salaryMin" class="salary-input" placeholder="Tối thiểu" value="{{filters.salaryMin}}">
+              <span>-</span>
+              <input type="number" name="salaryMax" id="salaryMax" class="salary-input" placeholder="Tối đa" value="{{filters.salaryMax}}">
+              <button type="button" class="btn-primary-custom" id="applySalaryFilter">Áp dụng</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="filter-row">
+          <div class="col-md-12">
+            <button type="button" class="btn-primary-custom" id="applyFilters">
+              <i class="fas fa-check"></i>
+              Áp dụng bộ lọc
+            </button>
+            <button type="button" class="btn-secondary-custom ms-2" id="clearFilters">
+              <i class="fas fa-times"></i>
+              Xóa bộ lọc
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Active Filters Display -->
+    <div class="active-filters" id="activeFiltersSection" style="display: none;">
+      <h6>Bộ lọc đang áp dụng:</h6>
+      <div id="activeFiltersList"></div>
+      <button type="button" class="clear-all-filters" id="clearAllFilters">Xóa tất cả</button>
+    </div>
+
+    <!-- Sort Section -->
+    <div class="sort-section">
+      <div class="sort-group">
+        <label for="sortBy" class="form-label">Sắp xếp theo:</label>
+        <select name="sortBy" id="sortBy" class="sort-select">
+          <option value="relevance" {{#ifEquals sortBy 'relevance'}}selected{{/ifEquals}}>Phù hợp nhất</option>
+          <option value="date" {{#ifEquals sortBy 'date'}}selected{{/ifEquals}}>Mới nhất</option>
+          <option value="salary" {{#ifEquals sortBy 'salary'}}selected{{/ifEquals}}>Lương cao nhất</option>
+        </select>
+      </div>
+      <div class="sort-group">
+        <label for="sortOrder" class="form-label">Thứ tự:</label>
+        <select name="sortOrder" id="sortOrder" class="sort-select">
+          <option value="desc" {{#ifEquals sortOrder 'desc'}}selected{{/ifEquals}}>Giảm dần</option>
+          <option value="asc" {{#ifEquals sortOrder 'asc'}}selected{{/ifEquals}}>Tăng dần</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+      <div class="spinner"></div>
+      <p>Đang tìm kiếm công việc phù hợp...</p>
+    </div>
+
+    <!-- Job Results -->
+    <div id="jobResults">
+      {{#if sorted.length}}
+      <div class="job-grid">
+        {{#each sorted}}
+        <div class="job-card">
+          <div class="status-badge status-{{this.status}}">
+            {{#ifEquals this.status 'urgent'}}Gấp{{/ifEquals}}
+            {{#ifEquals this.status 'active'}}Đang tuyển{{/ifEquals}}
+            {{#ifEquals this.status 'closed'}}Đã đóng{{/ifEquals}}
+          </div>
+
+          <div class="job-header">
+            <img src="{{this.logoPath}}" alt="{{this.companyName}}" class="company-logo"
+              onerror="this.src='/images/default-company.png'">
+            <div class="job-title">
+              <h3>{{this.title}}</h3>
+              <div class="company-name">{{this.companyName}}</div>
+            </div>
+          </div>
+
+          <div class="job-details">
+            <div class="detail-item">
+              <i class="fas fa-briefcase"></i>
+              <span>{{this.type}}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-clock"></i>
+              <span>{{this.workTime}}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{this.city}}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-tags"></i>
+              <span>{{this.field}}</span>
+            </div>
+          </div>
+
+          <div class="salary">
+            <i class="fas fa-dollar-sign"></i>
+            {{this.salary}}
+          </div>
+
+          <div class="job-footer">
+            <div class="posted-date">
+              <i class="fas fa-calendar-alt"></i>
+              {{this.formattedDate}}
+            </div>
+            <a href="/jobs/{{this.slug}}" class="job-apply-btn">
+              <i class="fas fa-eye"></i>
+              Xem chi tiết
+            </a>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+
+      <!-- Pagination -->
+      {{#if totalPages}}
+      <div class="pagination-container">
+        <div class="pagination">
+          {{#if currentPage}}
+          {{#if (gt currentPage 1)}}
+          <a href="?page={{sub currentPage 1}}&q={{keyword}}&sortBy={{sortBy}}&sortOrder={{sortOrder}}" class="page-link">
+            <i class="fas fa-chevron-left"></i>
+          </a>
+          {{/if}}
+          {{/if}}
+
+          {{#each (paginationRange currentPage totalPages)}}
+          {{#if this.isCurrent}}
+          <span class="page-link active">{{this.page}}</span>
+          {{else}}
+          <a href="?page={{this.page}}&q={{../keyword}}&sortBy={{../sortBy}}&sortOrder={{../sortOrder}}" class="page-link">{{this.page}}</a>
+          {{/if}}
+          {{/each}}
+
+          {{#if (lt currentPage totalPages)}}
+          <a href="?page={{add currentPage 1}}&q={{keyword}}&sortBy={{sortBy}}&sortOrder={{sortOrder}}" class="page-link">
+            <i class="fas fa-chevron-right"></i>
+          </a>
+          {{/if}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{else}}
+      <div class="no-results">
+        <i class="fas fa-search"></i>
+        <h2>Không tìm thấy công việc nào</h2>
+        <p>{{#if keyword}}Thử thay đổi từ khóa tìm kiếm "{{keyword}}" hoặc bộ lọc của bạn{{else}}Tìm kiếm công việc phù hợp ngay!{{/if}}</p>
+        <button type="button" class="btn-primary-custom mt-3" onclick="clearAllFiltersAndSearch()">
+          <i class="fas fa-redo"></i>
+          Tìm lại từ đầu
+        </button>
+      </div>
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Page JS -->
+  <script src="/js/search-results.js"></script>
+</body>
+
+</html>

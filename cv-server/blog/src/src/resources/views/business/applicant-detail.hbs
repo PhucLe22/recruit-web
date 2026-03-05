@@ -1,0 +1,373 @@
+<style>
+/* Enhanced styles for bigger, more spacious layout */
+.profile-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4rem 0 !important;
+    margin-bottom: 3rem;
+}
+
+.profile-avatar {
+    width: 150px !important;
+    height: 150px !important;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.profile-header h2 {
+    font-size: 3rem !important;
+    font-weight: 700;
+    margin-bottom: 1.5rem !important;
+}
+
+.profile-header p {
+    font-size: 1.2rem !important;
+    margin-bottom: 1rem !important;
+    opacity: 0.9;
+}
+
+.status-badge {
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.container {
+    max-width: 1400px !important;
+    padding: 0 2rem;
+}
+
+.info-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.info-card .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #dee2e6;
+    padding: 1.5rem 2rem;
+}
+
+.info-card .card-header h5 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: #2d3748;
+}
+
+.info-card .card-body {
+    padding: 2rem;
+}
+
+.info-item {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 700;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.info-value {
+    color: #6c757d;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.cv-item {
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+}
+
+.cv-item:hover {
+    border-left-color: #764ba2;
+    background-color: #f8f9ff;
+    transform: translateX(4px);
+}
+
+.action-btn {
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    color: white;
+}
+
+.btn-outline-primary {
+    border-width: 2px;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+}
+
+.btn-outline-secondary {
+    border-width: 2px;
+}
+
+/* Spacing improvements */
+.mb-4 {
+    margin-bottom: 3rem !important;
+}
+
+.mt-4 {
+    margin-top: 3rem !important;
+}
+
+.gap-2 {
+    gap: 1rem !important;
+}
+
+.gap-1 {
+    gap: 0.75rem !important;
+}
+
+/* Card improvements */
+.card {
+    margin-bottom: 2rem;
+}
+
+.card h6 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.card small {
+    font-size: 1rem;
+}
+</style>
+
+<!-- Profile Header -->
+<div class="profile-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                {{#if application.user.avatar}}
+                    <img src="/uploads/avatars/{{application.user.avatar}}" alt="{{application.user.fullName}}" class="profile-avatar">
+                {{else}}
+                    <div class="profile-avatar bg-white text-primary d-flex align-items-center justify-content-center">
+                        <i class="fas fa-user fa-2x"></i>
+                    </div>
+                {{/if}}
+            </div>
+            <div class="col">
+                <h2 class="mb-1">{{application.user.fullName}}</h2>
+                <p class="mb-2 opacity-75">
+                    <i class="fas fa-envelope me-2"></i>{{application.user.email}}
+                    {{#if application.user.phone}}
+                        <span class="ms-3"><i class="fas fa-phone me-1"></i>{{application.user.phone}}</span>
+                    {{/if}}
+                </p>
+                    <p class="mb-0 opacity-75">
+                        <i class="fas fa-calendar me-2"></i>Member since {{application.user.createdAt}}
+                    </p>
+                </div>
+                <div class="col-auto">
+                    <div class="text-end">
+                        {{#if (eq application.status 'pending')}}
+                            <span class="status-badge bg-warning">Pending</span>
+                        {{else if (eq application.status 'viewed')}}
+                            <span class="status-badge bg-info">Viewed</span>
+                        {{else if (eq application.status 'shortlisted')}}
+                            <span class="status-badge bg-primary">Shortlisted</span>
+                        {{else if (eq application.status 'rejected')}}
+                            <span class="status-badge bg-danger">Rejected</span>
+                        {{else if (eq application.status 'hired')}}
+                            <span class="status-badge bg-success">Hired</span>
+                        {{else}}
+                            <span class="status-badge bg-secondary">{{application.status}}</span>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <!-- Application Details -->
+            <div class="col-lg-8">
+                <div class="card info-card">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-briefcase text-primary me-2"></i>
+                            Application Details
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <div class="info-label">Applied Date</div>
+                                    <div class="info-value">{{application.applied_at}}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Job Title</div>
+                                    <div class="info-value">{{application.job.title}}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Job Field</div>
+                                    <div class="info-value">{{application.job.field}}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <div class="info-label">Location</div>
+                                    <div class="info-value">{{application.job.location}}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Salary</div>
+                                    <div class="info-value">{{application.job.salary}}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Application Status</div>
+                                    <div class="info-value">
+                                        {{#if (eq application.status 'pending')}}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {{else if (eq application.status 'viewed')}}
+                                            <span class="badge bg-info">Viewed</span>
+                                        {{else if (eq application.status 'shortlisted')}}
+                                            <span class="badge bg-primary">Shortlisted</span>
+                                        {{else if (eq application.status 'rejected')}}
+                                            <span class="badge bg-danger">Rejected</span>
+                                        {{else if (eq application.status 'hired')}}
+                                            <span class="badge bg-success">Hired</span>
+                                        {{else}}
+                                            <span class="badge bg-secondary">{{application.status}}</span>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Current CV -->
+                        {{#if application.cv}}
+                        <div class="mt-4">
+                            <h6 class="mb-3">
+                                <i class="fas fa-file-pdf text-danger me-2"></i>
+                                Submitted CV
+                            </h6>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <h6 class="mb-1">{{application.cv.originalName}}</h6>
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>{{application.cv.createdAt}}
+                                                <span class="ms-3"><i class="fas fa-database me-1"></i>{{application.cv.fileSize}}</span>
+                                            </small>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <a href="/business/cv/view/{{application.cv._id}}" class="action-btn btn-outline-primary">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                            <a href="/business/cv/download/{{application.cv._id}}" class="action-btn btn-success">
+                                                <i class="fas fa-download"></i> Download
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- User CVs -->
+            {{!-- <div class="col-lg-4">
+                <div class="card info-card">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-file-alt text-primary me-2"></i>
+                            All CVs
+                            <span class="badge bg-secondary ms-2">{{userCVs.length}}</span>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {{#each userCVs}}
+                        <div class="cv-item p-3 mb-3">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">
+                                        <i class="fas fa-file-pdf text-danger me-2"></i>
+                                        {{originalName}}
+                                    </h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>{{createdAt}}
+                                        <span class="ms-2"><i class="fas fa-database me-1"></i>{{fileSize}}</span>
+                                    </small>
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <a href="/business/cv/view/{{_id}}" class="btn btn-sm btn-outline-primary" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="/business/cv/download/{{_id}}" class="btn btn-sm btn-success" title="Download">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {{/each}}
+                        
+                        {{#unless userCVs}}
+                        <div class="text-center py-4">
+                            <i class="fas fa-file-pdf fa-2x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">No CVs available</p>
+                        </div>
+                        {{/unless}}
+                    </div>
+                </div>
+            </div>
+        </div> --}}
+
+        <!-- Action Buttons -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="text-center">
+                    <a href="/business/applications" class="action-btn btn-outline-secondary me-2">
+                        <i class="fas fa-arrow-left"></i> Back to Applications
+                    </a>
+                    <a href="/business/user-profile/{{application.user._id}}" class="action-btn btn-primary">
+                        <i class="fas fa-user"></i> View Full Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>

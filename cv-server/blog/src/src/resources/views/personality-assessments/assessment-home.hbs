@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài kiểm tra tính cách chuyên nghiệp - JobLife</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="/css/assessment-home.css" rel="stylesheet">
+</head>
+<body>
+    {{> header}}
+
+    <!-- Hero Section -->
+    <section class="assessment-hero-section">
+        <div class="assessment-hero">
+            <h1><i class="fas fa-brain"></i> Bài kiểm tra tính cách</h1>
+            <p>Khám phá bản thân và tìm kiếm công việc phù hợp nhất với tính cách của bạn</p>
+        </div>
+
+        {{#if user}}
+        <div class="user-info">
+            <div class="user-info-inner">
+                <i class="fas fa-user"></i> Xin chào, <strong>{{user.name}}</strong>! Chào mừng bạn đến với trang bài kiểm tra tính cách chuyên nghiệp.
+            </div>
+        </div>
+        {{/if}}
+    </section>
+
+    <!-- Assessment Cards Section -->
+    <section class="assessment-cards-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Chọn bài kiểm tra</h2>
+                <p class="section-subtitle">Mỗi bài kiểm tra sẽ giúp bạn hiểu rõ hơn về tính cách và định hướng nghề nghiệp</p>
+            </div>
+
+            <div class="assessment-grid">
+                <!-- MBTI Assessment Card -->
+                <div class="assessment-card mbti-card">
+                    <div class="assessment-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h2 class="assessment-title">MBTI</h2>
+                    <p class="assessment-subtitle">Myers-Briggs Type Indicator</p>
+                    <p class="assessment-description">
+                        Phân loại 16 nhóm tính cách dựa trên hướng nội/hướng ngoại, cảm tính/lý trí,
+                        trực giác/cảm giác và có kế hoạch/linh hoạt.
+                    </p>
+                    <ul class="assessment-features">
+                        <li>16 loại tính cách khác nhau</li>
+                        <li>Tập trung vào sở thích và năng khiếu</li>
+                        <li>Phù hợp với lựa chọn nghề nghiệp</li>
+                        <li>Thời gian: 10-15 phút</li>
+                    </ul>
+                    <a href="/personality-assessments/mbti" class="assessment-button">
+                        <i class="fas fa-play"></i> Bắt đầu bài kiểm tra
+                    </a>
+                </div>
+
+                <!-- Big Five Assessment Card -->
+                <div class="assessment-card bigfive-card">
+                    <div class="assessment-icon">
+                        <i class="fas fa-water"></i>
+                    </div>
+                    <h2 class="assessment-title">Big Five</h2>
+                    <p class="assessment-subtitle">Mô hình 5 yếu tố tính cách (OCEAN)</p>
+                    <p class="assessment-description">
+                        Đo lường 5 khía cạnh chính của tính cách: Hướng ngoại, Cởi mở,
+                        Tận tâm, Thân thiện và Ổn định cảm xúc.
+                    </p>
+                    <ul class="assessment-features">
+                        <li>5 yếu tố tính cách chính</li>
+                        <li>Đo lường theo thang điểm khoa học</li>
+                        <li>Dự đoán hiệu suất công việc</li>
+                        <li>Thời gian: 15-20 phút</li>
+                    </ul>
+                    <a href="/personality-assessments/big-five" class="assessment-button">
+                        <i class="fas fa-play"></i> Bắt đầu bài kiểm tra
+                    </a>
+                </div>
+
+                <!-- DISC Assessment Card -->
+                <div class="assessment-card disc-card">
+                    <div class="assessment-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h2 class="assessment-title">DISC</h2>
+                    <p class="assessment-subtitle">Đánh giá hành vi trong công việc</p>
+                    <p class="assessment-description">
+                        Phân tích 4 phong cách hành vi: Thống trị (Dominance), Ảnh hưởng (Influence),
+                        Ổn định (Steadiness) và Tận tâm (Conscientiousness).
+                    </p>
+                    <ul class="assessment-features">
+                        <li>4 phong cách hành vi chính</li>
+                        <li>Tập trung vào môi trường làm việc</li>
+                        <li>Dự báo phong cách lãnh đạo</li>
+                        <li>Thời gian: 10-15 phút</li>
+                    </ul>
+                    <a href="/personality-assessments/disc" class="assessment-button">
+                        <i class="fas fa-play"></i> Bắt đầu bài kiểm tra
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Section -->
+    <section class="info-cards-section">
+        <div class="container">
+            <div class="info-grid">
+                <div class="info-section">
+                    <h2><i class="fas fa-info-circle"></i> Tại sao nên làm bài kiểm tra tính cách?</h2>
+                    <p>
+                        Bài kiểm tra tính cách giúp bạn hiểu rõ hơn về bản thân, xác định điểm mạnh và điểm yếu,
+                        từ đó đưa ra quyết định nghề nghiệp chính xác hơn. Các công ty ngày càng sử dụng
+                        bài kiểm tra tính cách trong quy trình tuyển dụng để tìm kiếm ứng viên phù hợp nhất với văn hóa công ty.
+                    </p>
+                </div>
+
+                <div class="info-section">
+                    <h2><i class="fas fa-shield-alt"></i> Chính sách bảo mật</h2>
+                    <p>
+                        Chúng tôi cam kết bảo mật tuyệt đối thông tin cá nhân và kết quả bài kiểm tra của bạn.
+                        Kết quả chỉ được sử dụng để đưa ra gợi ý nghề nghiệp phù hợp và không chia sẻ cho bên thứ ba.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="/js/assessment-home.js"></script>
+</body>
+</html>

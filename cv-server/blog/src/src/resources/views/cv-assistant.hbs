@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Assistant - AI Services</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        body {
+            background: white;
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.95), rgba(63, 55, 201, 0.95));
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+            border-radius: 0 0 24px 24px;
+        }
+        
+        .hero h1 { 
+            font-size: 2.5rem; 
+            font-weight: 800; 
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .service-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            scroll-margin-top: 2rem;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .service-header {
+            background: var(--gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.95;
+        }
+        
+        .upload-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(67, 97, 238, 0.3);
+        }
+        
+        .result-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-left: 4px solid var(--success);
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        .result-box.show { display: block; }
+        .result-box.error { border-left-color: #ef4444; }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid #e5e7eb;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .badge-custom {
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        .job-card {
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .job-card:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.75rem; }
+            .service-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="container">
+            <h1><i class="fas fa-robot me-2"></i>CV Assistant</h1>
+            <p class="mb-0 opacity-90">AI-powered career development tools</p>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        {{#if isLogin}}
+            <div class="alert alert-info mb-4">
+                <i class="fas fa-user-check me-2"></i>
+                <strong>Welcome, {{#if user.name}}{{user.name}}{{else}}{{user.username}}{{/if}}!</strong>
+                {{#if userCVData}}
+                    <small class="d-block text-muted mt-1">CV: {{userCVData.filename}} ({{userCVData.file_size}}KB)</small>
+                {{else}}
+                    <small class="d-block text-muted mt-1">Upload your CV to get started</small>
+                {{/if}}
+            </div>
+        {{else}}
+            <div class="alert alert-warning mb-4">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Please log in</strong> to access CV analysis and job recommendations
+            </div>
+        {{/if}}
+
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <!-- CV Analysis -->
+                <div class="service-card mb-4">
+                    <div class="service-header">
+                        <div class="service-icon"><i class="fas fa-file-medical"></i></div>
+                        <h3 class="h5 mb-1">CV Analysis</h3>
+                        <small class="opacity-90">Get AI-powered feedback and improvement suggestions</small>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Username</label>
+                            <input type="text" id="cvUsername" class="form-control" 
+                                   value="{{#if user.username}}{{user.username}}{{/if}}" 
+                                   {{#if user}}readonly{{/if}} placeholder="Enter username">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Additional Options</label>
+                            <select class="form-select mb-2" id="cvAnalysisType">
+                                <option value="full">Full Analysis</option>
+                                <option value="quick">Quick Review</option>
+                                <option value="detailed">Detailed Feedback</option>
+                            </select>
+                            <select class="form-select" id="cvFormat">
+                                <option value="">All Formats</option>
+                                <option value="technical">Technical Focus</option>
+                                <option value="creative">Creative Focus</option>
+                                <option value="business">Business Focus</option>
+                            </select>
+                        </div>
+                        
+                        <div class="upload-zone mb-3" id="uploadZone">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-2"></i>
+                            <h6>Upload Your CV</h6>
+                            <small class="text-muted">Drag & drop or click (PDF, DOC, DOCX, TXT)</small>
+                            <input type="file" id="cvFile" accept=".pdf,.doc,.docx,.txt" hidden>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" onclick="analyzeCV()">
+                                <i class="fas fa-search me-2"></i>Analyze CV
+                            </button>
+                            <button class="btn btn-outline-primary" onclick="getImprovements()">
+                                <i class="fas fa-lightbulb me-2"></i>Get Improvements
+                            </button>
+                        </div>
+                        
+                        <div id="cvResult" class="result-box"></div>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Job Recommendations -->
+                <div class="service-card">
+                    <div class="service-header">
+                        <div class="service-icon"><i class="fas fa-briefcase"></i></div>
+                        <h3 class="h5 mb-1">Job Recommendations</h3>
+                        <small class="opacity-90">Find personalized job matches based on your profile</small>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Username</label>
+                            <input type="text" id="jobUsername" class="form-control" 
+                                   value="{{#if user.username}}{{user.username}}{{/if}}" 
+                                   {{#if user}}readonly{{/if}} placeholder="Enter username">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Filters</label>
+                            <select class="form-select mb-2" id="location">
+                                <option value="">All Locations</option>
+                                <option value="Ho Chi Minh">Ho Chi Minh City</option>
+                                <option value="Hanoi">Hanoi</option>
+                                <option value="Da Nang">Da Nang</option>
+                                <option value="Remote">Remote</option>
+                            </select>
+                            <select class="form-select" id="jobType">
+                                <option value="">All Types</option>
+                                <option value="full-time">Full-time</option>
+                                <option value="part-time">Part-time</option>
+                                <option value="contract">Contract</option>
+                                <option value="internship">Internship</option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" onclick="getJobs()">
+                                <i class="fas fa-search me-2"></i>Find Jobs
+                            </button>
+                            <button class="btn btn-outline-primary" onclick="refreshJobs()">
+                                <i class="fas fa-sync me-2"></i>Refresh Listings
+                            </button>
+                        </div>
+                        
+                        <div id="jobResult" class="result-box"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API = {
+            base: '/ai-service',
+            direct: '{{aiServiceUrl}}'
+        };
+
+        // Utility functions
+        const $ = id => document.getElementById(id);
+        const showResult = (id, html, success = true) => {
+            const el = $(id);
+            el.innerHTML = html;
+            el.className = `result-box show ${success ? '' : 'error'}`;
+        };
+        const showLoading = id => showResult(id, '<div class="text-center"><span class="spinner"></span> Processing...</div>');
+        const parseData = obj => typeof obj === 'string' ? obj : obj?.improvements || JSON.stringify(obj, null, 2);
+
+        // CV Analysis
+        async function analyzeCV() {
+            const username = $('cvUsername').value;
+            if (!username) return alert('Please enter username');
+            
+            showLoading('cvResult');
+            try {
+                const res = await fetch(`${API.base}/resume/${username}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                
+                const skills = (data.parsed_output?.technical_skills || [])
+                    .map(s => `<span class="badge bg-light text-dark me-1 mb-1">${typeof s === 'string' ? s : s.name || s}</span>`)
+                    .join('') || '<small class="text-muted">No skills detected</small>';
+                
+                showResult('cvResult', `
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <h6 class="mb-0">CV Found</h6>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><small class="text-muted">Uploaded:</small><br>${new Date(data.uploaded_at).toLocaleDateString()}</div>
+                        <div class="col-6"><small class="text-muted">Size:</small><br>${(data.file_size / 1024).toFixed(1)} KB</div>
+                    </div>
+                    ${data.parsed_output ? `
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-2">Skills:</small>
+                        ${skills}
+                    </div>
+                    ${data.parsed_output.experience_str ? `
+                    <div class="alert alert-info py-2 mb-0">
+                        <small><strong>Experience:</strong> ${data.parsed_output.experience_str}</small>
+                    </div>
+                    ` : ''}` : ''}
+                    <button class="btn btn-sm btn-outline-primary mt-3" onclick="getImprovements()">
+                        <i class="fas fa-lightbulb me-1"></i>Get Detailed Analysis
+                    </button>
+                `);
+            } catch (err) {
+                showResult('cvResult', `
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-times-circle text-danger me-2"></i>
+                        <h6 class="mb-0">CV Not Found</h6>
+                    </div>
+                    <p class="text-muted small mb-0">${err.message}</p>
+                `, false);
+            }
+        }
+
+        async function getImprovements() {
+            const username = $('cvUsername').value;
+            if (!username) return alert('Please enter username');
+            
+            showLoading('cvResult');
+            try {
+                const res = await fetch(`${API.base}/resume/${username}/suggest_improvements`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                
+                showResult('cvResult', `
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <h6 class="mb-0">Analysis Complete</h6>
+                    </div>
+                    <div class="alert alert-info mb-0">
+                        <h6 class="mb-2"><i class="fas fa-robot me-2"></i>AI Suggestions</h6>
+                        <div style="white-space: pre-line;">${parseData(data.improvements)}</div>
+                    </div>
+                `);
+            } catch (err) {
+                showResult('cvResult', `
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-times-circle text-danger me-2"></i>
+                        <h6 class="mb-0">Analysis Failed</h6>
+                    </div>
+                    <p class="text-muted small mb-0">${err.message}</p>
+                `, false);
+            }
+        }
+
+        // Job Recommendations
+        async function getJobs() {
+            const username = $('jobUsername').value;
+            if (!username) return alert('Please enter username');
+            
+            showLoading('jobResult');
+            try {
+                const res = await fetch(`${API.base}/jobs-suggestion/${username}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                
+                const jobs = (data.matching_jobs || data.jobs || []).slice(0, 10);
+                if (!jobs.length) throw new Error('No jobs found');
+                
+                const jobCards = jobs.map((job, i) => {
+                    const match = job.match_percentage || 0;
+                    const color = match >= 80 ? 'success' : match >= 60 ? 'info' : match >= 40 ? 'warning' : 'danger';
+                    return `
+                    <a href="/jobs/${job.slug}" class="job-card card mb-2 border-${i === 0 ? 'success' : 'light'}">
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="mb-0">${job.title || 'Job Title'}</h6>
+                                <span class="badge bg-${color}">${match}%</span>
+                            </div>
+                            <p class="mb-2 small">
+                                <strong>${job.company || 'Company'}</strong><br>
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>${job.location || 'Location'}
+                                    • ${job.type || 'Full-time'}
+                                </small>
+                            </p>
+                            <div class="progress" style="height: 4px;">
+                                <div class="progress-bar bg-${color}" style="width: ${match}%"></div>
+                            </div>
+                        </div>
+                    </a>
+                    `;
+                }).join('');
+                
+                showResult('jobResult', `
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <h6 class="mb-0">${jobs.length} Job Matches</h6>
+                    </div>
+                    ${jobCards}
+                `);
+            } catch (err) {
+                showResult('jobResult', `
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-times-circle text-danger me-2"></i>
+                        <h6 class="mb-0">Search Failed</h6>
+                    </div>
+                    <p class="text-muted small mb-0">${err.message}</p>
+                `, false);
+            }
+        }
+
+        async function refreshJobs() {
+            const username = $('jobUsername').value;
+            if (!username) return alert('Please enter username');
+            
+            showLoading('jobResult');
+            try {
+                const res = await fetch(`${API.base}/users/${username}/jobs`);
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                
+                showResult('jobResult', `
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <h6 class="mb-0">Listings Updated</h6>
+                    </div>
+                    <p class="text-muted small">Found ${data.count || 0} new opportunities</p>
+                    <button class="btn btn-sm btn-outline-primary" onclick="getJobs()">View Jobs</button>
+                `);
+            } catch (err) {
+                showResult('jobResult', `
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-times-circle text-danger me-2"></i>
+                        <h6 class="mb-0">Update Failed</h6>
+                    </div>
+                    <p class="text-muted small mb-0">${err.message}</p>
+                `, false);
+            }
+        }
+
+        // File Upload
+        document.addEventListener('DOMContentLoaded', () => {
+            const zone = $('uploadZone');
+            const input = $('cvFile');
+            
+            if (zone && input) {
+                zone.onclick = () => input.click();
+                zone.ondragover = e => { e.preventDefault(); zone.classList.add('dragover'); };
+                zone.ondragleave = () => zone.classList.remove('dragover');
+                zone.ondrop = e => {
+                    e.preventDefault();
+                    zone.classList.remove('dragover');
+                    uploadFile(e.dataTransfer.files[0]);
+                };
+                input.onchange = e => uploadFile(e.target.files[0]);
+            }
+        });
+
+        async function uploadFile(file) {
+            if (!file) return alert('Please select a file');
+            const username = $('cvUsername').value;
+            if (!username) return alert('Please enter username');
+            
+            showLoading('cvResult');
+            const form = new FormData();
+            form.append('file', file);
+            form.append('username', username);
+            
+            try {
+                const res = await fetch(`${API.base}/upload_resume`, { method: 'POST', body: form });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                
+                showResult('cvResult', `
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <h6 class="mb-0">Upload Success</h6>
+                    </div>
+                    <p class="mb-2"><strong>File:</strong> ${data.filename || file.name}</p>
+                    <p class="mb-3"><strong>Size:</strong> ${(data.size / 1024).toFixed(1)} KB</p>
+                    <button class="btn btn-sm btn-outline-primary" onclick="analyzeCV()">Analyze Now</button>
+                `);
+            } catch (err) {
+                showResult('cvResult', `
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-times-circle text-danger me-2"></i>
+                        <h6 class="mb-0">Upload Failed</h6>
+                    </div>
+                    <p class="text-muted small mb-0">${err.message}</p>
+                `, false);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,17 +1,12 @@
 services:
-  # Web Service
+  # Web Service using Docker
   - type: web
     name: recruit-web
-    env: node
+    env: docker
     plan: free
-    buildCommand: "npm install"
-    startCommand: "npm start"
     healthCheckPath: /
     envVars:
       - key: NODE_ENV
         value: production
-    # Specify the root directory where package.json is located
-    rootDir: .
-    # Build from the blog directory
-    repo: https://github.com/PhucLe22/recruit-web.git
-    branch: main
+      - key: PORT
+        value: 3000

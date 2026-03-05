@@ -1,83 +1,39 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# Virtual Environment
-venv/
-env/
-ENV/
-
-# Node.js
+# Dependencies
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.npm
+*/node_modules/
+
+# Environment variables
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Editor directories and files
-.idea/
-.vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-.DS_Store
-
-# Large files
-*.dylib
-*.so
-*.dll
-*.exe
-*.bin
-*.dat
-*.pth
-*.pt
-*.pkl
-*.h5
-*.hdf5
-*.zip
-*.tar.gz
-*.tar
-*.tgz
-
-# Specific large files from your error
-ai-agent/chatbot_backend/venv/
-**/site-packages/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# Local development
-.env
-.env.local
+# Build outputs
+dist/
+build/
 
 # Logs
-logs
+logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # OS generated files
 .DS_Store
@@ -88,11 +44,16 @@ logs
 ehthumbs.db
 Thumbs.db
 
-# Environment Variables
-.env
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
 
-# AI Agent
-ai-agent/chatbot_backend/venv/
-ai-agent/chatbot_backend/uploads
-ai-agent/chatbot_backend/ocr_output
-ai-agent/chatbot_backend/page_images
+# Temporary files
+*.tmp
+*.temp

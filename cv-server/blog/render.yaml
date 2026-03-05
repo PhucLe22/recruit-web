@@ -8,8 +8,8 @@ services:
     buildCommand: "npm install"
     startCommand: "npm start"
     healthCheckPath: /
-    # Set root directory to src where package.json is located
-    rootDir: src
+    # Use root directory where package.json is now located
+    rootDir: .
     # Ensure we're using the correct Node.js version
     nodeVersion: 20.20.0
     envVars:

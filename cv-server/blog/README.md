@@ -22,7 +22,7 @@ A full-stack job matching platform that connects job seekers with employers usin
 - Application status management (pending, accepted, rejected)
 - Business dashboard with analytics
 
-### AI Engine
+### AI Features
 - **CV Parsing** - Google Gemini 2.0 Flash extracts structured data from PDF resumes
 - **Matching Algorithm** - Multi-factor weighted scoring:
   - Skills (40%) | Experience (20%) | Education (15%) | Field (15%) | Title (10%)
@@ -36,8 +36,7 @@ A full-stack job matching platform that connects job seekers with employers usin
 | Backend | Node.js, Express.js v5, MongoDB (Mongoose) |
 | Frontend | Handlebars (HBS), Bootstrap 5, Vanilla JS |
 | Auth | Passport.js, Google OAuth 2.0, JWT, bcrypt |
-| AI Agent | Python, FastAPI, Google Gemini, LangChain, PyTorch |
-| File Processing | Multer, Sharp, Tesseract OCR, pdf2image |
+| File Processing | Multer, Sharp |
 | Email | Nodemailer |
 | DevTools | ESLint, Prettier, Husky, Nodemon |
 
@@ -63,11 +62,6 @@ A full-stack job matching platform that connects job seekers with employers usin
 │   │   └── partials/           # Shared components (header, footer, toast)
 │   ├── public/                 # Static assets (CSS, JS, images)
 │   └── server.js               # App entry point
-├── ai-agent/                   # Python FastAPI AI service
-│   └── chatbot_backend/
-│       ├── main.py
-│       ├── services/           # CV parsing, job suggestions, webscraping
-│       └── requirements.txt
 ├── package.json
 └── .env
 ```
@@ -77,18 +71,11 @@ A full-stack job matching platform that connects job seekers with employers usin
 ### Prerequisites
 - Node.js >= 18
 - MongoDB (Atlas or local)
-- Python 3.8+ (for AI agent)
-- Tesseract OCR, poppler-utils
 
 ### Installation
 
 ```bash
-# Install dependencies
 npm install
-
-# Setup AI agent
-cd ai-agent/chatbot_backend
-pip install -r requirements.txt
 ```
 
 ### Environment Variables
@@ -117,17 +104,15 @@ npm run dev
 
 # Production
 npm start
-
-# AI Agent (separate terminal)
-cd ai-agent/chatbot_backend
-uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
 ### Deploy on Render
 
+**Root Directory:** `cv-server/blog`
+
 **Build Command:**
 ```bash
-apt-get update && apt-get install -y poppler-utils && npm install
+npm install
 ```
 
 **Start Command:**
